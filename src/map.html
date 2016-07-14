@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html>
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <head>
 
-<!--  JQuery -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="leaflet/leaflet.css">
+  <link rel="stylesheet" href="leaflet/leaflet.draw.css">
+  <script src="leaflet/leaflet-src.js"></script>
+  <script src="leaflet/leaflet.draw.js"></script>
 
-<!-- Bootstrap -->
-<script type='text/javascript' src='js/bootstrap.js'></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <!-- jQuery, required by Bootstrap -->
+  <script src="jquery-1.12.1.min.js"></script>
 
-<!-- Leaflet -->
- <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
- <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
 <!-- Start of CSS -->
 <style>
@@ -52,12 +54,13 @@ li.list-group-item {
 }
 
 </style>
-<!-- End of CSS -->
+
 
 </head>
 
-<!-- Start of HTML -->
+
 <body>
+
 <div class="title">
   <h1>Early Access User Geomapper</h1>
     <h3> This application is a MarkLogic-based visualization that provides an "executive" display for locations of all MarkLogic 9 Early Access users.</h3>
@@ -71,7 +74,7 @@ li.list-group-item {
 <!--     <div class="col-xs-12">
       <button type="button" class="btn btn-default btn-lg" style="text-align:center">Select Dates</button>
     </div> -->
-    
+
     <div class="col-xs-6">
       <div class="panel-group" id="accordion">
         <div class="panel panel-default">
@@ -145,16 +148,10 @@ li.list-group-item {
   </div>
 
   <!-- Displaying the map (in JS) -->
-  <script>
-   var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+  <script type="text/javascript" src="public/map.js">
 
-  L.tileLayer('https://api.mapbox.com/styles/v1/liangdanica/ciqcx4m59003pbzm9p53mvq36/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg', {
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      maxZoom: 18,
-      id: 'Basic',
-      accessToken: 'pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg'
-  }).addTo(mymap);
   </script>
+
 </div></div>
 
 </body>
