@@ -102,8 +102,10 @@ map.on('draw:deleted', function (e) {
 
 });
 
-function log() {
-  console.log("success");
+function log(response) {
+  console.log(response.results);
+  displayGeoJSON(response.results);
+
 }
 
 // Copied from Jen and Jake's geoapp
@@ -131,17 +133,72 @@ function doPost(url, str, success, drawnLayer) {
 }
 
 // Draw geojson data on map, data will originate from Marketo
-geojsonLayer = L.geoJson(geojsonFeatures, {
-  style: function (feature) {
-    return {color: feature.properties.color};
-  },
-  pointToLayer: function (feature, latlng) {
-    var popupOptions = {maxWidth: 200};
-    var popupContent = feature.properties.name;
-    return new L.CircleMarker(latlng, {radius: 10, fillOpacity: 0.85})
-  },
-  onEachFeature: function (feature, layer) {
-    layer.bindPopup(feature.properties.name);
+
+function displayGeoJSON(geojsonFeatures) {
+  var geojsonLayer = L.geoJson(geojsonFeatures, {
+    pointToLayer: function (feature, latlng) {
+      var popupOptions = {maxWidth: 250};
+      var popupContent = feature.properties.name;
+      var MLFeatures = feature.properties.features;
+      return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85})
+    },
+    onEachFeature: function (feature, layer) {
+      layer.bindPopup(formatPopup(feature.properties));
+    },
+    style: function(feature) {
+      return {color: getColor(feature)};
+    }
+  });
+  map.addLayer(geojsonLayer);
+}
+
+// The redder the marker on map, the more ML features the EA user uses.
+var getColor = function(f) {
+  var numFeatures = 0;
+  if (f.properties.features && f.properties.features.length) {
+    numFeatures = f.properties.features.length;
   }
-});
-map.addLayer(geojsonLayer);
+  var red = 50 + 35 * numFeatures;
+  red = red > 255 ? 255 : red;
+  //toString(16) converts number to base 16 string
+  var c = "#"+red.toString(16)+(50).toString(16)+(50).toString(16);
+
+  return c;
+}
+
+function formatPopup(properties) {
+  var str = "";
+  if (!properties) return str;
+
+  if (properties && properties.name) {
+    str += '<b> Name: </b>' + properties.name;
+    str += '<br>';
+  }
+  // Name of company they work for
+  if (properties.company && properties.company !== "") {
+    str += "<b> Company: </b> " + properties.company;
+    str += "<br>";
+  }
+  if (properties.postalCode && properties.postalCode !== "") {
+    str += "<b> Postal Code: </b>" + properties.postalCode;
+    str += "<br>";
+  }
+
+  // Refer below for lists in HTML help
+  // http://www.htmlgoodies.com/tutorials/getting_started/article.php/3479461
+  if (properties.features && properties.features.length >= 1) {
+    // Features used in ML9
+    // ** Assuming properties.features will be string array of ML9 Features **
+    str += "<b> Features: </b><UL>";
+    for (var feature in properties.features) {
+      str += "<LI>" + feature;
+    }
+    str += "</UL>";
+    str += "<br>";
+  } else if (properties.features.length === 0) {
+    str += "<b> Features: </b> None specified";
+    str += "<br>";
+  }
+
+  return str;
+}
