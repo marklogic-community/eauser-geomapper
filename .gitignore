@@ -1,3 +1,4 @@
 deploy/local.properties
 src/private/*.js
 src/private/*.sjs
+.DS_Store
