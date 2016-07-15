@@ -56,9 +56,9 @@ var drawControl = new L.Control.Draw({
     featureGroup: drawnShapes
   }, //https://github.com/Leaflet/Leaflet.draw/wiki/API-Reference#lcontroldraw
   draw: { //all shapes enabled by default
-    polyline: false,
-    marker: false,
-    circle: false
+    polyline: false, //disable polylines
+    marker: false, // disable markers
+    circle: false // disable circles
   }
 });
 map.addControl(drawControl);
@@ -152,15 +152,18 @@ function displayGeoJSON(geojsonFeatures) {
   map.addLayer(geojsonLayer);
 }
 
-// The redder the marker on map, the more ML features the EA user uses.
+// The brighter the red, the more ML features the EA user uses.
+// 0 features is black circle marker
+// 3+ creates a bright red circle marker
 var getColor = function(f) {
   var numFeatures = 0;
   if (f.properties.features && f.properties.features.length) {
     numFeatures = f.properties.features.length;
-  }
-  var red = 50 + 35 * numFeatures;
+  } // 57 + 66(3) = 255
+  var red = 57 + 66 * numFeatures;
+  // Color doesn't display correctly if > 255
   red = red > 255 ? 255 : red;
-  //toString(16) converts number to base 16 string
+  //toString(16) converts number to base 16 string ex. 10 -> a
   var c = "#"+red.toString(16)+(50).toString(16)+(50).toString(16);
 
   return c;
@@ -170,33 +173,36 @@ function formatPopup(properties) {
   var str = "";
   if (!properties) return str;
 
-  if (properties && properties.name) {
-    str += '<b> Name: </b>' + properties.name;
-    str += '<br>';
-  }
-  // Name of company they work for
-  if (properties.company && properties.company !== "") {
-    str += "<b> Company: </b> " + properties.company;
+  // EA User's name
+  if (properties.name) {
+    str += "<b>EA User:</b> " + properties.name;
     str += "<br>";
   }
+  // EA User's company
+  if (properties.company && properties.company !== "") {
+    str += "<b>Company:</b> " + properties.company;
+    str += "<br>";
+  }
+  // EA User's postal code
   if (properties.postalCode && properties.postalCode !== "") {
-    str += "<b> Postal Code: </b>" + properties.postalCode;
+    str += "<b>Postal Code:</b> " + properties.postalCode;
     str += "<br>";
   }
 
   // Refer below for lists in HTML help
   // http://www.htmlgoodies.com/tutorials/getting_started/article.php/3479461
+  // Features of ML9 the EA user listed they use when signing up for EA
   if (properties.features && properties.features.length >= 1) {
     // Features used in ML9
     // ** Assuming properties.features will be string array of ML9 Features **
-    str += "<b> Features: </b><UL>";
+    str += "<b>Features:</b><UL>";
     for (var feature in properties.features) {
       str += "<LI>" + feature;
     }
     str += "</UL>";
     str += "<br>";
   } else if (properties.features.length === 0) {
-    str += "<b> Features: </b> None specified";
+    str += "<b>Features:</b> None specified";
     str += "<br>";
   }
 
