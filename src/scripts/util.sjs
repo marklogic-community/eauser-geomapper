@@ -10,7 +10,6 @@ var userID = keys.userID;
 var secretkey = keys.secretkey;
 
 
-
 // Calls the Google Maps geocoding api, and returns the lat/long associated with a postal code in a certain country
 var getCoord = function(postalCode, country) {
 
@@ -26,7 +25,6 @@ var getCoord = function(postalCode, country) {
       noSpaceUrl = noSpacesArray[0];
       continue;
     }
-    
     noSpaceUrl = noSpaceUrl + "%20" + noSpacesArray[i];
   }
   
@@ -42,7 +40,6 @@ var getCoord = function(postalCode, country) {
     return null;
   }
 };
-
 
 
 // takes a leadRecord from Marketo and transforms it into GeoJSON
@@ -70,12 +67,9 @@ var convertToJson = function(record) {
     "type": "Point",
     "coord": coord
   };
-  
 
   return doc;
 };
-
-
 
 
 // Marketo SOAP requests
@@ -87,7 +81,6 @@ var marketoGetLead = function(email) {
   var timestamp = fn.currentDateTime();
   var message = "" + timestamp + userID;
   var signature = xdmp.hmacSha1(secretkey, message);
-
 
   var options = xdmp.quote(
     "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns1=\"http://www.marketo.com/mktows/\"><SOAP-ENV:Header><ns1:AuthenticationHeader><mktowsUserId>"
@@ -118,15 +111,12 @@ var marketoGetLead = function(email) {
 
 };
 
-
 // getMultipleLeads
 //
 //..
 //..
 //.. marketo is unresponsive.. :(
 //
-
-
 
 module.exports{
   "convertToJson": convertToJson,
@@ -136,5 +126,4 @@ module.exports{
 
   "marketoGetLead": marketoGetLead
 }
-
 
