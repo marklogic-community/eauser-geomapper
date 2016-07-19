@@ -136,7 +136,6 @@ function displayGeoJSON(geojsonFeatures) {
   console.log(geojsonFeatures);
   var geojsonLayer = L.geoJson(geojsonFeatures, {
     pointToLayer: function (feature, latlng) {
-      var popupOptions = {maxWidth: 250};
       var popupContent = feature.properties.name;
       var MLFeatures = feature.properties.features;
       return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85})
