@@ -2,7 +2,7 @@ Files in this directory are not to be added to the public repo. Such files
 ought to contain private values and nothing else.
 
 
-Private API keys are stored in the module `keys.sjs` :
+Private keys for MarkLogic scripts are stored in the module `keys.sjs` :
 
 
 ```javascript
@@ -15,11 +15,17 @@ var geocoderKey = keys.geocoderKey;
 var endpoint = keys.endpoint;
 var userID = keys.userID;
 var secretkey = keys.secretkey;
+```
 
-// Mapbox api
+
+Private keys for the browser are stored in `browserKeys.js` :
+
+```javascript
+// assuming <script src="browserKeys.js"></script> has been added
+//  above the place you want to use these values..
+
 var mapboxToken = keys.mapboxToken;
 var mapboxStyle = keys.mapboxStyle;
 ```
-
 
 

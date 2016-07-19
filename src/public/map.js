@@ -42,12 +42,12 @@ var map = L.map('mapid').setView([35.7, -83], 4);
 
 var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
-L.tileLayer("https://api.mapbox.com/styles/v1/liangdanica/ciqcx4m59003pbzm9p53mvq36/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg",
+L.tileLayer(url, 
 {
   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
   maxZoom: 18,
   id: 'Basic',
-  accessToken: "pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg"
+  accessToken: token
 }).addTo(map);
 
 
