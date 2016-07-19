@@ -1,6 +1,5 @@
-var keys = require("../private/keys.sjs");
-var token = keys.mapboxToken;
 var style = keys.mapboxStyle;
+var token = keys.mapboxToken;
 
 //Example GeoJson data, need to automate this with Marketo
 var geojsonFeatures = [
@@ -41,19 +40,16 @@ var geojsonFeatures = [
 
 var map = L.map('mapid').setView([35.7, -83], 4);
 
-L.tileLayer('https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token,
+var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
+
+L.tileLayer("https://api.mapbox.com/styles/v1/liangdanica/ciqcx4m59003pbzm9p53mvq36/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg",
 {
   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
   maxZoom: 18,
   id: 'Basic',
-  accessToken: token
+  accessToken: "pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg"
 }).addTo(map);
 
-
-/*
-var googleLayer = new L.Google("ROADMAP");
-map.addLayer(googleLayer);
-*/
 
 //Initialize the FeatureGroup to store editable layers (shapes drawn by user)
 // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
