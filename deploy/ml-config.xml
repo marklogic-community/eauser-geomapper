@@ -243,12 +243,14 @@
         Sample for:
           <name xmlns="http://marklogic.com/ns/sample">bob<name>
 -->
+
+
         <range-element-index>
           <scalar-type>string</scalar-type>
           <namespace-uri></namespace-uri>
-          <localname>region</localname>
+          <localname>industry</localname>
           <collation>http://marklogic.com/collation/codepoint</collation>
-          <range-value-positions>true</range-value-positions>
+          <range-value-positions>false</range-value-positions>
         </range-element-index>
 
       </range-element-indexes>
@@ -379,6 +381,7 @@
       </element-word-lexicons>
       <element-attribute-word-lexicons>
 <!--
+
         <element-attribute-word-lexicon>
           <parent-namespace-uri>http://www.marklogic.com/ns/sample</parent-namespace-uri>
           <parent-localname>sample-element</parent-localname>

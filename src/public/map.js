@@ -84,7 +84,7 @@ map.on('draw:created', function (e) {
   }
 
   drawnShapes.addLayer(layer);
-  doPost("http://localhost:8040/search.sjs", "name", displayGeoJSON, drawnShapes);
+  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes);
 });
 
 map.on('draw:edited', function (e) {
@@ -93,6 +93,7 @@ map.on('draw:edited', function (e) {
     // loops over each edited layer
     // do whatever you want, most likely save back to db
   });
+  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes);
 });
 
 map.on('draw:deleted', function (e) {
