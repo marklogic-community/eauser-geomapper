@@ -37,13 +37,15 @@ var geojsonFeatures = [
 
 var map = L.map('mapid').setView([35.7, -83], 4);
 
-L.tileLayer('https://api.mapbox.com/styles/v1/liangdanica/ciqcx4m59003pbzm9p53mvq36/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg',
+L.tileLayer('https://api.mapbox.com/styles/v1/liangdanica/ciqcx4m59003pbzm9p53mvq36/tiles/256/' +
+              '{z}/{x}/{y}?access_token=pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg',
   {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+                  '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     maxZoom: 18,
     id: 'Basic',
     accessToken: 'pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg'
-  }).addTo(map);
+}).addTo(map);
 
 //Initialize the FeatureGroup to store editable layers (shapes drawn by user)
 // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
@@ -58,14 +60,13 @@ var drawControl = new L.Control.Draw({
   draw: { //all shapes enabled by default
     polyline: false, //disable polylines
     marker: false, // disable markers
-    circle: false // disable circles
+    circle: false // disable circles, additional code required to implement, not supported by geojson
   }
 });
 map.addControl(drawControl);
 
 // Reference: https://github.com/Leaflet/Leaflet.draw
 map.on('draw:created', function (e) {
-  console.log('NEW SHAPE CREATED');
   var type = e.layerType,
     layer = e.layer;
 
@@ -83,6 +84,7 @@ map.on('draw:created', function (e) {
   }
 
   drawnShapes.addLayer(layer);
+  doPost("http://localhost:8040/search.sjs", "name", displayGeoJSON, drawnShapes);
 });
 
 map.on('draw:edited', function (e) {
@@ -96,19 +98,9 @@ map.on('draw:edited', function (e) {
 map.on('draw:deleted', function (e) {
   // Update db to save latest changes.
   drawnShapes.removeLayer(e.layer);
-
-  // deleted layer automatically removed from drawnShapes
-  doPost("search.sjs", "name", log, drawnShapes);
-
 });
 
-function log(response) {
-  console.log(response.results);
-  displayGeoJSON(response.results);
-
-}
-
-// Copied from Jen and Jake's geoapp
+// ****** Copied from Jen and Jake's geoapp ********
 function doPost(url, str, success, drawnLayer) {
   //clearResults();
   var payload = {
@@ -128,13 +120,19 @@ function doPost(url, str, success, drawnLayer) {
     data: JSON.stringify(payload),
     contentType: "application/json",
     dataType: "json",
-    success: success
+    success: success,
+    error: fail
   });
 }
 
-// Draw geojson data on map, data will originate from Marketo
+function fail(jqXHR, status, errorThrown) {
+  console.log("fail");
+}
 
+// Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
+  console.log("geojson success");
+  console.log(geojsonFeatures);
   var geojsonLayer = L.geoJson(geojsonFeatures, {
     pointToLayer: function (feature, latlng) {
       var popupOptions = {maxWidth: 250};

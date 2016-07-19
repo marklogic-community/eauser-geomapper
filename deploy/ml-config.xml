@@ -301,16 +301,16 @@
       </range-path-indexes>
 
       <geospatial-element-indexes>
-<!--
+
         <geospatial-element-index>
-          <namespace-uri>http://www.marklogic.com/ns/sample</namespace-uri>
-          <localname>geo-element</localname>
+          <namespace-uri></namespace-uri>
+          <localname>coordinates</localname>
           <coordinate-system>wgs84</coordinate-system>
-          <point-format>point</point-format>
+          <point-format>long-lat-point</point-format>
           <range-value-positions>false</range-value-positions>
           <invalid-values>reject</invalid-values>
         </geospatial-element-index>
--->
+
       </geospatial-element-indexes>
 
       <geospatial-element-attribute-pair-indexes>
