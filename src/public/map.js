@@ -1,5 +1,6 @@
 var keys = require("../private/keys.sjs");
 var token = keys.mapboxToken;
+var style = keys.mapboxStyle;
 
 //Example GeoJson data, need to automate this with Marketo
 var geojsonFeatures = [
@@ -40,7 +41,7 @@ var geojsonFeatures = [
 
 var map = L.map('mapid').setView([35.7, -83], 4);
 
-L.tileLayer('https://api.mapbox.com/styles/v1/liangdanica/ciqcx4m59003pbzm9p53mvq36/tiles/256/{z}/{x}/{y}?access_token=' + token,
+L.tileLayer('https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token,
 {
   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
   maxZoom: 18,
