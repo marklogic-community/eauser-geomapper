@@ -47,6 +47,7 @@ var convertToJson = function(record) {
   
   var properties = {};
   
+  // preview fields
   properties["firstname"] = record.xpath("./leadAttributeList/attribute[attrName = 'FirstName']/attrValue/fn:string()");
   properties["lastname"] = record.xpath("./leadAttributeList/attribute[attrName = 'LastName']/attrValue/fn:string()");
   properties["email"] = record.xpath("./Email/fn:string()");
@@ -55,6 +56,13 @@ var convertToJson = function(record) {
   properties["state"] = record.xpath("./leadAttributeList/attribute[attrName = 'State']/attrValue/fn:string()");
   properties["postalCode"] = record.xpath("./leadAttributeList/attribute[attrName = 'PostalCode']/attrValue/fn:string()");
   properties["industry"] = record.xpath("./leadAttributeList/attribute[attrName = 'Main_Industry__c']/attrValue/fn:string()");
+
+  // full detail fields
+  properties["leadScore"] = record.xpath("./leadAttributeList/attribute[attrName = 'LeadScore']/attrValue/fn:string()");
+  properties["leadSource"] = record.xpath("./leadAttributeList/attribute[attrName = 'LeadSource']/attrValue/fn:string()");
+  properties["markLogicContactEmail"] = record.xpath("./leadAttributeList/attribute[attrName = 'markLogicContactEmail']/attrValue/fn:string()");
+  properties["phone"] = record.xpath("./leadAttributeList/attribute[attrName = 'Phone']/attrValue/fn:string()");
+  properties["registrationDate"] = record.xpath("./leadAttributeList/attribute[attrName = 'Registration_Date__c']/attrValue/fn:string()");
   
   var doc = {};
 
@@ -115,7 +123,7 @@ var marketoGetLead = function(email) {
 //
 //..
 //..
-//.. marketo is unresponsive.. :(
+//.. Still waiting.. :'(
 //
 
 module.exports{
