@@ -15,6 +15,7 @@
  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
  <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 
+
 <!-- Start of CSS -->
 <style>
 body {
@@ -95,6 +96,13 @@ li.list-group-item {
     <br><br><br>
 
 <!-- Select Industry -->
+
+<!-- code to find all industries -->
+<!-- <script>
+var jsearch = require('/Marklogic/jsearch.sjs');
+  jsearch.facets([jsearch.facet('Industry', 'industry').slice(0, 215)]).result()
+</script> -->
+
     <div class="col-xs-6">
       <div class="panel-group" id="accordion">
         <div class="panel panel-default">
@@ -104,15 +112,43 @@ li.list-group-item {
           </div>
           <div id="collapse1" class="panel-collapse collapse">
             <ul class="list-group">
-              <li class="list-group-item"><input type="checkbox" value=""> Industry 1</li>
-              <li class="list-group-item"><input type="checkbox" value=""> Industry 2</li>
+              <li class="list-group-item"><input type="checkbox" onclick="handleClick(this);"> i_1 </li>
+              <li class="list-group-item"><input type="checkbox" value=""> i_2 </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
+
+<!-- Functions -->
+<script>
+
+function handleClick(cb) {
+  // get the user(s)
+  var jsearch = require('/Marklogic/jsearch.sjs');
+  var results =
+    jsearch.facets(
+      jsearch.facet('Industry', 'industry'),
+      jsearch.documents().map({snippet: false, extract: {select: 'all'}}))
+        .where(jsearch.byExample({city: 'i_1'}))
+      .result('iterator')
+    //.result()
+
+  // display user(s) on map
+  L.geoJson(results).addTo(mymap);
+  }
+</script>
+
+
 <!-- Select Features -->
+
+<!-- code to find all features -->
+<!-- <script>
+var jsearch = require('/Marklogic/jsearch.sjs');
+  jsearch.facets([jsearch.facet('Feature', 'feature').slice(0, 215)]).result()
+</script> -->
+
     <div class="col-xs-6">
       <div class="panel-group" id="accordion">
         <div class="panel panel-default">
@@ -146,7 +182,7 @@ li.list-group-item {
 
   <!-- Displaying the map (in JS) -->
   <script>
-   var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+   var mymap = L.map('mapid').setView([37.766579, -122.230758], 13);
 
   L.tileLayer('https://api.mapbox.com/styles/v1/liangdanica/ciqcx4m59003pbzm9p53mvq36/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg', {
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -154,6 +190,57 @@ li.list-group-item {
       id: 'Basic',
       accessToken: 'pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg'
   }).addTo(mymap);
+
+
+  // L.tileLayer('https://api.mapbox.com/styles/v1/liangdanica/ciqcx4m59003pbzm9p53mvq36/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg', {
+  //     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  //     maxZoom: 18,
+  //     id: 'Basic',
+  //     accessToken: 'pk.eyJ1IjoibGlhbmdkYW5pY2EiLCJhIjoiY2lxY3gzeG95MDJkbmZubmUzYmxicW5kMSJ9.5p2qxjIuC7exMGGm19XFeg'
+  // }).addTo(mymap);
+
+var geojsonFeature = [{
+    "type": "Feature",
+    "properties": {
+        "name": "Coors Field",
+        "amenity": "Baseball Stadium",
+        "popupContent": "This is where the Rockies play!"
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-107.290283, 43.075970]
+    }
+},
+{
+    "type": "Feature",
+    "properties": {
+        "name": "Litchfield Prison",
+        "amenity": "Prison",
+        "popupContent": "Inmates are housed here!"
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-95.366302, 29.761993]
+    }
+
+}];
+
+L.geoJson(geojsonFeature).addTo(mymap);
+
+  var marker = L.marker([37.766579, -122.230758]).addTo(mymap);
+
+  // marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+
+  var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng([37.766579, -122.230758])
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(mymap);
+}
+mymap.on('click', onMapClick);
+
   </script>
 </div></div>
 
