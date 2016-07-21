@@ -72,9 +72,11 @@
   <h3> This application is a MarkLogic-based visualization that provides an "executive" display for locations of all MarkLogic 9 Early Access users.</h3>
 </div>
 
+<!--
 <button ng-click="showDetail=!showDetail" ng-init="showDetail=false">
   Switch
 </button>
+-->
 
 <!-- MAP -->
 <div class="container" ng-hide="showDetail">
@@ -179,11 +181,13 @@
 
 </div> <!-- end of ng-app and ng-controller -->
 
-<!-- Displaying the map (in JS) -->
-<script type="text/javascript" src="public/map.js"></script>
 
 <!-- Displaying user details (Angular controller) -->
 <script src="details.js"></script>
+
+<!-- Displaying the map (in JS) -->
+<script type="text/javascript" src="public/map.js"></script>
+
 
 </body>
 </html>

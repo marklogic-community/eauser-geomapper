@@ -214,5 +214,8 @@ function formatPopup(properties) {
     str += "<br>";
   }
 
+  // Show full detail button (could also look like a link)
+  str += "<button ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
+
   return str;
 }
