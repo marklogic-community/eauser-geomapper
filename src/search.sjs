@@ -5,9 +5,6 @@ var jsearch = require('/MarkLogic/jsearch.sjs');
 var rawInput = xdmp.getRequestBody();
 var input = rawInput.toObject();
 
-//log the input to ErrorLog.txt
-//xdmp.log("Input received by Kevin's search.sjs: " + xdmp.quote(rawInput));
-
 //searchRegions is an array of the user's search regions
 var searchRegions = [];
 //bounds is a box representing the current map window
@@ -18,8 +15,8 @@ var geoQueryJson;
 var searchResults;
 
 //On initial page load searchRegions is null
-if (input.searchRegions) {
-  if (input.searchRegions.features.length == 0) {
+if (input.features == false) {
+  if (input.searchRegions.features.length === 0) {
     //if the user didn't provide a search region, then use the window bounds.
     searchRegions.push(bounds);
   } else {
@@ -41,9 +38,8 @@ if (input.searchRegions) {
     searchRegions,
     "type=long-lat-point");
 
-  var searchResults = cts.search(geoQueryJson).toArray();
+  searchResults = cts.search(geoQueryJson).toArray();
 }
-
 
 var industries = {};
 var features = {};

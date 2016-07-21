@@ -4,9 +4,9 @@ var token = keys.mapboxToken;
 var map = L.map('mapid').setView([35.7, -83], 4);
 
 var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
-
+var drawnShapes = new L.FeatureGroup();
 // Load initial features and industries options for dropdown menus
-doPost('/search.sjs', "", processResults, null, true, true);
+doPost('/search.sjs', "", populateMenus, drawnShapes, true);
 
 L.tileLayer(url,
 {
@@ -18,7 +18,8 @@ L.tileLayer(url,
 
 //Initialize the FeatureGroup to store editable layers (shapes drawn by user)
 // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
-var drawnShapes = new L.FeatureGroup();
+
+
 map.addLayer(drawnShapes);
 
 //Initialize the draw control and pass it the FeatureGroup of editable layers
@@ -55,7 +56,7 @@ map.on('draw:created', function (e) {
   }
 
   drawnShapes.addLayer(layer);
-  doPost("/search.sjs", "name", processResults, drawnShapes, true, true);
+  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
 });
 
 map.on('draw:edited', function (e) {
@@ -64,19 +65,16 @@ map.on('draw:edited', function (e) {
     // loops over each edited layer
     // do whatever you want, most likely save back to db
   });
-  doPost("/search.sjs", "name", processResults, drawnShapes, false, false);
+  doPost("/search.sjs", "name",displayGeoJSON, drawnShapes, false);
 });
 
 map.on('draw:deleted', function (e) {
   // Update db to save latest changes.
-  console.log(e);
-  //e.removeTile(); //
   drawnShapes.removeLayer(e.layer);
-
 });
 
-function processResults(response) {
-  displayGeoJSON(response.results);
+
+function populateMenus(response) {
   displayFeatures(response.features.facets);
   displayIndustries(response.industries.facets);
 }
@@ -95,8 +93,8 @@ function displayIndustries(industries) {
   console.log(industries);
 }
 
-// ****** Copied from Jen and Jake's geoapp ********
-function doPost(url, str, success, drawnLayer, industries, features) {
+// ****** Copied from Jen and Jake's geoapp and modified********
+function doPost(url, str, success, drawnLayer, firstLoad) {
   //clearResults();
   var payload = {
     searchString: str,
@@ -107,12 +105,10 @@ function doPost(url, str, success, drawnLayer, industries, features) {
       map.getBounds().getNorth(),
       map.getBounds().getEast()
     ],
-    industries: industries,
-    features: features
+    industries: firstLoad,
+    features: firstLoad,
+    searchRegions: drawnShapes.toGeoJSON()
   };
-  if (drawnLayer != null) {
-     payload.searchRegions = drawnLayer.toGeoJSON();
-  }
 
 
   $.ajax({
@@ -132,9 +128,8 @@ function fail(jqXHR, status, errorThrown) {
 
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
-  console.log("geojson success");
-  console.log(geojsonFeatures);
-  var geojsonLayer = L.geoJson(geojsonFeatures, {
+  //console.log(geojsonFeatures.results);
+  var geojsonLayer = L.geoJson(geojsonFeatures.results, {
     pointToLayer: function (feature, latlng) {
       return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
     },
@@ -150,6 +145,10 @@ function displayGeoJSON(geojsonFeatures) {
   });
   map.addLayer(geojsonLayer);
 
+}
+
+function removeAllFeatures() {
+  map.removeLayer(drawnShapes);
 }
 
 // The brighter the red, the more ML features the EA user uses.
