@@ -239,16 +239,8 @@
       </fields>
 -->
       <range-element-indexes>
-    
-        <range-element-index>
-          <scalar-type>string</scalar-type>
-          <namespace-uri></namespace-uri>
-          <localname>region</localname>
-          <collation>http://marklogic.com/collation/codepoint</collation>
-          <range-value-positions>true</range-value-positions>
-        </range-element-index>
 
-        <range-element-index>
+          <range-element-index>
           <scalar-type>string</scalar-type>
           <namespace-uri></namespace-uri>
           <localname>city</localname>
@@ -256,6 +248,22 @@
           <range-value-positions>true</range-value-positions>
         </range-element-index>
 
+        <range-element-index>
+          <scalar-type>string</scalar-type>
+          <namespace-uri></namespace-uri>
+          <localname>industry</localname>
+          <collation>http://marklogic.com/collation/codepoint</collation>
+          <range-value-positions>true</range-value-positions>
+        </range-element-index>
+
+         <range-element-index>
+          <scalar-type>string</scalar-type>
+          <namespace-uri></namespace-uri>
+          <localname>company</localname>
+          <collation>http://marklogic.com/collation/codepoint</collation>
+          <range-value-positions>false</range-value-positions>
+        </range-element-index>
+        
       </range-element-indexes>
       <range-element-attribute-indexes>
 <!--
@@ -306,16 +314,16 @@
       </range-path-indexes>
 
       <geospatial-element-indexes>
-<!--
+
         <geospatial-element-index>
-          <namespace-uri>http://www.marklogic.com/ns/sample</namespace-uri>
-          <localname>geo-element</localname>
+          <namespace-uri></namespace-uri>
+          <localname>coordinates</localname>
           <coordinate-system>wgs84</coordinate-system>
-          <point-format>point</point-format>
+          <point-format>long-lat-point</point-format>
           <range-value-positions>false</range-value-positions>
           <invalid-values>reject</invalid-values>
         </geospatial-element-index>
--->
+
       </geospatial-element-indexes>
 
       <geospatial-element-attribute-pair-indexes>
@@ -384,6 +392,7 @@
       </element-word-lexicons>
       <element-attribute-word-lexicons>
 <!--
+
         <element-attribute-word-lexicon>
           <parent-namespace-uri>http://www.marklogic.com/ns/sample</parent-namespace-uri>
           <parent-localname>sample-element</parent-localname>
