@@ -1,45 +1,12 @@
 var style = keys.mapboxStyle;
 var token = keys.mapboxToken;
 
-//Example GeoJson data, need to automate this with Marketo
-var geojsonFeatures = [
-  {
-    "type": "Feature",
-    "properties":
-    {
-      "name": "Coors Field",
-      "amenity": "Baseball Stadium",
-      "popupContent": "This is where the Rockies play!",
-      "show_on_map": true, //used for filter, not using a filter currently
-      "color": "#ff78f0"
-    },
-    "geometry":
-    {
-      "type": "Point",
-      "coordinates": [-104.99404, 39.75621] //geojson so coordinates in long, lat
-    }
-  },
-  {
-    "type": "Feature",
-    "properties":
-    {
-      "name": "Some Name",
-      "amenity": "Baseball Stadium",
-      "popupContent": "This is where the Rockies play!",
-      "show_on_map": true, //used for filter, not using a filter, currently
-      "color": "#ff7800"
-    },
-    "geometry":
-    {
-      "type": "Point",
-      "coordinates": [-100.99404, 19.75621] //geojson so coordinates in long, lat
-    }
-  }
-];
-
-
 var map = L.map('mapid').setView([35.7, -83], 4);
+
 var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
+
+// Load initial features and industries options for dropdown menus
+doPost('/search.sjs', "", processResults, null, true, true);
 
 L.tileLayer(url,
 {
@@ -81,12 +48,14 @@ map.on('draw:created', function (e) {
     layer.radius = radius; //radius is in meters
   }
   else if (type === 'polygon') {
+
   }
   else if (type === 'rectangle') {
+
   }
 
   drawnShapes.addLayer(layer);
-  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes);
+  doPost("/search.sjs", "name", processResults, drawnShapes, true, true);
 });
 
 map.on('draw:edited', function (e) {
@@ -95,16 +64,39 @@ map.on('draw:edited', function (e) {
     // loops over each edited layer
     // do whatever you want, most likely save back to db
   });
-  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes);
+  doPost("/search.sjs", "name", processResults, drawnShapes, false, false);
 });
 
 map.on('draw:deleted', function (e) {
   // Update db to save latest changes.
+  console.log(e);
+  //e.removeTile(); //
   drawnShapes.removeLayer(e.layer);
+
 });
 
+function processResults(response) {
+  displayGeoJSON(response.results);
+  displayFeatures(response.features.facets);
+  displayIndustries(response.industries.facets);
+}
+
+function displayFeatures(features) {
+  console.log(features);
+  var array = $.makeArray(features);
+  //console.log(array);
+  //TODO add features to drop down list on web page, div id = collapse2
+  for (var obj in features.Features) {
+    $("#collapse2 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
+  }
+}
+
+function displayIndustries(industries) {
+  console.log(industries);
+}
+
 // ****** Copied from Jen and Jake's geoapp ********
-function doPost(url, str, success, drawnLayer) {
+function doPost(url, str, success, drawnLayer, industries, features) {
   //clearResults();
   var payload = {
     searchString: str,
@@ -115,8 +107,14 @@ function doPost(url, str, success, drawnLayer) {
       map.getBounds().getNorth(),
       map.getBounds().getEast()
     ],
-    searchRegions: drawnLayer.toGeoJSON()
+    industries: industries,
+    features: features
   };
+  if (drawnLayer != null) {
+     payload.searchRegions = drawnLayer.toGeoJSON();
+  }
+
+
   $.ajax({
     type: "POST",
     url: url,
@@ -129,7 +127,7 @@ function doPost(url, str, success, drawnLayer) {
 }
 
 function fail(jqXHR, status, errorThrown) {
-  console.log("fail");
+  console.log(status);
 }
 
 // Draw geojson data on map, data will originate from Marketo
@@ -138,11 +136,12 @@ function displayGeoJSON(geojsonFeatures) {
   console.log(geojsonFeatures);
   var geojsonLayer = L.geoJson(geojsonFeatures, {
     pointToLayer: function (feature, latlng) {
-      var popupContent = feature.properties.name;
-      var MLFeatures = feature.properties.features;
-      return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85})
+      return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
     },
     onEachFeature: function (feature, layer) {
+      console.log(layer);
+      //console.log(layer);
+
       layer.bindPopup(formatPopup(feature.properties));
     },
     style: function(feature) {
@@ -150,6 +149,7 @@ function displayGeoJSON(geojsonFeatures) {
     }
   });
   map.addLayer(geojsonLayer);
+
 }
 
 // The brighter the red, the more ML features the EA user uses.
@@ -193,11 +193,12 @@ function formatPopup(properties) {
   // http://www.htmlgoodies.com/tutorials/getting_started/article.php/3479461
   // Features of ML9 the EA user listed they use when signing up for EA
   if (properties.features && properties.features.length >= 1) {
+    console.log(properties.features);
     // Features used in ML9
     // ** Assuming properties.features will be string array of ML9 Features **
     str += "<b>Features:</b><UL>";
-    for (var feature in properties.features) {
-      str += "<LI>" + feature;
+    for (var ndx in properties.features) {
+      str += "<LI>" + properties.features[ndx];
     }
     str += "</UL>";
     str += "<br>";
