@@ -81,10 +81,6 @@ function populateMenus(response) {
 }
 
 function displayFeatures(features) {
-
-  var array = $.makeArray(features);
-  //console.log(array);
-  //TODO add features to drop down list on web page, div id = collapse2
   for (var obj in features.Features) {
     $("#collapse2 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
   }
@@ -98,7 +94,7 @@ function displayIndustries(industries) {
 
 // ****** Copied from Jen and Jake's geoapp and modified********
 function doPost(url, str, success, drawnLayer, firstLoad) {
-  //clearResults();
+
   var payload = {
     searchString: str,
     //mapWindow is used for search if there are no drawn shapes on map
