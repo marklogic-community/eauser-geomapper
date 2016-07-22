@@ -1,7 +1,7 @@
 var style = keys.mapboxStyle;
 var token = keys.mapboxToken;
 
-var map = L.map('mapid').setView([37.507056, -122.246997], 12);
+var map = L.map('mapid').setView([37.507056, -122.246997], 3);
 
 var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
@@ -23,7 +23,8 @@ L.tileLayer(url,
 
 
 $("#clearButton").click(removeAllFeatures);
-
+//$("#clearButton").click(clickedItems);
+// Zoomed out on world, start with al lpoints, filter
 map.addLayer(drawnShapes);
 map.addLayer(markers);
 
@@ -44,7 +45,6 @@ map.addControl(drawControl);
 map.on('draw:created', function (e) {
   var type = e.layerType,
     layer = e.layer;
-
     // Store type of layer to know if it is a circle,
     // type is an unused property, so it will be used for this purpose
     layer.type = type;
@@ -54,7 +54,10 @@ map.on('draw:created', function (e) {
     layer.radius = radius; //radius is in meters
   }
   else if (type === 'polygon') { }
-  else if (type === 'rectangle') { }
+  else if (type === 'rectangle') {
+    console.log(layer);
+    console.log(layer.toGeoJSON())
+  }
 
   drawnShapes.addLayer(layer);
   doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
@@ -91,10 +94,14 @@ function displayIndustries(industries) {
     $("#collapse1 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
   }
 }
+function clickedItems() {
+  var items = document.getElementsByClassName("list-group-item");
+  console.log(items);
+}
 
 // ****** Copied from Jen and Jake's geoapp and modified********
 function doPost(url, str, success, drawnLayer, firstLoad) {
-
+  console.log(drawnShapes.toGeoJSON());
   var payload = {
     searchString: str,
     //mapWindow is used for search if there are no drawn shapes on map

@@ -14,7 +14,8 @@ var geoQuery;
 var geoQueryJson;
 var searchResults;
 
-//On initial page load searchRegions is null
+// On initial page load input.features is true;
+// don't run this code on initial page load
 if (input.features == false) {
   if (input.searchRegions.features.length === 0) {
     //if the user didn't provide a search region, then use the window bounds.
@@ -23,10 +24,20 @@ if (input.features == false) {
     //loop through the user's search regions and populate the searchRegions array.
     for (var i = 0; i < input.searchRegions.features.length; i++) {
       //decode input from GeoJSON format
-      var r = geojson.parseGeojson(input.searchRegions.features[i].geometry);
+      var r;
+      xdmp.log(input.searchRegions.features[i]);
+      if (input.searchRegions.features[i].type ===  "rectangle") {
+        xdmp.log("rectangle");
+        r = geojson.box(input.searchRegions.features[i].geometry);
+      }
+      else {
+        r = geojson.parseGeojson(input.searchRegions.features[i].geometry);
+      }
+      // Need to determine if geometry represents a box or polygon
+
       searchRegions.push(r);
     }
-  }
+  } // use cts.box, curvy lines with polygon from parseGeoJson
 
   geoQuery = cts.elementGeospatialQuery(
     xs.QName("coordinates"),
