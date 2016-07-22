@@ -97,6 +97,18 @@ var convertToJson = function(record) {
   return doc;
 };
 
+// returns the date/time of a day ago.
+var oneDayAgo = function(currentDateTime) {
+  var currentTimestamp = xdmp.wallclockToTimestamp(currentDateTime);
+
+  // 10000000 = 1 second
+  var dayOldTimestamp = currentTimestamp - 10000000*60*60*24;
+
+  return xdmp.timestampToWallclock(dayOldTimestamp);
+}
+
+
+
 
 // Marketo SOAP requests
 
@@ -149,6 +161,8 @@ module.exports{
 
   //getCoord might not be necessary..
   "getCoord": getCoord,
+
+  "oneDayAgo": oneDayAgo,
 
   "marketoGetLead": marketoGetLead
 }
