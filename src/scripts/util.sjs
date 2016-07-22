@@ -71,7 +71,6 @@ var convertToJson = function(record) {
   properties["phone"] = record.xpath("./leadAttributeList/attribute[attrName = 'Phone']/attrValue/fn:string()");
   properties["accountType"] = record.xpath("./leadAttributeList/attribute[attrName = 'Account_Type__c_lead']/attrValue/fn:string()");
   properties["address"] = record.xpath("./leadAttributeList/attribute[attrName = 'Address']/attrValue/fn:string()");
-
   properties["country"] = record.xpath("./leadAttributeList/attribute[attrName = 'Country']/attrValue/fn:string()");
   properties["numEmployees"] = record.xpath("./leadAttributeList/attribute[attrName = 'DC_NoOfEmp__c']/attrValue/fn:number()");
   properties["username"] = record.xpath("./leadAttributeList/attribute[attrName = 'EA_ML9username']/attrValue/fn:string()")
