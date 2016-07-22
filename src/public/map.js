@@ -1,26 +1,31 @@
 var style = keys.mapboxStyle;
 var token = keys.mapboxToken;
 
-var map = L.map('mapid').setView([35.7, -83], 4);
+var map = L.map('mapid').setView([37.507056, -122.246997], 12);
 
 var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
+
+// Initialize the FeatureGroup to store editable layers (shapes drawn by user)
+// ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
 var drawnShapes = new L.FeatureGroup();
+var markers = new L.FeatureGroup();
 // Load initial features and industries options for dropdown menus
 doPost('/search.sjs', "", populateMenus, drawnShapes, true);
 
 L.tileLayer(url,
 {
-  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
   maxZoom: 18,
   id: 'Basic',
   accessToken: token
 }).addTo(map);
 
-//Initialize the FeatureGroup to store editable layers (shapes drawn by user)
-// ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
 
+$("#clearButton").click(removeAllFeatures);
 
 map.addLayer(drawnShapes);
+map.addLayer(markers);
 
 //Initialize the draw control and pass it the FeatureGroup of editable layers
 var drawControl = new L.Control.Draw({
@@ -48,12 +53,8 @@ map.on('draw:created', function (e) {
     var radius = layer.getRadius();
     layer.radius = radius; //radius is in meters
   }
-  else if (type === 'polygon') {
-
-  }
-  else if (type === 'rectangle') {
-
-  }
+  else if (type === 'polygon') { }
+  else if (type === 'rectangle') { }
 
   drawnShapes.addLayer(layer);
   doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
@@ -80,7 +81,7 @@ function populateMenus(response) {
 }
 
 function displayFeatures(features) {
-  console.log(features);
+
   var array = $.makeArray(features);
   //console.log(array);
   //TODO add features to drop down list on web page, div id = collapse2
@@ -90,7 +91,9 @@ function displayFeatures(features) {
 }
 
 function displayIndustries(industries) {
-  console.log(industries);
+  for (var obj in industries.Industries) {
+    $("#collapse1 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
+  }
 }
 
 // ****** Copied from Jen and Jake's geoapp and modified********
@@ -123,32 +126,29 @@ function doPost(url, str, success, drawnLayer, firstLoad) {
 }
 
 function fail(jqXHR, status, errorThrown) {
-  console.log(status);
+  console.log(errorThrown);
 }
 
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
-  //console.log(geojsonFeatures.results);
   var geojsonLayer = L.geoJson(geojsonFeatures.results, {
     pointToLayer: function (feature, latlng) {
       return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
     },
     onEachFeature: function (feature, layer) {
-      console.log(layer);
-      //console.log(layer);
-
       layer.bindPopup(formatPopup(feature.properties));
     },
     style: function(feature) {
       return {color: getColor(feature)};
     }
   });
-  map.addLayer(geojsonLayer);
+  markers.addLayer(geojsonLayer);
 
 }
 
 function removeAllFeatures() {
-  map.removeLayer(drawnShapes);
+  drawnShapes.clearLayers();
+  markers.clearLayers();
 }
 
 // The brighter the red, the more ML features the EA user uses.
@@ -192,7 +192,6 @@ function formatPopup(properties) {
   // http://www.htmlgoodies.com/tutorials/getting_started/article.php/3479461
   // Features of ML9 the EA user listed they use when signing up for EA
   if (properties.features && properties.features.length >= 1) {
-    console.log(properties.features);
     // Features used in ML9
     // ** Assuming properties.features will be string array of ML9 Features **
     str += "<b>Features:</b><UL>";
