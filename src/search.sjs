@@ -25,19 +25,29 @@ if (input.features === false) {
     for (var i = 0; i < input.searchRegions.features.length; i++) {
       //decode input from GeoJSON format
       var r;
-      xdmp.log(input.searchRegions.features[i]);
-      if (input.searchRegions.features[i].type ===  "rectangle") {
-        xdmp.log("rectangle");
-        r = geojson.box(input.searchRegions.features[i].geometry);
+      //xdmp.log(input.searchRegions.features[i]);
+      var geometry = input.searchRegions.features[i].geometry;
+      var coordinates = geometry.coordinates[0];
+      if (coordinates.length === 5 && coordinates[0][0] === coordinates[1][0]
+                                   && coordinates[1][1] === coordinates[2][1]
+                                   && coordinates[2][0] === coordinates[3][0]
+                                   && coordinates[3][1] === coordinates[4][1]
+                                   && coordinates[4][0] === coordinates[0][0]
+                                   && coordinates[4][1] === coordinates[0][1] ) {
+        //https://docs.marklogic.com/geojson.box
+        r = geojson.box( {
+          type: 'Feature',
+          bbox: [coordinates[0][0], coordinates[3][1], coordinates[2][0], coordinates[1][1]],
+          geometry: geometry
+        });
       }
       else {
-        r = geojson.parseGeojson(input.searchRegions.features[i].geometry);
+        r = geojson.parseGeojson(geometry);
       }
-      // Need to determine if geometry represents a box or polygon
 
       searchRegions.push(r);
     }
-  } // use cts.box, curvy lines with polygon from parseGeoJson
+  }
 
   geoQuery = cts.elementGeospatialQuery(
     xs.QName("coordinates"),
