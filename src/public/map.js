@@ -1,7 +1,7 @@
 var style = keys.mapboxStyle;
 var token = keys.mapboxToken;
 
-var map = L.map('mapid').setView([37.507056, -122.246997], 3);
+var map = L.map('mapid').setView([0, 0], 2);
 
 var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
@@ -10,7 +10,8 @@ var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/
 var drawnShapes = new L.FeatureGroup();
 var markers = new L.FeatureGroup();
 // Load initial features and industries options for dropdown menus
-doPost('/search.sjs', "", populateMenus, drawnShapes, true);
+// And draw all map markers
+doPost('/search.sjs', "", initPage, drawnShapes, true);
 
 L.tileLayer(url,
 {
@@ -23,8 +24,8 @@ L.tileLayer(url,
 
 
 $("#clearButton").click(removeAllFeatures);
-//$("#clearButton").click(clickedItems);
-// Zoomed out on world, start with al lpoints, filter
+
+// Zoomed out on world, start with all points, filter
 map.addLayer(drawnShapes);
 map.addLayer(markers);
 
@@ -50,13 +51,11 @@ map.on('draw:created', function (e) {
     layer.type = type;
 
   if (type === 'circle') { //Save the radius
-    var radius = layer.getRadius();
-    layer.radius = radius; //radius is in meters
+    layer.radius = layer.getRadius(); //radius is in meters
   }
   else if (type === 'polygon') { }
   else if (type === 'rectangle') {
-    console.log(layer);
-    console.log(layer.toGeoJSON())
+
   }
 
   drawnShapes.addLayer(layer);
@@ -69,7 +68,7 @@ map.on('draw:edited', function (e) {
     // loops over each edited layer
     // do whatever you want, most likely save back to db
   });
-  doPost("/search.sjs", "name",displayGeoJSON, drawnShapes, false);
+  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
 });
 
 map.on('draw:deleted', function (e) {
@@ -77,6 +76,10 @@ map.on('draw:deleted', function (e) {
   drawnShapes.removeLayer(e.layer);
 });
 
+function initPage(response) {
+  displayGeoJSON(response);
+  populateMenus(response);
+}
 
 function populateMenus(response) {
   clearResults();
@@ -107,7 +110,7 @@ function clickedItems() {
 
 // ****** Copied from Jen and Jake's geoapp and modified********
 function doPost(url, str, success, drawnLayer, firstLoad) {
-  console.log(drawnShapes.toGeoJSON());
+  //console.log(drawnShapes.toGeoJSON());
   var payload = {
     searchString: str,
     //mapWindow is used for search if there are no drawn shapes on map
