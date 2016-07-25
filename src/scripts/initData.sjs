@@ -46,45 +46,23 @@ while (remainingCount > 0) {
   var result = xdmp.httpPost(endpoint, 
   {
     "data" : options,
-    "timeout" : 10000
+    "timeout" : 100000
   });
   
   // get remainingCount and newStreamPosition
   remainingCount = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/remainingCount/fn:number()");
   streamPosition = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/newStreamPosition/fn:string()");
   
-  // iterate through all the leadRecords in this batch.
-  var records = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/leadRecordList/leadRecord");
-  
-  for (var rec of records) {
-    var person = {};
-    
-    try {
-      if (fn.boolean(rec.xpath("leadAttributeList/attribute[attrName='EA_ML9username']"))){
-        var json = util.convertToJson(rec);
-        eausers.push(json);
-        
-        var username = json.fullDetails.username;
-        var uri = "/users/" + username + ".json";
-        xdmp.documentInsert(uri, json);
-      }
-      // else they're not an eauser.
-    }
-    catch (error) {
-      // Heh. What error? (insert devilish grin)
-      //  but in all seriousness, we should probably record this person in order to manually check what's going on..
-      errors.push(rec.xpath("Email/fn:string()"));
-    }
-  }
+  xdmp.log("ERRORS:", "warning");
+
+  // call xdmp.spawn
+
+  xdmp.spawn("insert.sjs", {"result": result}, null);
+
   
 }
 
-var end = {
-  "eausers": eausers,
-  "errors": errors
-}
-
-end;
+"done";
 
 
 
