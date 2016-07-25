@@ -1,58 +1,32 @@
 var style = keys.mapboxStyle;
 var token = keys.mapboxToken;
 
-//Example GeoJson data, need to automate this with Marketo
-var geojsonFeatures = [
-  {
-    "type": "Feature",
-    "properties":
-    {
-      "name": "Coors Field",
-      "amenity": "Baseball Stadium",
-      "popupContent": "This is where the Rockies play!",
-      "show_on_map": true, //used for filter, not using a filter currently
-      "color": "#ff78f0"
-    },
-    "geometry":
-    {
-      "type": "Point",
-      "coordinates": [-104.99404, 39.75621] //geojson so coordinates in long, lat
-    }
-  },
-  {
-    "type": "Feature",
-    "properties":
-    {
-      "name": "Some Name",
-      "amenity": "Baseball Stadium",
-      "popupContent": "This is where the Rockies play!",
-      "show_on_map": true, //used for filter, not using a filter, currently
-      "color": "#ff7800"
-    },
-    "geometry":
-    {
-      "type": "Point",
-      "coordinates": [-100.99404, 19.75621] //geojson so coordinates in long, lat
-    }
-  }
-];
+var map = L.map('mapid').setView([37.507056, -122.246997], 3);
 
-
-var map = L.map('mapid').setView([35.7, -83], 4);
 var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
+
+// Initialize the FeatureGroup to store editable layers (shapes drawn by user)
+// ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
+var drawnShapes = new L.FeatureGroup();
+var markers = new L.FeatureGroup();
+// Load initial features and industries options for dropdown menus
+doPost('/search.sjs', "", populateMenus, drawnShapes, true);
 
 L.tileLayer(url,
 {
-  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
   maxZoom: 18,
   id: 'Basic',
   accessToken: token
 }).addTo(map);
 
-//Initialize the FeatureGroup to store editable layers (shapes drawn by user)
-// ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
-var drawnShapes = new L.FeatureGroup();
+
+$("#clearButton").click(removeAllFeatures);
+//$("#clearButton").click(clickedItems);
+// Zoomed out on world, start with al lpoints, filter
 map.addLayer(drawnShapes);
+map.addLayer(markers);
 
 //Initialize the draw control and pass it the FeatureGroup of editable layers
 var drawControl = new L.Control.Draw({
@@ -71,7 +45,6 @@ map.addControl(drawControl);
 map.on('draw:created', function (e) {
   var type = e.layerType,
     layer = e.layer;
-
     // Store type of layer to know if it is a circle,
     // type is an unused property, so it will be used for this purpose
     layer.type = type;
@@ -80,13 +53,14 @@ map.on('draw:created', function (e) {
     var radius = layer.getRadius();
     layer.radius = radius; //radius is in meters
   }
-  else if (type === 'polygon') {
-  }
+  else if (type === 'polygon') { }
   else if (type === 'rectangle') {
+    console.log(layer);
+    console.log(layer.toGeoJSON())
   }
 
   drawnShapes.addLayer(layer);
-  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes);
+  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
 });
 
 map.on('draw:edited', function (e) {
@@ -95,7 +69,7 @@ map.on('draw:edited', function (e) {
     // loops over each edited layer
     // do whatever you want, most likely save back to db
   });
-  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes);
+  doPost("/search.sjs", "name",displayGeoJSON, drawnShapes, false);
 });
 
 map.on('draw:deleted', function (e) {
@@ -103,9 +77,37 @@ map.on('draw:deleted', function (e) {
   drawnShapes.removeLayer(e.layer);
 });
 
-// ****** Copied from Jen and Jake's geoapp ********
-function doPost(url, str, success, drawnLayer) {
-  //clearResults();
+
+function populateMenus(response) {
+  clearResults();
+  displayFeatures(response.features.facets);
+  displayIndustries(response.industries.facets);
+}
+
+function clearResults() {
+  $("#collapse1 ul").empty();
+  $("#collapse2 ul").empty();
+}
+
+function displayFeatures(features) {
+  for (var obj in features.Features) {
+    $("#collapse2 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
+  }
+}
+
+function displayIndustries(industries) {
+  for (var obj in industries.Industries) {
+    $("#collapse1 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
+  }
+}
+function clickedItems() {
+  var items = document.getElementsByClassName("list-group-item");
+  console.log(items);
+}
+
+// ****** Copied from Jen and Jake's geoapp and modified********
+function doPost(url, str, success, drawnLayer, firstLoad) {
+  console.log(drawnShapes.toGeoJSON());
   var payload = {
     searchString: str,
     //mapWindow is used for search if there are no drawn shapes on map
@@ -115,8 +117,12 @@ function doPost(url, str, success, drawnLayer) {
       map.getBounds().getNorth(),
       map.getBounds().getEast()
     ],
-    searchRegions: drawnLayer.toGeoJSON()
+    industries: firstLoad,
+    features: firstLoad,
+    searchRegions: drawnShapes.toGeoJSON()
   };
+
+
   $.ajax({
     type: "POST",
     url: url,
@@ -129,18 +135,14 @@ function doPost(url, str, success, drawnLayer) {
 }
 
 function fail(jqXHR, status, errorThrown) {
-  console.log("fail");
+  console.log(errorThrown);
 }
 
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
-  console.log("geojson success");
-  console.log(geojsonFeatures);
-  var geojsonLayer = L.geoJson(geojsonFeatures, {
+  var geojsonLayer = L.geoJson(geojsonFeatures.results, {
     pointToLayer: function (feature, latlng) {
-      var popupContent = feature.properties.name;
-      var MLFeatures = feature.properties.features;
-      return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85})
+      return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
     },
     onEachFeature: function (feature, layer) {
       layer.bindPopup(formatPopup(feature.properties));
@@ -149,7 +151,13 @@ function displayGeoJSON(geojsonFeatures) {
       return {color: getColor(feature)};
     }
   });
-  map.addLayer(geojsonLayer);
+  markers.addLayer(geojsonLayer);
+
+}
+
+function removeAllFeatures() {
+  drawnShapes.clearLayers();
+  markers.clearLayers();
 }
 
 // The brighter the red, the more ML features the EA user uses.
@@ -196,8 +204,8 @@ function formatPopup(properties) {
     // Features used in ML9
     // ** Assuming properties.features will be string array of ML9 Features **
     str += "<b>Features:</b><UL>";
-    for (var feature in properties.features) {
-      str += "<LI>" + feature;
+    for (var ndx in properties.features) {
+      str += "<LI>" + properties.features[ndx];
     }
     str += "</UL>";
     str += "<br>";
