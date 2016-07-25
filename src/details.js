@@ -9,14 +9,14 @@ app.controller("detailController", function($scope) {
     "preview": {
       "firstname": "Kevin", 
       "lastname": "Costello", 
-      "email": "kevin.costello@marklogic.com", 
+      "email": "hiKeven@what.com", 
       "city": "San Carlos", 
       "state": "CA", 
       "industry": "Technology - Software", 
       "company": "MarkLogic"
     }, 
     "fullDetails": {
-      "phone": "925-667-7310", 
+      "phone": "123-456-7890", 
       "accountType": "Customer", 
       "address": "999 Skyway Rd Ste 200", 
       "country": "United States of America", 
