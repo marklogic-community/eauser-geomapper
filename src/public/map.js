@@ -79,8 +79,14 @@ map.on('draw:deleted', function (e) {
 
 
 function populateMenus(response) {
+  clearResults();
   displayFeatures(response.features.facets);
   displayIndustries(response.industries.facets);
+}
+
+function clearResults() {
+  $("#collapse1 ul").empty();
+  $("#collapse2 ul").empty();
 }
 
 function displayFeatures(features) {

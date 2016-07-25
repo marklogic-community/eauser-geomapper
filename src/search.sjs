@@ -16,7 +16,7 @@ var searchResults;
 
 // On initial page load input.features is true;
 // don't run this code on initial page load
-if (input.features == false) {
+if (input.features === false) {
   if (input.searchRegions.features.length === 0) {
     //if the user didn't provide a search region, then use the window bounds.
     searchRegions.push(bounds);
