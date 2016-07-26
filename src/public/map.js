@@ -10,7 +10,7 @@ var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/
 var drawnShapes = new L.FeatureGroup();
 var markers = new L.FeatureGroup();
 // Load initial features and industries options for dropdown menus
-doPost('/search.sjs', "", populateMenus, drawnShapes, true);
+doPost('/search.sjs', "", populateMenus, drawnShapes, true, 'Baluba');
 
 L.tileLayer(url,
 {
@@ -55,12 +55,12 @@ map.on('draw:created', function (e) {
   }
   else if (type === 'polygon') { }
   else if (type === 'rectangle') {
-    console.log(layer);
-    console.log(layer.toGeoJSON())
+    // console.log(layer);
+    // console.log(layer.toGeoJSON())
   }
 
   drawnShapes.addLayer(layer);
-  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
+  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false, '');
 });
 
 map.on('draw:edited', function (e) {
@@ -69,7 +69,7 @@ map.on('draw:edited', function (e) {
     // loops over each edited layer
     // do whatever you want, most likely save back to db
   });
-  doPost("/search.sjs", "name",displayGeoJSON, drawnShapes, false);
+  doPost("/search.sjs", "name",displayGeoJSON, drawnShapes, false, '');
 });
 
 map.on('draw:deleted', function (e) {
@@ -77,9 +77,7 @@ map.on('draw:deleted', function (e) {
   console.log(e);
   //e.removeTile(); //
   drawnShapes.removeLayer(e.layer);
-
 });
-
 
 function populateMenus(response) {
   clearResults();
@@ -109,10 +107,11 @@ function clickedItems() {
 }
 
 // ****** Copied from Jen and Jake's geoapp and modified********
-function doPost(url, str, success, drawnLayer, firstLoad) {
+function doPost(url, str, success, drawnLayer, firstLoad, industries) {
   console.log(drawnShapes.toGeoJSON());
   var payload = {
     searchString: str,
+    industries: industries,
     //mapWindow is used for search if there are no drawn shapes on map
     mapWindow: [
       map.getBounds().getSouth(),
@@ -121,8 +120,7 @@ function doPost(url, str, success, drawnLayer, firstLoad) {
       map.getBounds().getEast()
     ],
 
-    industries: firstLoad,
-    features: firstLoad,
+    firstLoad: firstLoad,
     searchRegions: drawnShapes.toGeoJSON()
   };
 
@@ -148,19 +146,7 @@ function displayGeoJSON(geojsonFeatures) {
       return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
     },
     onEachFeature: function (feature, layer) {
-      console.log(layer);
-      console.log(feature);
-      // console.log(layer);
-
       layer.bindPopup(formatPopup(feature.properties));
-/*      layer.on({
-        remove: function(e) {
-          console.log("removed");
-        }
-      });
-
-*/ 
-      layers.push(layer);
     },
     style: function(feature) {
       return {color: getColor(feature)};
