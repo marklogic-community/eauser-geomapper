@@ -238,32 +238,29 @@
         </field>
       </fields>
 -->
-      <range-element-indexes>
+     <range-element-indexes>
+        <!--
+        Sample for:
+          <name xmlns="http://marklogic.com/ns/sample">bob<name>
+-->
 
-          <range-element-index>
-          <scalar-type>string</scalar-type>
-          <namespace-uri></namespace-uri>
-          <localname>city</localname>
-          <collation>http://marklogic.com/collation/codepoint</collation>
-          <range-value-positions>true</range-value-positions>
-        </range-element-index>
 
         <range-element-index>
           <scalar-type>string</scalar-type>
           <namespace-uri></namespace-uri>
           <localname>industry</localname>
-          <collation>http://marklogic.com/collation/codepoint</collation>
-          <range-value-positions>true</range-value-positions>
+          <collation>http://marklogic.com/collation/en/S1</collation>
+          <range-value-positions>false</range-value-positions>
         </range-element-index>
 
          <range-element-index>
           <scalar-type>string</scalar-type>
           <namespace-uri></namespace-uri>
-          <localname>company</localname>
-          <collation>http://marklogic.com/collation/codepoint</collation>
+          <localname>feature</localname>
+          <collation>http://marklogic.com/collation/en/S1</collation>
           <range-value-positions>false</range-value-positions>
         </range-element-index>
-        
+
       </range-element-indexes>
       <range-element-attribute-indexes>
 <!--

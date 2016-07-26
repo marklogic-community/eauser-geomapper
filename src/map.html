@@ -117,8 +117,8 @@ var jsearch = require('/Marklogic/jsearch.sjs');
           </div>
           <div id="collapse1" class="panel-collapse collapse">
             <ul class="list-group">
-              <li class="list-group-item"><input type="checkbox" onclick="handleClick(this);"> i_1 </li>
-              <li class="list-group-item"><input type="checkbox" value=""> i_2 </li>
+              <li class="list-group-item"><input id="" type="checkbox" value=""> Industry 1 </li>
+              <li class="list-group-item"><input id="" type="checkbox" value=""> Industry 2 </li>
             </ul>
           </div>
         </div>
@@ -127,7 +127,7 @@ var jsearch = require('/Marklogic/jsearch.sjs');
 
 
 <!-- Functions -->
-<script>
+<!-- <script>
 
 function handleClick(cb) {
   // get the user(s)
@@ -141,10 +141,10 @@ function handleClick(cb) {
     //.result()
 
   // display user(s) on map
-  L.geoJson(results).addTo(mymap);
+  L.geoJson(results).addTo(map);
   }
 </script>
-
+ -->
 
 <!-- Select Features -->
 
@@ -162,8 +162,8 @@ var jsearch = require('/Marklogic/jsearch.sjs');
           </div>
           <div id="collapse2" class="panel-collapse collapse">
             <ul class="list-group">
-              <li class="list-group-item"><input type="checkbox" value=""> Feature 1</li>
-              <li class="list-group-item"><input type="checkbox" value=""> Feature 2</li>
+              <li class="list-group-item"><input id="" type="checkbox" value=""> Feature 1</li>
+              <li class="list-group-item"><input id="" type="checkbox" value=""> Feature 2</li>
             </ul>
           </div>
         </div>
