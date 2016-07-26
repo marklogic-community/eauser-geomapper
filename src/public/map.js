@@ -1,59 +1,32 @@
 var style = keys.mapboxStyle;
 var token = keys.mapboxToken;
 
-//Example GeoJson data, need to automate this with Marketo
-var geojsonFeatures = [
-  {
-    "type": "Feature",
-    "properties":
-    {
-      "name": "Coors Field",
-      "amenity": "Baseball Stadium",
-      "popupContent": "This is where the Rockies play!",
-      "show_on_map": true, //used for filter, not using a filter currently
-      "color": "#ff78f0"
-    },
-    "geometry":
-    {
-      "type": "Point",
-      "coordinates": [-104.99404, 39.75621] //geojson so coordinates in long, lat
-    }
-  },
-  {
-    "type": "Feature",
-    "properties":
-    {
-      "name": "Some Name",
-      "amenity": "Baseball Stadium",
-      "popupContent": "This is where the Rockies play!",
-      "show_on_map": true, //used for filter, not using a filter, currently
-      "color": "#ff7800"
-    },
-    "geometry":
-    {
-      "type": "Point",
-      "coordinates": [-100.99404, 19.75621] //geojson so coordinates in long, lat
-    }
-  }
-];
-
-
-var map = L.map('mapid').setView([35.7, -83], 4);
+var map = L.map('mapid').setView([37.507056, -122.246997], 3);
 
 var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
+// Initialize the FeatureGroup to store editable layers (shapes drawn by user)
+// ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
+var drawnShapes = new L.FeatureGroup();
+var markers = new L.FeatureGroup();
+// Load initial features and industries options for dropdown menus
+doPost('/search.sjs', "", populateMenus, drawnShapes, true);
+
 L.tileLayer(url,
 {
-  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
   maxZoom: 18,
   id: 'Basic',
   accessToken: token
 }).addTo(map);
 
-//Initialize the FeatureGroup to store editable layers (shapes drawn by user)
-// ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
-var drawnShapes = new L.FeatureGroup();
+
+$("#clearButton").click(removeAllFeatures);
+//$("#clearButton").click(clickedItems);
+// Zoomed out on world, start with al lpoints, filter
 map.addLayer(drawnShapes);
+map.addLayer(markers);
 
 //Initialize the draw control and pass it the FeatureGroup of editable layers
 var drawControl = new L.Control.Draw({
@@ -72,7 +45,6 @@ map.addControl(drawControl);
 map.on('draw:created', function (e) {
   var type = e.layerType,
     layer = e.layer;
-
     // Store type of layer to know if it is a circle,
     // type is an unused property, so it will be used for this purpose
     layer.type = type;
@@ -81,13 +53,14 @@ map.on('draw:created', function (e) {
     var radius = layer.getRadius();
     layer.radius = radius; //radius is in meters
   }
-  else if (type === 'polygon') {
-  }
+  else if (type === 'polygon') { }
   else if (type === 'rectangle') {
+    console.log(layer);
+    console.log(layer.toGeoJSON())
   }
 
   drawnShapes.addLayer(layer);
-  doPost("/search.sjs", "name", processResults, drawnShapes, true, true);
+  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
 });
 
 map.on('draw:edited', function (e) {
@@ -96,7 +69,7 @@ map.on('draw:edited', function (e) {
     // loops over each edited layer
     // do whatever you want, most likely save back to db
   });
-  doPost("/search.sjs", "name", processResults, drawnShapes, false, false);
+  doPost("/search.sjs", "name",displayGeoJSON, drawnShapes, false);
 });
 
 map.on('draw:deleted', function (e) {
@@ -107,67 +80,37 @@ map.on('draw:deleted', function (e) {
 
 });
 
-function processResults(response) {
-  // console.log(response);
 
-  // console.log("Here is the response:");
-  // console.log(response);
-  // console.log("End of response!");
-  displayGeoJSON(response);
-
-  // console.log("ya gurl is hoping!111");
-  // console.log(response[1].properties.features.facets);
-  // console.log("2:");
-  // console.log(response[1].properties.features);
-  // console.log("3:");
-  // console.log(response[1].features.facets);
-  // console.log("work bitch");
-
-
-  // console.log(response.features.facets);
-  // displayFeatures(geojsonFeatures.features.facets);
-console.log("wha:");
+function populateMenus(response) {
+  clearResults();
   displayFeatures(response.features.facets);
+  displayIndustries(response.industries.facets);
+}
 
-  console.log("huh:");
-  console.log(features);
-  displayFeatures(geojsonFeatures.properties.features);
-  displayFeatures(response.properties.features);
-  // console.log(response.industries.facets);
-  // displayIndustries(response.industries.facets);
+function clearResults() {
+  $("#collapse1 ul").empty();
+  $("#collapse2 ul").empty();
 }
 
 function displayFeatures(features) {
-  console.log(features);
-  var array = $.makeArray(features);
-  //console.log(array);
-  //TODO add features to drop down list on web page, div id = collapse2
   for (var obj in features.Features) {
-    $("#collapse2 ul").append('<li class="list-group-item"><input id="id_' + obj.toString() + '" type="checkbox" value=""> '+ obj.toString() + '</li>');
+    $("#collapse2 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
   }
-
-  //<li class="list-group-item"><input type="checkbox" value=""> Feature 1</li>
 }
 
 function displayIndustries(industries) {
-  console.log(industries);
-  var array = $.makeArray(industries);
   for (var obj in industries.Industries) {
-    $("#collapse1 ul").append('<li class="list-group-item"><input id="id_' + obj.toString() + '" type="checkbox" value=""> '+ obj.toString() + '</li>');
+    $("#collapse1 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
   }
-
+}
+function clickedItems() {
+  var items = document.getElementsByClassName("list-group-item");
+  console.log(items);
 }
 
-// function checkIfCheck() {
-//   var array = $.makeArray(features);
-//   for (var obj in features.Feature) {
-//     if ($("#id_" + obj.toString()))
-//   }
-// }
-
-// ****** Copied from Jen and Jake's geoapp ********
-function doPost(url, str, success, drawnLayer, industries, features) {
-  //clearResults();
+// ****** Copied from Jen and Jake's geoapp and modified********
+function doPost(url, str, success, drawnLayer, firstLoad) {
+  console.log(drawnShapes.toGeoJSON());
   var payload = {
     searchString: str,
     //mapWindow is used for search if there are no drawn shapes on map
@@ -177,12 +120,12 @@ function doPost(url, str, success, drawnLayer, industries, features) {
       map.getBounds().getNorth(),
       map.getBounds().getEast()
     ],
-    searchRegions: drawnLayer.toGeoJSON(),
-    industries: industries,
-    features: features
+
+    industries: firstLoad,
+    features: firstLoad,
+    searchRegions: drawnShapes.toGeoJSON()
   };
 
-  
   $.ajax({
     type: "POST",
     url: url,
@@ -195,30 +138,18 @@ function doPost(url, str, success, drawnLayer, industries, features) {
 }
 
 function fail(jqXHR, status, errorThrown) {
-  console.log(status);
+  console.log(errorThrown);
 }
 
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
-  //console.log("geojson success");
-  console.log("below is geojsonFeatures:");
-  console.log(geojsonFeatures);
-  console.log("above here");
-//  console.log(geojsonFeatures.features.facets);
-
-  var layers = [];
-  var geojsonLayer = L.geoJson(geojsonFeatures, {
+  var geojsonLayer = L.geoJson(geojsonFeatures.results, {
     pointToLayer: function (feature, latlng) {
       return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
     },
     onEachFeature: function (feature, layer) {
-      console.log("what is dis:");
-
       console.log(layer);
-
-      console.log("AY0");
       console.log(feature);
-      console.log("asdfghfd");
       // console.log(layer);
 
       layer.bindPopup(formatPopup(feature.properties));
@@ -228,21 +159,20 @@ function displayGeoJSON(geojsonFeatures) {
         }
       });
 
-*/    console.log("what is here:");
+*/ 
       layers.push(layer);
     },
     style: function(feature) {
-
-
-          console.log("I DON'T THINK THIS BITCH BE WORKING");
-
       return {color: getColor(feature)};
     }
   });
+  markers.addLayer(geojsonLayer);
 
-  console.log("i don't even know man");
-  map.addLayer(geojsonLayer);
+}
 
+function removeAllFeatures() {
+  drawnShapes.clearLayers();
+  markers.clearLayers();
 }
 
 // The brighter the red, the more ML features the EA user uses.
@@ -302,6 +232,3 @@ function formatPopup(properties) {
 
   return str;
 }
-
-
-// L.geoJson(foodIndustries).addTo(map);
