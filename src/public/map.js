@@ -10,7 +10,7 @@ var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/
 var drawnShapes = new L.FeatureGroup();
 var markers = new L.FeatureGroup();
 // Load initial features and industries options for dropdown menus
-doPost('/search.sjs', "", populateMenus, drawnShapes, true, 'Baluba');
+doPost('/search.sjs', "", populateMenus, drawnShapes, true, ['Dyno', 'Earwax', 'Cubix']);
 
 L.tileLayer(url,
 {

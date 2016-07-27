@@ -71,24 +71,30 @@ if (input.firstLoad === true) {
   features = jsearch.facets([jsearch.facet('Features', 'features').slice(0,215)]).result();
 }
 
-if (input.industries !== '') {
+if (input.industries.length != 0) { // so as long as it is not an empty array
   // function to find all users in a given industry
   // 'ind' as a string parameter represents the industry
   // outputs array of GeoJSON objects
-  xdmp.log("finding");  
+
+  // separate the array input
+  var allIndustries = [];
+  for (i = 0 ; i < input.industries.length; i++) {
+    allIndustries.push({'industry': input.industries[i]});
+  }
+
   // extracted returns the facets (# of users in industry ind) and documents
   var extracted =
     jsearch.facets(
     jsearch.facet('Industries', 'industry'),
     jsearch.documents().map({snippet: false, extract:{select: 'all'}}))
-      .where(jsearch.byExample({industry: input.industries}))
+  .where(jsearch.byExample({'$or': allIndustries}))
   .result('iterator');
   
 // extracting only the documents part of the GeoJSON files
-// arr includes the score, fitness, uri, and extracted (main info is here)
+// push includes the score, fitness, uri, and extracted (main info is here)
    for (var i of extracted.documents) {
      found.push(i);
-  }
+  }  
 }
 
 
