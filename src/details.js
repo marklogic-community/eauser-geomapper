@@ -1,7 +1,10 @@
 var app = angular.module("detailApp", []);
 
-app.controller("detailController", function($scope) {
+app.controller("detailController", function($scope, $routeParams/*, user */) {
   $scope.showDetail = false;
+
+  //use $routeParams.username to find $scope.user
+  //$scope.user = user;
 
   $scope.user = 
   {
@@ -41,7 +44,34 @@ app.controller("detailController", function($scope) {
       ]
     }
   };
+});
 
+app.controller("mapController", function($scope) {
+/*
+  // a click has been noticed. Check if a popup has appeared.
+  // if yes, hold onto the username, in case they ask for full details.
+  $scope.checkUsername = function() {
+    // scan DOM for the popup.
+    document.getElementById("")
+      .getElementsByClassName("")[0] // examples..
+  };
+*/
+});
+
+
+app.config(function($routeProvider) {
+  $routeProvider
+    .when("/*/detail/:username", {
+      templateUrl: "details2.html",
+      controller: "detailController"
+    })
+    .when("/main.html", {
+      templateUrl: "map2.html",
+      controller: "mapController"
+    })
+    .otherwise( {
+      redirectTo: "/"
+    });
 });
 
 //should probably have this be a single-page application... That way passing info to the scope for display is easier.

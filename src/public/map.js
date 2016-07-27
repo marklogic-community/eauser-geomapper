@@ -209,7 +209,9 @@ function formatPopup(properties) {
   // Show full detail button (could also look like a link)
   //  manually compile and link a button controlled by ng-click.
   //  need functions from details.js
-  str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
+  //str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
+
+  str += "<a href=\"#/detail/" + properties.name + "\">Show Full Detail</a>";
 
   return str;
 }
