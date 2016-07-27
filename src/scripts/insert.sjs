@@ -35,11 +35,9 @@ for (var r of records) {
   }
   catch (error) {
     // Heh. What error? (insert devilish grin)
-    //  but in all seriousness, we should probably record this person 
-    //  in order to manually check what's going on..
+    //  but in all seriousness, we should probably record this person in order to manually check what's going on..
     try {
       // this will error if rec is undefined... which is why there's another try-catch in a try-catch
-      xdmp.log("Error: " + error, "warning");
       xdmp.log("Failed: " + rec.xpath("Email/fn:string()"), "warning");
     }
     catch (error) {
@@ -47,5 +45,4 @@ for (var r of records) {
     }
   }
 }
-
 

@@ -72,7 +72,6 @@ app.config(function($routeProvider) {
     .otherwise( {
       redirectTo: "/"
     });
-
 });
 
 //should probably have this be a single-page application... That way passing info to the scope for display is easier.
