@@ -45,8 +45,9 @@ var removeSpaces = function(string, filler) {
     noSpaceString = noSpaceString + filler + noSpacesArray[i];
   }
 
-}
+  return noSpaceString;
 
+}
 
 
 // takes a leadRecord from Marketo and transforms it into GeoJSON
@@ -84,6 +85,7 @@ var convertToJson = function(record) {
   properties["leadSource"] = record.xpath("./leadAttributeList/attribute[attrName = 'Specific_Lead_Source__c']/attrValue/fn:string()");
   properties["website"] = record.xpath("./leadAttributeList/attribute[attrName = 'Website']/attrValue/fn:string()"); // taken from email address
 
+  properties["lastUpdated"] = fn.currentdateTime();
 
   var doc = {};
 
@@ -163,13 +165,16 @@ var marketoGetLead = function(email) {
 //.. Still waiting.. :'(
 //
 
+
+/*
 exports.convertToJson = convertToJson;
 exports.getCoord = getCoord;
 exports.oneDayAgo = oneDayAgo;
 exports.marketoGetLead = marketoGetLead;
 exports.removeSpaces = removeSpaces;
-/*
-{
+
+*/
+module.exports = {
   "convertToJson": convertToJson,
 
   //getCoord might not be necessary..
@@ -177,7 +182,9 @@ exports.removeSpaces = removeSpaces;
 
   "oneDayAgo": oneDayAgo,
 
-  "marketoGetLead": marketoGetLead
+  "marketoGetLead": marketoGetLead,
+
+  "removeSpaces": removeSpaces
 }
-*/
+
 
