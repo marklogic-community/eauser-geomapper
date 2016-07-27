@@ -184,6 +184,6 @@ module.exports = {
 
   "removeSpaces": removeSpaces
 }
-*/
+
 
 
