@@ -21,19 +21,25 @@ for (var r of records) {
         
       var username = json.fullDetails.username;
 
-      username = util.removeSpaces(username, "-");
+      username = util.removeSpaces(username, "+");
+
+      var uri = "/users/" + username + ".json";
+
+      //TODO: 
+      //var changed = util.compare(uri);
 
       xdmp.log(" inserted " + username);
-      var uri = "/users/" + username + ".json";
       xdmp.documentInsert(uri, json);
     }
     // else they're not an eauser.
   }
   catch (error) {
     // Heh. What error? (insert devilish grin)
-    //  but in all seriousness, we should probably record this person in order to manually check what's going on..
+    //  but in all seriousness, we should probably record this person 
+    //  in order to manually check what's going on..
     try {
       // this will error if rec is undefined... which is why there's another try-catch in a try-catch
+      xdmp.log("Error: " + error, "warning");
       xdmp.log("Failed: " + rec.xpath("Email/fn:string()"), "warning");
     }
     catch (error) {
