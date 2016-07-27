@@ -15,18 +15,7 @@ var getCoord = function(postalCode, country) {
 
   var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + postalCode + "%20" + country + "&key=" + geocoderKey;
   
-  // need to remove spaces from the url
-  var noSpacesArray = url.split(" ");
-
-  var noSpaceUrl = "";
-  
-  for (var i = 0; i < noSpacesArray.length; i++) {
-    if (i == 0) {
-      noSpaceUrl = noSpacesArray[0];
-      continue;
-    }
-    noSpaceUrl = noSpaceUrl + "%20" + noSpacesArray[i];
-  }
+  var noSpaceUrl = removeSpaces(url, "%20");
   
   var res = xdmp.httpGet(noSpaceUrl);
 
@@ -40,6 +29,24 @@ var getCoord = function(postalCode, country) {
     return null;
   }
 };
+
+// removes spaces from a string
+var removeSpaces = function(string, filler) {
+  // need to remove spaces from the url
+  var noSpacesArray = string.split(" ");
+
+  var noSpaceString = "";
+  
+  for (var i = 0; i < noSpacesArray.length; i++) {
+    if (i == 0) {
+      noSpaceString = noSpacesArray[0];
+      continue;
+    }
+    noSpaceString = noSpaceString + filler + noSpacesArray[i];
+  }
+
+}
+
 
 
 // takes a leadRecord from Marketo and transforms it into GeoJSON
@@ -156,7 +163,13 @@ var marketoGetLead = function(email) {
 //.. Still waiting.. :'(
 //
 
-module.exports{
+exports.convertToJson = convertToJson;
+exports.getCoord = getCoord;
+exports.oneDayAgo = oneDayAgo;
+exports.marketoGetLead = marketoGetLead;
+exports.removeSpaces = removeSpaces;
+/*
+{
   "convertToJson": convertToJson,
 
   //getCoord might not be necessary..
@@ -166,4 +179,5 @@ module.exports{
 
   "marketoGetLead": marketoGetLead
 }
+*/
 

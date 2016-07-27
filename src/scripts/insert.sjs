@@ -2,20 +2,28 @@
 // batch size = [TBD]
 
 var util = require("util.sjs");
+declareUpdate();
 
 
 // iterate through all the leadRecords in this batch.
 var records = result.xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/leadRecordList/leadRecord");
 
-for (var rec of records) {
-  var person = {};
+records = records.toArray();
+
+xdmp.log("About to insert records " + records.length);
+
+for (var r of records) {
+  var rec = r;
 
   try {
     if (fn.boolean(rec.xpath("leadAttributeList/attribute[attrName='EA_ML9username']"))){
       var json = util.convertToJson(rec);
-      eausers.push(json);
         
       var username = json.fullDetails.username;
+
+      username = util.removeSpaces(username, "-");
+
+      xdmp.log(" inserted " + username);
       var uri = "/users/" + username + ".json";
       xdmp.documentInsert(uri, json);
     }
@@ -24,7 +32,15 @@ for (var rec of records) {
   catch (error) {
     // Heh. What error? (insert devilish grin)
     //  but in all seriousness, we should probably record this person in order to manually check what's going on..
-    xdmp.log(rec.xpath("Email/fn:string()"), "warning");
+    try {
+      // this will error if rec is undefined... which is why there's another try-catch in a try-catch
+      xdmp.log("Failed: " + rec.xpath("Email/fn:string()"), "warning");
+    }
+    catch (error) {
+      xdmp.log("ERROR: " + error);
+    }
   }
 }
+
+
 
