@@ -3,3 +3,6 @@ src/private/*.js
 src/private/*.sjs
 .DS_Store
 data/*
+*2.html
+*test.sjs
+main.html
