@@ -92,13 +92,15 @@ function clearResults() {
 
 function displayFeatures(features) {
   for (var obj in features.Features) {
-    $("#collapse2 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
-  }
+    var count = features.Features[obj]; // frequency of each feature
+    $("#collapse2 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
+    }
 }
 
 function displayIndustries(industries) {
   for (var obj in industries.Industries) {
-    $("#collapse1 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
+    var count = industries.Industries[obj]; // frequency of each industry
+    $("#collapse1 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
   }
 }
 function clickedItems() {
