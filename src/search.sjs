@@ -61,10 +61,7 @@ if (input.firstLoad === true) {
               .slice(0, 100)))
               .result();
 
-  features = jsearch.facets((jsearch.facet('Features', 'features')
-              .orderBy('frequency')
-              .slice(0, 100)))
-              .result();
+  features = cts.search(cts.directoryQuery("/config/"));
 }
 //don't want to run this on firstLoad becuase input.industries is undefined
 if (input.industries != undefined) { // some industries specified
