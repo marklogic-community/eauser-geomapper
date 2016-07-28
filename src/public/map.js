@@ -10,7 +10,7 @@ var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/
 var drawnShapes = new L.FeatureGroup();
 var markers = new L.FeatureGroup();
 // Load initial features and industries options for dropdown menus
-doPost('/search.sjs', "", populateMenus, drawnShapes, true);
+doPost('/search.sjs', "", populateMenus, drawnShapes, true, ['Dyno', 'Earwax', 'Cubix']);
 
 L.tileLayer(url,
 {
@@ -55,12 +55,12 @@ map.on('draw:created', function (e) {
   }
   else if (type === 'polygon') { }
   else if (type === 'rectangle') {
-    console.log(layer);
-    console.log(layer.toGeoJSON())
+    // console.log(layer);
+    // console.log(layer.toGeoJSON())
   }
 
   drawnShapes.addLayer(layer);
-  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
+  doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false, '');
 });
 
 map.on('draw:edited', function (e) {
@@ -69,14 +69,15 @@ map.on('draw:edited', function (e) {
     // loops over each edited layer
     // do whatever you want, most likely save back to db
   });
-  doPost("/search.sjs", "name",displayGeoJSON, drawnShapes, false);
+  doPost("/search.sjs", "name",displayGeoJSON, drawnShapes, false, '');
 });
 
 map.on('draw:deleted', function (e) {
   // Update db to save latest changes.
+  console.log(e);
+  //e.removeTile(); //
   drawnShapes.removeLayer(e.layer);
 });
-
 
 function populateMenus(response) {
   clearResults();
@@ -91,13 +92,15 @@ function clearResults() {
 
 function displayFeatures(features) {
   for (var obj in features.Features) {
-    $("#collapse2 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
-  }
+    var count = features.Features[obj]; // frequency of each feature
+    $("#collapse2 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
+    }
 }
 
 function displayIndustries(industries) {
   for (var obj in industries.Industries) {
-    $("#collapse1 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + '</li>');
+    var count = industries.Industries[obj]; // frequency of each industry
+    $("#collapse1 ul").append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
   }
 }
 function clickedItems() {
@@ -106,10 +109,11 @@ function clickedItems() {
 }
 
 // ****** Copied from Jen and Jake's geoapp and modified********
-function doPost(url, str, success, drawnLayer, firstLoad) {
+function doPost(url, str, success, drawnLayer, firstLoad, industries) {
   console.log(drawnShapes.toGeoJSON());
   var payload = {
     searchString: str,
+    industries: industries,
     //mapWindow is used for search if there are no drawn shapes on map
     mapWindow: [
       map.getBounds().getSouth(),
@@ -117,11 +121,10 @@ function doPost(url, str, success, drawnLayer, firstLoad) {
       map.getBounds().getNorth(),
       map.getBounds().getEast()
     ],
-    industries: firstLoad,
-    features: firstLoad,
+
+    firstLoad: firstLoad,
     searchRegions: drawnShapes.toGeoJSON()
   };
-
 
   $.ajax({
     type: "POST",
@@ -140,7 +143,7 @@ function fail(jqXHR, status, errorThrown) {
 
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
-  var geojsonLayer = L.geoJson(geojsonFeatures.results, {
+  var geojsonLayer = L.geoJson(geojsonFeatures, {
     pointToLayer: function (feature, latlng) {
       return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
     },
@@ -201,6 +204,7 @@ function formatPopup(properties) {
   // http://www.htmlgoodies.com/tutorials/getting_started/article.php/3479461
   // Features of ML9 the EA user listed they use when signing up for EA
   if (properties.features && properties.features.length >= 1) {
+    console.log(properties.features);
     // Features used in ML9
     // ** Assuming properties.features will be string array of ML9 Features **
     str += "<b>Features:</b><UL>";
