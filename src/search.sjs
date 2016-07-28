@@ -52,25 +52,56 @@ geoQueryJson = cts.jsonPropertyGeospatialQuery(
 searchResults = cts.search(geoQueryJson).toArray();
 
 var industries = {};
-if (input.industries === true) {
-  industries = jsearch.facets([jsearch.facet('Industries', 'industry').slice(0,100)]).result();
-}
-
 var features = {};
-if (input.features === true) {
-  features = jsearch.facets([jsearch.facet('Features', 'features').slice(0,215)]).result();
+var found = [];
+
+if (input.firstLoad === true) {
+  industries = jsearch.facets((jsearch.facet('Industries', 'industry')
+              .orderBy('frequency')
+              .slice(0, 100)))
+              .result();
+
+  features = jsearch.facets((jsearch.facet('Features', 'features')
+              .orderBy('frequency')
+              .slice(0, 100)))
+              .result();
+}
+//don't want to run this on firstLoad becuase input.industries is undefined
+if (input.industries != undefined) { // some industries specified
+  // function to find all users in a given industry
+  // 'ind' as a string parameter represents the industry
+  // outputs array of GeoJSON objects
+
+  // separate the array input
+  var allIndustries = [];
+  for (i = 0 ; i < input.industries.length; i++) {
+    allIndustries.push({'industry': input.industries[i]});
+  }
+
+  // extracted returns the facets (# of users in industry ind) and documents
+  var extracted =
+    jsearch.facets(
+    jsearch.facet('Industries', 'industry'),
+    jsearch.documents().map({snippet: false, extract:{select: 'all'}}))
+  .where(jsearch.byExample({'$or': allIndustries}))
+  .result('iterator');
+
+  // extracting only the documents part of the GeoJSON files
+  // push includes the score, fitness, uri, and extracted (main info is here)
+  for (var i of extracted.documents) {
+    found.push(i);
+  }
 }
 
-var featuresNode;
-if (input.getMLFeatures === true) {
-  featuresNode = fn.doc("/MLFeatures.json");
-}
+// searchResults is all users in the search regions
+// found is all users in the given industries
+// if any were given.
 
-var results = {
+var resultsObj = {
   results: searchResults,
-  industries: industries,
-  features: featuresNode
+  allIndustries: industries,
+  features: features,
+  foundUsers: found
 };
 
-results;
-
+resultsObj;

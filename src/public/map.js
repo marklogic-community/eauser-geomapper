@@ -41,7 +41,7 @@ function start() {
 
   // Load all MarkLogic feature and industry options for dropdown menus
   // and Draw all map markers
-  doPost('/search.sjs', "", drawPage, true);
+  doPost('/search.sjs', "", drawPage, true, ['Dyno', 'Earwax', 'Cubix']);
 
   // mouse-click event for 'clear map' button
   $("#clearButton").click(removeAllFeatures);
@@ -65,11 +65,11 @@ function addMapEvents() {
 
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
-    doPost("/search.sjs", "name", displayGeoJSON, false);
+    doPost("/search.sjs", "name", displayGeoJSON, false, '');
   });
 
   map.on('draw:edited', function (e) {
-    doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
+    doPost("/search.sjs", "name", displayGeoJSON, false, '');
   });
 
   map.on('draw:deleted', function (e) {
@@ -102,7 +102,6 @@ function loadMLInfo() {
     },
     error: fail
   });
-
 }
 
 // Find all items clicked (selected) in the Industry and Feature menu lists.
@@ -117,9 +116,11 @@ function getClickedItems() {
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
-function doPost(url, str, success, firstLoad) {
+// industries is an array of strings ex: ['Dyno', 'Earwax', 'Cubix']
+function doPost(url, str, success, firstLoad, industries) {
   var payload = {
     searchString: str,
+    industries: industries,
     //mapWindow is used for search if there are no drawn shapes on map
     mapWindow: [
       map.getBounds().getSouth(),
@@ -127,11 +128,10 @@ function doPost(url, str, success, firstLoad) {
       map.getBounds().getNorth(),
       map.getBounds().getEast()
     ],
-    industries: firstLoad,
-    features: firstLoad,
+
+    firstLoad: firstLoad,
     searchRegions: drawnShapes.toGeoJSON()
   };
-
 
   $.ajax({
     type: "POST",
@@ -239,11 +239,9 @@ function saveFeatureContents() {
   // Identify the user clicked by their email
   // unique emails so cannot reuse emails for signing up for EA
   var userEmail = map.currUser.properties.email;
-  console.log(featArr);
   trimmedArr = featArr.map(function(s) {
     return String.prototype.trim.apply(s);
   });
-  console.log(trimmedArr);
 
   // ***** TODO ****
   // AJAX call to MarkLogic and send the features in the
@@ -265,17 +263,17 @@ function formatPopup(properties) {
     str += "<br>";
   }
   // EA User's company
-  if (properties.company && properties.company !== "") {
+  if (properties.company) {
     str += "<b>Company:</b> " + properties.company;
     str += "<br>";
   }
   // EA User's postal code
-  if (properties.postalCode && properties.postalCode !== "") {
+  if (properties.postalCode) {
     str += "<b>Postal Code:</b> " + properties.postalCode;
     str += "<br>";
   }
   //EA User's industry
-  if (properties.industry && properties.industry !== "") {
+  if (properties.industry) {
     str += "<b>Industry:</b> " + properties.industry;
     str += "<br>";
   }
@@ -283,7 +281,7 @@ function formatPopup(properties) {
   // Refer below for lists in HTML help
   // http://www.htmlgoodies.com/tutorials/getting_started/article.php/3479461
   // Features of ML9 the EA user listed they use when signing up for EA
-  if (properties.features && properties.features.length >= 1) {
+  if (properties.features && properties.features.length > 0) {
     // Features used in ML9
     // ** Assuming properties.features will be string array of ML9 Features **
     str += "<b>Features:</b><UL>";
