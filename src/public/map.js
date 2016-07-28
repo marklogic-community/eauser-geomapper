@@ -9,6 +9,7 @@ var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/
 // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
 var drawnShapes = new L.FeatureGroup();
 var markers = new L.FeatureGroup();
+
 // Load initial features and industries options for dropdown menus
 doPost('/search.sjs', "", populateMenus, drawnShapes, true);
 

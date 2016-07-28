@@ -41,6 +41,10 @@
     .container h3 {
       text-align: center;
     }
+    .container-fluid {
+      padding-left: 40px;
+      padding-right: 40px;
+    }
   </style>
 </head>
 
@@ -51,95 +55,121 @@
 </div>
 
 <div ng-app="detailApp" ng-controller="detailController" class="container-fluid">
-  <h3>User Details:</h3>
+  <h4>User Details:</h4>
   <br/>
 
-  <table class="table table-hover">
-    <tr>
-      <td>First Name</td>
-      <td>{{user.preview.firstname}}</td>
-    </tr>
-    <tr>
-      <td>Last Name</td>
-      <td>{{user.preview.lastname}}</td>
-    </tr>
-    <tr>
-      <td>Email</td>
-      <td>{{user.preview.email}}</td>
-    </tr>
-    <tr>
-      <td>Address</td>
-      <td>{{user.fullDetails.address}}</td>
-    </tr>
-    <tr>
-      <td>City</td>
-      <td>{{user.preview.city}}</td>
-    </tr>
-    <tr>
-      <td>State</td>
-      <td>{{user.preview.state}}</td>
-    </tr>
-    <tr>
-      <td>Postal Code</td>
-      <td>{{user.fullDetails.postalCode}}</td>
-    </tr>
-    <tr>
-      <td>Country</td>
-      <td>{{user.fullDetails.country}}</td>
-    </tr>
-    <tr>
-      <td>Geographical Region</td>
-      <td>{{user.fullDetails.region}}</td>
-    </tr>
-    <tr>
-      <td>Industry</td>
-      <td>{{user.preview.industry}}</td>
-    </tr>
-    <tr>
-      <td>Company</td>
-      <td>{{user.preview.company}}</td>
-    </tr>
-    <tr>
-      <td>Revenue Range</td>
-      <td>{{user.fullDetails.revenueRange}}</td>
-    </tr>
-    <tr>
-      <td>Number of Employees</td>
-      <td>{{user.fullDetails.numEmployees}}</td>
-    </tr>
-    <tr>
-      <td>Website</td>
-      <td>{{user.fullDetails.website}}</td>
-    </tr>
-    <tr>
-      <td>Account Type</td>
-      <td>{{user.fullDetails.accountType}}</td>
-    </tr>
-    <tr>
-      <td>username</td>
-      <td>{{user.fullDetails.username}}</td>
-    </tr>
-    <tr>
-      <td>Registered for EAML8?</td>
-      <td>{{user.fullDetails.registeredForEAML8}}</td>
-    </tr>
-    <tr>
-      <td>Has Access to EAML9?</td>
-      <td>{{user.fullDetails.hasAccessToEAML9}}</td>
-    </tr>
-    <tr>
-      <td>Registered for NoSQL for Dummies?</td>
-      <td>{{user.fullDetails.registeredForNoSQLforDummies}}</td>
-    </tr>
-    <tr>
-      <td>Registration Date</td>
-      <td>{{user.fullDetails.registrationDate}}</td>
-    </tr>
-    <tr>
-      <td>Lead Source</td>
-      <td>{{user.fullDetails.leadSource}}</td>
-    </tr>
-  </table>
+  <div class="row">
+    <div class="col-sm-6">
+      <table class="table table-hover">
+        <tr>
+          <td>First Name</td>
+          <td>{{user.preview.firstname}}</td>
+        </tr>
+        <tr>
+          <td>Last Name</td>
+          <td>{{user.preview.lastname}}</td>
+        </tr>
+        <tr>
+          <td>Email</td>
+          <td>{{user.preview.email}}</td>
+        </tr>
+        <tr>
+          <td>Address</td>
+          <td>{{user.fullDetails.address}}</td>
+        </tr>
+        <tr>
+          <td>City</td>
+          <td>{{user.preview.city}}</td>
+        </tr>
+        <tr>
+          <td>State</td>
+          <td>{{user.preview.state}}</td>
+        </tr>
+        <tr>
+          <td>Postal Code</td>
+          <td>{{user.fullDetails.postalCode}}</td>
+        </tr>
+        <tr>
+          <td>Country</td>
+          <td>{{user.fullDetails.country}}</td>
+        </tr>
+        <tr>
+          <td>Geographical Region</td>
+          <td>{{user.fullDetails.region}}</td>
+        </tr>
+        <tr>
+          <td>Industry</td>
+          <td>{{user.preview.industry}}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="col-sm-6">
+      <h3>Insert editable features view</h3>
+    </div>
+  </div> <!-- end of first row -->
+
+  <br/>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <h4>Company info:</h4>
+      <br/>
+      <table class="table table-hover">
+        <tr>
+          <td>Company</td>
+          <td>{{user.preview.company}}</td>
+        </tr>
+        <tr>
+          <td>Revenue Range</td>
+          <td>{{user.fullDetails.revenueRange}}</td>
+        </tr>
+        <tr>
+          <td>Number of Employees</td>
+          <td>{{user.fullDetails.numEmployees}}</td>
+        </tr>
+        <tr>
+          <td>Website</td>
+          <td>{{user.fullDetails.website}}</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="col-sm-6">
+      <h4>MarkLogic Account info:</h4>
+      <br/>
+      <table class="table table-hover">  
+        <tr>
+          <td>Account Type</td>
+          <td>{{user.fullDetails.accountType}}</td>
+        </tr>
+        <tr>
+          <td>username</td>
+          <td>{{user.fullDetails.username}}</td>
+        </tr>
+        <tr>
+          <td>Registered for EAML8?</td>
+          <td>{{user.fullDetails.registeredForEAML8}}</td>
+        </tr>
+        <tr>
+          <td>Has Access to EAML9?</td>
+          <td>{{user.fullDetails.hasAccessToEAML9}}</td>
+        </tr>
+        <tr>
+          <td>Registered for NoSQL for Dummies?</td>
+          <td>{{user.fullDetails.registeredForNoSQLforDummies}}</td>
+        </tr>
+        <tr>
+          <td>Registration Date</td>
+          <td>{{user.fullDetails.registrationDate}}</td>
+        </tr>
+        <tr>
+          <td>Lead Source</td>
+          <td>{{user.fullDetails.leadSource}}</td>
+        </tr>
+      </table>
+    </div>
+  </div> <!-- end of second row -->
 
 </div>
 
