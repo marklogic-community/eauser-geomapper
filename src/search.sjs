@@ -61,7 +61,6 @@ if (input.features === false) {
 
   searchResults = cts.search(geoQueryJson).toArray();
 }
-xdmp.log(searchResults);
 var industries = {};
 var features = {};
 var found = [];
