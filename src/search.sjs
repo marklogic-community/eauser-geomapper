@@ -8,21 +8,20 @@ var input = rawInput.toObject();
 //searchRegions is an array of the user's search regions
 var searchRegions = [];
 //bounds is a box representing the current map window
-var bounds = cts.box.apply(null,input.mapWindow);
+var bounds;
+if (input.mapWindow) {
+  bounds = cts.box.apply(null,input.mapWindow);
+}
 
 var geoQuery;
 var geoQueryJson;
 var searchResults;
 
-// On initial page load input.features is true;
-// don't run this code on initial page load
-
-if (input.searchRegions.features.length === 0) {
+if (input.searchRegions && input.searchRegions.features.length === 0) {
   //if the user didn't provide a search region, then use the window bounds.
   searchRegions.push(bounds);
-  xdmp.log("bounds");
 }
-else {
+else if (input.searchRegions) {
   //loop through the user's search regions and populate the searchRegions array.
   for (var i = 0; i < input.searchRegions.features.length; i++) {
     //decode input from GeoJSON format
@@ -50,11 +49,6 @@ else {
   }
 }
 
-geoQuery = cts.elementGeospatialQuery(
-  xs.QName("coordinates"),
-  searchRegions,
-  "type=long-lat-point");
-
 geoQueryJson = cts.jsonPropertyGeospatialQuery(
   "coordinates",
   searchRegions,
@@ -74,10 +68,18 @@ if (input.features === true) {
   features = jsearch.facets([jsearch.facet('Features', 'features').slice(0,215)]).result();
 }
 
+if (input.getMLFeatures === true) {
+  //TODO cts.search to find the MLFeatures
+  // Find doc based on uri
+  var featuresNode = fn.doc("/MLFeatures.json");
+  xdmp.log(featuresNode);
+}
+
 var results = {
   results: searchResults,
   industries: industries,
-  features: features
+  features: featuresNode
+
 };
 
 results;
