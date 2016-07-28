@@ -31,9 +31,10 @@ var getCoord = function(postalCode, country) {
 };
 
 // removes spaces from a string
-var removeSpaces = function(string, filler) {
-  // need to remove spaces from the url
-  var noSpacesArray = string.split(" ");
+var removeSpaces = function(stuff, filler) {
+  // need to remove spaces from the string.
+  //  this will work even if there aren't any spaces in "stuff"
+  var noSpacesArray = stuff.split(" ");
 
   var noSpaceString = "";
   
@@ -84,7 +85,9 @@ var convertToJson = function(record) {
   properties["leadSource"] = record.xpath("./leadAttributeList/attribute[attrName = 'Specific_Lead_Source__c']/attrValue/fn:string()");
   properties["website"] = record.xpath("./leadAttributeList/attribute[attrName = 'Website']/attrValue/fn:string()"); // taken from email address
 
-  properties["lastUpdated"] = fn.currentdateTime();
+  properties["lastUpdated"] = fn.currentDateTime();
+
+  properties["dateAdded"] = fn.currentDateTime();
 
   var doc = {};
 

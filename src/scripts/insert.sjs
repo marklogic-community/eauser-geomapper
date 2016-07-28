@@ -1,5 +1,4 @@
-// result = SOAP response from Marketo
-// batch size = [TBD]
+//batch size = 200
 
 var util = require("util.sjs");
 declareUpdate();
@@ -21,11 +20,13 @@ for (var r of records) {
         
       var username = json.fullDetails.username;
 
-      username = util.removeSpaces(username, "+");
+      username = util.removeSpaces("" + username, "+");
 
       var uri = "/users/" + username + ".json";
 
       //TODO: 
+      // if the person already exists in the database, 
+      // update the person (keeping the dateAdded field the same!!)
       //var changed = util.compare(uri);
 
       xdmp.log(" inserted " + username);
@@ -38,7 +39,7 @@ for (var r of records) {
     //  but in all seriousness, we should probably record this person 
     //  in order to manually check what's going on..
     try {
-      // this will error if rec is undefined... which is why there's another try-catch in a try-catch
+      // this will error if rec is undefined... which is why there's a try-catch in a try-catch :p
       xdmp.log("Error: " + error, "warning");
       xdmp.log("Failed: " + rec.xpath("Email/fn:string()"), "warning");
     }

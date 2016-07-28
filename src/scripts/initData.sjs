@@ -22,7 +22,8 @@ var eausers = [];
 var errors = [];
 
 while (remainingCount > 0) {
-  // grab all users whose accounts were updated after TODO: << PICK A DATE >>
+  // grab all users whose accounts were updated after 2/2/2016 
+  //  (Note: EA1 was released 2/3/2016)
   
   var options = xdmp.quote(
     "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns1=\"http://www.marketo.com/mktows/\">"
@@ -43,6 +44,8 @@ while (remainingCount > 0) {
     + "</SOAP-ENV:Body></SOAP-ENV:Envelope>"
   );
   
+  xdmp.log("requesting StreamPosition " + streamPosition);
+
   var result = xdmp.httpPost(endpoint, 
   {
     "data" : options,
@@ -52,12 +55,10 @@ while (remainingCount > 0) {
   // get remainingCount and newStreamPosition
   remainingCount = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/remainingCount/fn:number()");
   streamPosition = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/newStreamPosition/fn:string()");
-  
-  xdmp.log("ERRORS:", "warning");
 
-  // call xdmp.spawn
+  // call xdmp.spawn to filter and ingest data from the batch
 
-  xdmp.spawn("insert.sjs", {"result": result}, null);
+  xdmp.spawn("insert.sjs", {"result": result.toArray()[1]}, null);
 
   
 }
