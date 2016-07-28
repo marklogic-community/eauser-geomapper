@@ -2,7 +2,6 @@ var style; //MapBox API
 var token; //MapbBx API
 var map; // Leaflet map
 var url; // String
-var drawnShapes; //FeatureGroup
 var markers; //FeatureGroup
 var MLFeatures; // Array
 
@@ -32,16 +31,14 @@ function start() {
 
   // Initialize the FeatureGroup to store editable layers (shapes drawn by user)
   // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
-  drawnShapes = new L.FeatureGroup();
   markers = new L.FeatureGroup();
 
   // Add the layers to the map so they are displayed
-  map.addLayer(drawnShapes);
   map.addLayer(markers);
 
   // Load all MarkLogic feature and industry options for dropdown menus
   // and Draw all map markers
-  doPost('/search.sjs', "", drawPage, drawnShapes, true);
+  doPost('/search.sjs', "", drawPage, true);
 
   // mouse-click event for 'clear map' button
   $("#clearButton").click(removeAllFeatures);
@@ -86,7 +83,7 @@ function getClickedItems() {
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
-function doPost(url, str, success, drawnLayer, firstLoad) {
+function doPost(url, str, success, firstLoad) {
   var payload = {
     searchString: str,
     //mapWindow is used for search if there are no drawn shapes on map
@@ -98,7 +95,6 @@ function doPost(url, str, success, drawnLayer, firstLoad) {
     ],
     industries: firstLoad,
     features: firstLoad,
-    searchRegions: drawnShapes.toGeoJSON()
   };
 
 
@@ -141,7 +137,6 @@ function displayGeoJSON(geojsonFeatures) {
 }
 
 function removeAllFeatures() {
-  drawnShapes.clearLayers();
   markers.clearLayers();
 }
 
