@@ -3,6 +3,7 @@ var token; //MapbBx API
 var map; // Leaflet map
 var url; // String
 var markers; //FeatureGroup
+var drawnShapes; //FeatureGroup
 var MLFeatures; // Array
 
 // Start! Initialize the map and all things awesome.
@@ -32,9 +33,11 @@ function start() {
   // Initialize the FeatureGroup to store editable layers (shapes drawn by user)
   // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
   markers = new L.FeatureGroup();
+  drawnShapes = new L.FeatureGroup();
 
   // Add the layers to the map so they are displayed
   map.addLayer(markers);
+  map.addLayer(drawnShapes);
 
   // Load all MarkLogic feature and industry options for dropdown menus
   // and Draw all map markers
@@ -44,6 +47,35 @@ function start() {
   $("#clearButton").click(removeAllFeatures);
 
   loadMLInfo();
+  addMapEvents();
+}
+
+function addMapEvents() {
+  var drawControl = new L.Control.Draw({
+    edit: { //allows editing/deleting of drawn shapes on map
+      featureGroup: drawnShapes
+    }, //https://github.com/Leaflet/Leaflet.draw/wiki/API-Reference#lcontroldraw
+    draw: { //all shapes enabled by default
+      polyline: false, //disable polylines
+      marker: false, // disable markers
+      circle: false // disable circles, additional code required to implement, not supported by geojson
+    }
+  });
+  map.addControl(drawControl);
+
+  map.on('draw:created', function (e) {
+    drawnShapes.addLayer(e.layer);
+    doPost("/search.sjs", "name", displayGeoJSON, false);
+  });
+
+  map.on('draw:edited', function (e) {
+    doPost("/search.sjs", "name", displayGeoJSON, drawnShapes, false);
+  });
+
+  map.on('draw:deleted', function (e) {
+    // Update db to save latest changes.
+    drawnShapes.removeLayer(e.layer);
+  });
 }
 
 // Draw markers on map
@@ -95,6 +127,7 @@ function doPost(url, str, success, firstLoad) {
     ],
     industries: firstLoad,
     features: firstLoad,
+    searchRegions: drawnShapes.toGeoJSON()
   };
 
 
@@ -137,6 +170,7 @@ function displayGeoJSON(geojsonFeatures) {
 }
 
 function removeAllFeatures() {
+  drawnShapes.clearLayers();
   markers.clearLayers();
 }
 
@@ -232,6 +266,11 @@ function formatPopup(properties) {
   // EA User's postal code
   if (properties.postalCode && properties.postalCode !== "") {
     str += "<b>Postal Code:</b> " + properties.postalCode;
+    str += "<br>";
+  }
+  //EA User's industry
+  if (properties.industry && properties.industry !== "") {
+    str += "<b>Industry:</b> " + properties.industry;
     str += "<br>";
   }
 
