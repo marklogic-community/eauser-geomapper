@@ -96,6 +96,8 @@ function loadMLInfo() {
     contentType: "application/json",
     dataType: "json",
     success: function (response) {
+      // Idea is to only call this function once and save the result
+      // so it might be faster. Called every browser refresh.
       MLFeatures = response.features.MarkLogic;
     },
     error: fail
@@ -238,6 +240,10 @@ function saveFeatureContents() {
   // unique emails so cannot reuse emails for signing up for EA
   var userEmail = map.currUser.properties.email;
   console.log(featArr);
+  trimmedArr = featArr.map(function(s) {
+    return String.prototype.trim.apply(s);
+  });
+  console.log(trimmedArr);
 
   // ***** TODO ****
   // AJAX call to MarkLogic and send the features in the
