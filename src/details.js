@@ -1,6 +1,6 @@
 var app = angular.module("detailApp", []);
 
-app.controller("detailController", function($scope, $routeParams/*, user */) {
+app.controller("detailController", function($scope) { //, $routeParams/*, user */) {
   $scope.showDetail = false;
 
   //use $routeParams.username to find $scope.user
@@ -58,10 +58,10 @@ app.controller("mapController", function($scope) {
 */
 });
 
-
+/*
 app.config(function($routeProvider) {
   $routeProvider
-    .when("/*/detail/:username", {
+    .when("/[WILDCARD*]/detail/:username", {
       templateUrl: "details2.html",
       controller: "detailController"
     })
@@ -73,7 +73,7 @@ app.config(function($routeProvider) {
       redirectTo: "/"
     });
 });
-
+*/
 //should probably have this be a single-page application... That way passing info to the scope for display is easier.
 
 //also, can just hide the map page.
