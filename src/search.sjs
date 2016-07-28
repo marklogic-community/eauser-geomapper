@@ -67,8 +67,15 @@ var features = {};
 var found = [];
 
 if (input.firstLoad === true) {
-  industries = jsearch.facets([jsearch.facet('Industries', 'industry').slice(0,100)]).result();
-  features = jsearch.facets([jsearch.facet('Features', 'features').slice(0,215)]).result();
+  industries = jsearch.facets((jsearch.facet('Industries', 'industry')
+                 .orderBy('frequency')
+                 .slice(0, 100)))
+  .result();
+  
+  features = jsearch.facets((jsearch.facet('Features', 'features')
+               .orderBy('frequency')
+               .slice(0, 100)))
+  .result();
 }
 
 if (input.industries.length != 0) { // so as long as it is not an empty array

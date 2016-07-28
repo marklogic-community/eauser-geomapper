@@ -141,7 +141,7 @@ function fail(jqXHR, status, errorThrown) {
 
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
-  var geojsonLayer = L.geoJson(geojsonFeatures.results, {
+  var geojsonLayer = L.geoJson(geojsonFeatures, {
     pointToLayer: function (feature, latlng) {
       return new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
     },
