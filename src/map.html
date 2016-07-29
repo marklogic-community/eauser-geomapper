@@ -11,6 +11,9 @@
 
   <!-- jQuery, required by Bootstrap -->
   <script src="jquery-1.12.1.min.js"></script>
+  <script src="jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="jquery-ui.min.css">
+
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -38,7 +41,6 @@
     #mapid {
         height: 600px;
     }
-
 
     .title {
       padding: 40px 15px;
@@ -131,6 +133,12 @@
     <script type="text/javascript" src="public/map.js"></script>
 
   </div>
+</div>
+<div id = "dialogFeatureEdit" hidden title="Edit user features">
+    <div id = "userFeatures">
+      <b> Features: </b>
+      <textarea rows="3" cols="30" id="FeatureText"> </textarea>
+    </div>
 </div>
 
 </body>
