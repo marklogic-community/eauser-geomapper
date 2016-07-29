@@ -193,7 +193,7 @@ function removeAllFeatures() {
 // Color of map marker corresponds to number of features the user uses
 // black: 0 features
 // red: 1 feature
-// Cyan: 2 features
+// Green: 2 features
 // Yellow: 3+ features
 function getColor(user) {
   var numFeatures = 0;
@@ -250,6 +250,7 @@ function editFeatures() {
     initDialog();
   }
   dialog.dialog("open");
+  document.getElementById("dialogUserEmail").innerHTML = map.currUser.properties.email;
   // Clear the text area before adding new items, this method is slow
   document.getElementById("FeatureText").value = formatFeatures();
   // Get the features of the selected user

@@ -54,6 +54,7 @@ if (input.getMLFeatures === true) {
   features = cts.search(cts.directoryQuery("/config/"));
 }
 
+// Need to combine the geoQuery with query for industries and features
 searchResults = cts.search(geoQueryJson).toArray();
 
 var industries = {};
@@ -65,24 +66,19 @@ if (input.firstLoad === true) {
               .slice(0, 100)))
               .result();
 }
+
 //don't want to run this on firstLoad becuase input.industries is undefined
 if (input.selections && input.selections.industries.length !== 0) { // some industries specified
   // function to find all users in a given industry
   // 'ind' as a string parameter represents the industry
   // outputs array of GeoJSON objects
 
-  // separate the array input
-  var allIndustries = [];
-  for (i = 0 ; i < input.selections.industries.length; i++) {
-    allIndustries.push({'industry': input.selections.industries[i]});
-  }
-
   // extracted returns the facets (# of users in industry ind) and documents
   var extracted =
     jsearch.facets(
     jsearch.facet('Industries', 'industry'),
     jsearch.documents().map({snippet: false, extract:{select: 'all'}}))
-  .where(jsearch.byExample({'$or': allIndustries}))
+  .where(jsearch.byExample({'$or': input.selections.industries}))
   .result('iterator');
 
   // extracting only the documents part of the GeoJSON files
