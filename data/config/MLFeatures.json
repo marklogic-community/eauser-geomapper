@@ -1,10 +1,9 @@
 {
   "MarkLogicFeatures": [
     "Entity Services",
-	  "Data Integration",
+    "Data Integration",
     "Data Movement",
-	  "Template Driven Extraction",
+    "Template Driven Extraction",
     "SQL"
-	]
+  ]
 }
-
