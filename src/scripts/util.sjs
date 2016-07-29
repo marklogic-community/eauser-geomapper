@@ -68,10 +68,6 @@ var convertToJson = function(record) {
   // full detail fields
   var properties = {};
   //properties["leadScore"] = record.xpath("./leadAttributeList/attribute[attrName = 'LeadScore']/attrValue/fn:string()");
-<<<<<<< HEAD
-=======
-  //properties["leadSource"] = record.xpath("./leadAttributeList/attribute[attrName = 'LeadSource']/attrValue/fn:string()");
->>>>>>> a8de62cc11c74dfbb2938b93bc1fe42e213477b4
   //properties["markLogicContactEmail"] = record.xpath("./leadAttributeList/attribute[attrName = 'markLogicContactEmail']/attrValue/fn:string()");
   properties["phone"] = record.xpath("./leadAttributeList/attribute[attrName = 'Phone']/attrValue/fn:string()");
   properties["accountType"] = record.xpath("./leadAttributeList/attribute[attrName = 'Account_Type__c_lead']/attrValue/fn:string()");

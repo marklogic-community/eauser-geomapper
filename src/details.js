@@ -1,20 +1,11 @@
 var app = angular.module("detailApp", ["ngSanitize"]);
 
-app.controller("detailController", function($scope) { //, $routeParams/*, user */) {
+app.controller("detailController", function($scope, $sce) { //, $routeParams/*, user */) {
   $scope.showDetail = false;
 
   //for Option 2 (description in map.html),
   //use $routeParams.username to find $scope.user
   //$scope.user = user;
-
-  //Will use to create an editable features list (with checkboxes)
-  //Not working for some reason.
-  $scope.radios = "<h1>hi</h1>";
-  $scope.realfeaturs = function() {
-    // TODO:
-    // go through everything in $scope.user.features and create checkboxes.
-    // also need to keep track of changes and update MarkLogic accordingly.
-  };
 
   // Kevin's data for testing purposes.
   $scope.user = 
@@ -65,6 +56,28 @@ app.controller("detailController", function($scope) { //, $routeParams/*, user *
         -122.2710602
       ]
     }
+  };
+
+  //Will use to create an editable features list (with checkboxes)
+  // completely aesthetic at the moment.
+  $scope.featureCheckboxes = function() {
+
+    var str = "";
+
+    for (feature in $scope.user.features) {
+      var checked = "";
+      if ($scope.user.features.feature) {
+        checked = "checked";
+      }
+
+      //checkboxes not displaying
+      // will discuss with Daphne the quickest way to make the editable features list.
+      str += $sce.trustAsHtml("<label><input type=\"checkbox\" value=\"\"" + checked + ">" + feature + "</label><br/>");
+    }
+
+    return str;
+    // TODO:
+    // need to keep track of changes and update MarkLogic accordingly.
   };
 
 });
