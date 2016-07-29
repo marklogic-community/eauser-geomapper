@@ -1,3 +1,6 @@
+// To run this, the time limit has to be extended by a lot...
+// I changed it from 3600 sec to 36000. (just to be safe :D)
+
 'use strict'
 
 var keys = require("../private/keys.sjs");
@@ -5,26 +8,22 @@ var util = require("util.sjs");
 
 // Getting all the EA users.
 
-
-var endpoint = keys.endpoint;
-var timestamp = fn.currentDateTime();
-var userID = keys.userID;
-
 var secretkey = keys.secretkey;
-var message = "" + timestamp + userID;
-
-var signature = xdmp.hmacSha1(secretkey, message)
+var endpoint = keys.endpoint;
+var userID = keys.userID;
 
 var streamPosition = ""
 var remainingCount = 1; // completely random.
 
-var eausers = [];
-var errors = [];
-
 while (remainingCount > 0) {
   // grab all users whose accounts were updated after 2/2/2016 
   //  (Note: EA1 was released 2/3/2016)
-  
+
+  var timestamp = fn.currentDateTime();
+  var message = "" + timestamp + userID;
+
+  var signature = xdmp.hmacSha1(secretkey, message)
+
   var options = xdmp.quote(
     "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns1=\"http://www.marketo.com/mktows/\">"
     + "<SOAP-ENV:Header><ns1:AuthenticationHeader><mktowsUserId>"
