@@ -20,6 +20,10 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
+  <!-- Angular -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script> 
+  
   <!-- Private Keys -->
   <script type="text/javascript" src="private/browserKeys.js"></script>
 
@@ -62,17 +66,29 @@
 
 <body>
 
+<div ng-app="detailApp" ng-controller="detailController" >
+
 <div class="title">
   <h1>Early Access User Geomapper</h1>
   <h3> This application is a MarkLogic-based visualization that provides an "executive" display for locations of all MarkLogic 9 Early Access users.</h3>
 </div>
 
-<div class="container">
+<!--
+<button ng-click="showDetail=!showDetail" ng-init="showDetail=false">
+  Switch
+</button>
+-->
+
+<!-- MAP -->
+<div class="container" ng-hide="showDetail">
   <div class="row">
     <div class="col-sm-4">
       <h3>Features</h3><br>
 
-
+<!-- Select Dates button -->
+<!--     <div class="col-xs-12">
+      <button type="button" class="btn btn-default btn-lg" style="text-align:center">Select Dates</button>
+    </div> -->
       <div class="col-xs-6">
         <div class="panel-group" id="accordion">
           <div class="panel panel-default">
@@ -88,7 +104,6 @@
       </div>
 
       <br><br><br>
-
   <!-- Select Industry -->
       <div class="col-xs-6">
         <div class="panel-group" id="accordion">
@@ -103,7 +118,7 @@
         </div>
       </div>
 
-  <!-- Select Features -->
+<!-- Select Features -->
       <div class="col-xs-6">
         <div class="panel-group" id="accordion">
           <div class="panel panel-default">
@@ -117,23 +132,51 @@
         </div>
       </div>
 
-  <br><br><br>
+      <br><br><br>
+
+<!--     <div class="col-xs-12">
+      <button type="button" class="btn btn-default btn-lg" style="text-align:center">Draw Regions</button>
+    </div> -->
 
     </div>
 
-  <!--  Map -->
-
+<!--  Map -->
     <div class="col-sm-8">
-      <h3>Map Display</h3>
-      <br>
-      <div id="mapid">
+      <h3>Map Display</h3><br>
+      <div id="mapid"></div>
     </div>
-
-    <!-- Displaying the map (in JS) -->
-    <script type="text/javascript" src="public/map.js"></script>
 
   </div>
-</div>
+</div> <!-- end of ng-hide -->
+
+<!-- USER DETAILS -->
+<div class="container-fluid" ng-show="showDetail">
+  <h3>User Details:</h3>
+  <br/>
+
+  <table class="table table-hover">
+    <tr>
+      <td>First Name</td>
+      <td>{{user.firstName}}</td>
+    </tr>
+    <tr>
+      <td>Last Name</td>
+      <td>{{user.lastName}}</td>
+    </tr>
+    <tr>
+      <td>Email Address</td>
+      <td>{{user.email}}</td>
+    </tr>
+  </table>
+</div> <!-- end of ng-show -->
+
+</div> <!-- end of ng-app and ng-controller -->
+
+<!-- Displaying user details (Angular controller) -->
+<script src="details.js"></script>
+
+<!-- Displaying the map (in JS) -->
+<script type="text/javascript" src="public/map.js"></script>
 <div id = "dialogFeatureEdit" hidden title="Edit user features">
     <div id = "userFeatures">
       <b> Features: </b>

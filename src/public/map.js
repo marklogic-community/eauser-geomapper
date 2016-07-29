@@ -323,5 +323,16 @@ function formatPopup(properties) {
   }
   str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
 
+  // Option 1:
+  // Show full detail button (could also look like a link)
+  //  manually compile and link a button controlled by ng-click.
+  str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
+
+  // Option 2:
+  // Show full detai link.
+  //  changes the hash to #/detail/username,
+  //  use the username to pull the full document from MarkLogic
+  //str += "<a href=\"#/detail/" + properties.name + "\">Show Full Detail</a>";
+
   return str;
 }
