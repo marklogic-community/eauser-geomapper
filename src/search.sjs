@@ -49,10 +49,14 @@ geoQueryJson = cts.jsonPropertyGeospatialQuery(
   "type=long-lat-point"
 );
 
+var features = {};
+if (input.getMLFeatures === true) {
+  features = cts.search(cts.directoryQuery("/config/"));
+}
+
 searchResults = cts.search(geoQueryJson).toArray();
 
 var industries = {};
-var features = {};
 var found = [];
 
 if (input.firstLoad === true) {
@@ -60,19 +64,17 @@ if (input.firstLoad === true) {
               .orderBy('frequency')
               .slice(0, 100)))
               .result();
-
-  features = cts.search(cts.directoryQuery("/config/"));
 }
 //don't want to run this on firstLoad becuase input.industries is undefined
-if (input.industries != undefined) { // some industries specified
+if (input.selections && input.selections.industries.length !== 0) { // some industries specified
   // function to find all users in a given industry
   // 'ind' as a string parameter represents the industry
   // outputs array of GeoJSON objects
 
   // separate the array input
   var allIndustries = [];
-  for (i = 0 ; i < input.industries.length; i++) {
-    allIndustries.push({'industry': input.industries[i]});
+  for (i = 0 ; i < input.selections.industries.length; i++) {
+    allIndustries.push({'industry': input.selections.industries[i]});
   }
 
   // extracted returns the facets (# of users in industry ind) and documents
@@ -92,12 +94,14 @@ if (input.industries != undefined) { // some industries specified
 
 // searchResults is all users in the search regions
 // found is all users in the given industries
-// if any were given.
+// if any were given; expand to include users who use
+// specified features as well.
+// allFeatures is all ML features
 
 var resultsObj = {
   results: searchResults,
   allIndustries: industries,
-  features: features,
+  allFeatures: features,
   foundUsers: found
 };
 

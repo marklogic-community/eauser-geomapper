@@ -41,7 +41,7 @@ function start() {
 
   // Load all MarkLogic feature and industry options for dropdown menus
   // and Draw all map markers
-  doPost('/search.sjs', "", drawPage, true, ['Dyno', 'Earwax', 'Cubix']);
+  doPost('/search.sjs', "", drawPage, true);
 
   // mouse-click event for 'clear map' button
   $("#clearButton").click(removeAllFeatures);
@@ -65,11 +65,11 @@ function addMapEvents() {
 
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
-    doPost("/search.sjs", "name", displayGeoJSON, false, '');
+    doPost("/search.sjs", "name", displayGeoJSON, false);
   });
 
   map.on('draw:edited', function (e) {
-    doPost("/search.sjs", "name", displayGeoJSON, false, '');
+    doPost("/search.sjs", "name", displayGeoJSON, false);
   });
 
   map.on('draw:deleted', function (e) {
@@ -98,7 +98,7 @@ function loadMLInfo() {
     success: function (response) {
       // Idea is to only call this function once and save the result
       // so it might be faster. Called every browser refresh.
-      MLFeatures = response.features.MarkLogic;
+      MLFeatures = response.allFeatures;
     },
     error: fail
   });
@@ -106,21 +106,36 @@ function loadMLInfo() {
 
 // Find all items clicked (selected) in the Industry and Feature menu lists.
 // TODO make this work. First need to grab the html element, right?
-function getClickedItems() {
+function getSelectedItems() {
   var items = document.getElementsByClassName("list-group-item");
-  var selected = {};
-  //selected.features = ...
-  //selected.industries = ...
+  var selectedIndustries = [];
+  var selectedFeatures = [];
 
-  return selected;
+  // hard coded for now till html elements are created and/or real data is gotten
+  selectedIndustries.push('Animalia');
+  selectedIndustries.push('Qnekt');
+  selectedIndustries.push('Filodyne');
+  selectedIndustries.push('Singavera');
+
+  selectedFeatures.push('Combogene');
+  selectedFeatures.push('Elemantra');
+  selectedFeatures.push('Sequitur');
+  selectedFeatures.push('Steelfab');
+
+  var selections = {
+    industries: selectedIndustries,
+    features: selectedFeatures
+  }
+
+  return selections;
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
 // industries is an array of strings ex: ['Dyno', 'Earwax', 'Cubix']
-function doPost(url, str, success, firstLoad, industries) {
+function doPost(url, str, success, firstLoad) {
   var payload = {
     searchString: str,
-    industries: industries,
+    selections: getSelectedItems(),
     //mapWindow is used for search if there are no drawn shapes on map
     mapWindow: [
       map.getBounds().getSouth(),
