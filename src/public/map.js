@@ -83,6 +83,7 @@ function drawPage(response) {
   displayGeoJSON(response);
 }
 
+
 function loadMLInfo() {
   // post call to find the ML features
   var payload = {
@@ -105,13 +106,14 @@ function loadMLInfo() {
 }
 
 // Find all items clicked (selected) in the Industry and Feature menu lists.
-// TODO make this work. First need to grab the html element, right?
+// TODO make this get selected items from HTML elements.
 function getSelectedItems() {
   var items = document.getElementsByClassName("list-group-item");
   var selectedIndustries = [];
   var selectedFeatures = [];
 
-  // hard coded for now till html elements are created and/or real data is gotten
+  // Hard coded for now until HTML elements are created and/or real data
+  // is found
   selectedIndustries.push('Animalia');
   selectedIndustries.push('Qnekt');
   selectedIndustries.push('Filodyne');
@@ -131,19 +133,16 @@ function getSelectedItems() {
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
-// industries is an array of strings ex: ['Dyno', 'Earwax', 'Cubix']
 function doPost(url, str, success, firstLoad) {
   var payload = {
     searchString: str,
     selections: getSelectedItems(),
-    //mapWindow is used for search if there are no drawn shapes on map
-    mapWindow: [
+    mapWindow: [ //Used for search if no drawn shapes
       map.getBounds().getSouth(),
       map.getBounds().getWest(),
       map.getBounds().getNorth(),
       map.getBounds().getEast()
     ],
-
     firstLoad: firstLoad,
     searchRegions: drawnShapes.toGeoJSON()
   };
@@ -191,22 +190,35 @@ function removeAllFeatures() {
   markers.clearLayers();
 }
 
-// The brighter the red, the more ML features the EA user uses.
-// 0 features is black circle marker
-// 3+ creates a bright red circle marker
-// f is a EA user
+// Color of map marker corresponds to number of features the user uses
+// black: 0 features
+// red: 1 feature
+// Cyan: 2 features
+// Yellow: 3+ features
 function getColor(user) {
   var numFeatures = 0;
   if (user.properties.features && user.properties.features.length) {
     numFeatures = user.properties.features.length;
-  } // 57 + 66(3) = 255
-  var red = 57 + 66 * numFeatures;
-  // Color doesn't display correctly if > 255
-  red = red > 255 ? 255 : red;
-  //toString(16) converts number to base 16 string ex. 10 -> a
-  var c = "#"+red.toString(16)+(50).toString(16)+(50).toString(16);
+  }
 
-  return c;
+  var ff = 'ff';
+  var red = '00', green = '00', blue = '00';
+
+  if (numFeatures === 0) { }// do nothing, color is black
+  else if (numFeatures === 1) {
+    red = ff;
+  }
+  else if (numFeatures === 2) {
+    blue = ff;
+    green = ff;
+  }
+  else {
+    green = ff;
+    red = ff;
+  }
+
+  //Hexadecimal color ex: #ffff00, need 6 characters after '#'
+  return "#" + red + green + blue;
 }
 
 // Initialize the dialog window .
