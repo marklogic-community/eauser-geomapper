@@ -19,7 +19,7 @@ while (remainingCount > 0) {
   // grab all users whose accounts were updated after 2/2/2016 
   //  (Note: EA1 was released 2/3/2016)
 
-  var timestamp = fn.currentDateTime();
+  var timestamp = fn.currentDateTime().add(xdmp.elapsedTime());
   var message = "" + timestamp + userID;
 
   var signature = xdmp.hmacSha1(secretkey, message)
@@ -48,7 +48,7 @@ while (remainingCount > 0) {
   var result = xdmp.httpPost(endpoint, 
   {
     "data" : options,
-    "timeout" : 100000
+    "timeout" : 1000000
   });
   
   // get remainingCount and newStreamPosition
