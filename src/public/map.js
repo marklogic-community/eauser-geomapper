@@ -209,7 +209,7 @@ function getColor(user) {
     red = ff;
   }
   else if (numFeatures === 2) {
-    blue = ff;
+    red = '09';
     green = ff;
   }
   else {
