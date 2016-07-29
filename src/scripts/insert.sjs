@@ -9,30 +9,34 @@ var records = result.xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/
 
 records = records.toArray();
 
-xdmp.log("About to insert records " + records.length);
+xdmp.log("About to insert " + records.length + " records");
 
 for (var r of records) {
   var rec = r;
 
   try {
+    // filter out EA users (They will have the EA_ML9username attribute).
     if (fn.boolean(rec.xpath("leadAttributeList/attribute[attrName='EA_ML9username']"))){
       var json = util.convertToJson(rec);
         
       var username = json.fullDetails.username;
 
+      // picked "+" over "-" because some users have already used "-" in their username.
       username = util.removeSpaces("" + username, "+");
 
+      // uri template for EA users
       var uri = "/users/" + username + ".json";
 
       //TODO: 
       // if the person already exists in the database, 
-      // update the person (keeping the dateAdded field the same!!)
+      // update the person (keeping the dateAdded field the same as the original!!)
       //var changed = util.compare(uri);
 
       xdmp.log(" inserted " + username);
       xdmp.documentInsert(uri, json);
     }
-    // else they're not an eauser.
+
+    // else they're not an eauser. So we will ignore them.
   }
   catch (error) {
     // Heh. What error? (insert devilish grin)
