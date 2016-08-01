@@ -15,18 +15,7 @@ var getCoord = function(postalCode, country) {
 
   var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + postalCode + "%20" + country + "&key=" + geocoderKey;
   
-  // need to remove spaces from the url
-  var noSpacesArray = url.split(" ");
-
-  var noSpaceUrl = "";
-  
-  for (var i = 0; i < noSpacesArray.length; i++) {
-    if (i == 0) {
-      noSpaceUrl = noSpacesArray[0];
-      continue;
-    }
-    noSpaceUrl = noSpaceUrl + "%20" + noSpacesArray[i];
-  }
+  var noSpaceUrl = removeSpaces(url, "%20");
   
   var res = xdmp.httpGet(noSpaceUrl);
 
@@ -41,25 +30,73 @@ var getCoord = function(postalCode, country) {
   }
 };
 
+// removes spaces from a string
+var removeSpaces = function(stuff, filler) {
+  // need to remove spaces from the string.
+  //  this will work even if there aren't any spaces in "stuff"
+  var noSpacesArray = stuff.split(" ");
+
+  var noSpaceString = "";
+  
+  for (var i = 0; i < noSpacesArray.length; i++) {
+    if (i == 0) {
+      noSpaceString = noSpacesArray[0];
+      continue;
+    }
+    noSpaceString = noSpaceString + filler + noSpacesArray[i];
+  }
+
+  return noSpaceString;
+
+}
+
 
 // takes a leadRecord from Marketo and transforms it into GeoJSON
 var convertToJson = function(record) {
   
+  var preview = {};
+  
+  // preview fields
+  preview["firstname"] = record.xpath("./leadAttributeList/attribute[attrName = 'FirstName']/attrValue/fn:string()");
+  preview["lastname"] = record.xpath("./leadAttributeList/attribute[attrName = 'LastName']/attrValue/fn:string()");
+  preview["email"] = record.xpath("./Email/fn:string()");
+  preview["city"] = record.xpath("./leadAttributeList/attribute[attrName = 'City']/attrValue/fn:string()");
+  preview["state"] = record.xpath("./leadAttributeList/attribute[attrName = 'State']/attrValue/fn:string()");
+  preview["industry"] = record.xpath("./leadAttributeList/attribute[attrName = 'Main_Industry__c']/attrValue/fn:string()");
+  preview["company"] = record.xpath("./leadAttributeList/attribute[attrName = 'Company']/attrValue/fn:string()");
+
+  // full detail fields
   var properties = {};
-  
-  properties["firstname"] = record.xpath("./leadAttributeList/attribute[attrName = 'FirstName']/attrValue/fn:string()");
-  properties["lastname"] = record.xpath("./leadAttributeList/attribute[attrName = 'LastName']/attrValue/fn:string()");
-  properties["email"] = record.xpath("./Email/fn:string()");
-  properties["username"] = record.xpath("./leadAttributeList/attribute[attrName = 'EA_ML9username']/attrValue/fn:string()")
+  //properties["leadScore"] = record.xpath("./leadAttributeList/attribute[attrName = 'LeadScore']/attrValue/fn:string()");
+  //properties["markLogicContactEmail"] = record.xpath("./leadAttributeList/attribute[attrName = 'markLogicContactEmail']/attrValue/fn:string()");
+  properties["phone"] = record.xpath("./leadAttributeList/attribute[attrName = 'Phone']/attrValue/fn:string()");
+  properties["accountType"] = record.xpath("./leadAttributeList/attribute[attrName = 'Account_Type__c_lead']/attrValue/fn:string()");
+  properties["address"] = record.xpath("./leadAttributeList/attribute[attrName = 'Address']/attrValue/fn:string()");
   properties["country"] = record.xpath("./leadAttributeList/attribute[attrName = 'Country']/attrValue/fn:string()");
-  properties["state"] = record.xpath("./leadAttributeList/attribute[attrName = 'State']/attrValue/fn:string()");
+  properties["numEmployees"] = record.xpath("./leadAttributeList/attribute[attrName = 'DC_NoOfEmp__c']/attrValue/fn:number()");
+  properties["username"] = record.xpath("./leadAttributeList/attribute[attrName = 'EA_ML9username']/attrValue/fn:string()")
+  properties["region"] = record.xpath("./leadAttributeList/attribute[attrName = 'GEO_Region_Sub_Region__c']/attrValue/fn:string()");
+  properties["hasAccessToEAML9"] = fn.boolean(record.xpath("./leadAttributeList/attribute[attrName = 'HasAccessToEAML9']/attrValue")); //// test this
   properties["postalCode"] = record.xpath("./leadAttributeList/attribute[attrName = 'PostalCode']/attrValue/fn:string()");
-  properties["industry"] = record.xpath("./leadAttributeList/attribute[attrName = 'Main_Industry__c']/attrValue/fn:string()");
-  
+  properties["registeredForEAML8"] = fn.boolean(record.xpath("./leadAttributeList/attribute[attrName = 'registeredforEAML8']/attrValue")); /////
+  properties["registeredForNoSQLforDummies"] = fn.boolean(record.xpath("./leadAttributeList/attribute[attrName = 'registeredforNoSQLforDummies']/attrValue")); /////
+  properties["registrationDate"] = record.xpath("./leadAttributeList/attribute[attrName = 'Registration_Date__c']/attrValue/fn:string()");
+  properties["revenueRange"] = record.xpath("./leadAttributeList/attribute[attrName = 'Revenue_Range__c']/attrValue/fn:string()");
+  properties["leadSource"] = record.xpath("./leadAttributeList/attribute[attrName = 'Specific_Lead_Source__c']/attrValue/fn:string()");
+  properties["website"] = record.xpath("./leadAttributeList/attribute[attrName = 'Website']/attrValue/fn:string()"); // taken from email address
+
+  properties["lastUpdated"] = fn.currentDateTime();
+
+  properties["dateAdded"] = fn.currentDateTime();
+
   var doc = {};
 
   doc["type"] = "Feature";
-  doc["properties"] = properties;
+  doc["preview"] = preview;
+  doc["fullDetails"] = properties;
+
+  //full copy of the leadRecord XML doc
+  doc["source"] = record.xpath(".")
   
   var coord = getCoord(properties.postalCode, properties.country);
   
@@ -70,6 +107,18 @@ var convertToJson = function(record) {
 
   return doc;
 };
+
+// returns the date/time of a day ago.
+var oneDayAgo = function(currentDateTime) {
+  var currentTimestamp = xdmp.wallclockToTimestamp(currentDateTime);
+
+  // 10000000 = 1 second
+  var dayOldTimestamp = currentTimestamp - 10000000*60*60*24;
+
+  return xdmp.timestampToWallclock(dayOldTimestamp);
+}
+
+
 
 
 // Marketo SOAP requests
@@ -115,15 +164,28 @@ var marketoGetLead = function(email) {
 //
 //..
 //..
-//.. marketo is unresponsive.. :(
+//.. Still waiting.. :'(
 //
 
-module.exports{
+/*
+exports.convertToJson = convertToJson;
+exports.getCoord = getCoord;
+exports.oneDayAgo = oneDayAgo;
+exports.marketoGetLead = marketoGetLead;
+exports.removeSpaces = removeSpaces;
+
+*/
+module.exports = {
   "convertToJson": convertToJson,
 
   //getCoord might not be necessary..
   "getCoord": getCoord,
 
-  "marketoGetLead": marketoGetLead
+  "oneDayAgo": oneDayAgo,
+
+  "marketoGetLead": marketoGetLead,
+
+  "removeSpaces": removeSpaces
 }
+
 
