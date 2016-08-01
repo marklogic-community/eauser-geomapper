@@ -57,7 +57,7 @@ if (input.getMLFeatures === true) {
 // Need to combine the geoQuery with query for industries and features
 searchResults = cts.search(geoQueryJson).toArray();
 
-var industries = {};
+var industries;
 var found = [];
 
 if (input.firstLoad === true) {
@@ -67,26 +67,24 @@ if (input.firstLoad === true) {
               .result();
 }
 
-//don't want to run this on firstLoad becuase input.industries is undefined
-if (input.selections && input.selections.industries.length !== 0) { // some industries specified
-  // function to find all users in a given industry
-  // 'ind' as a string parameter represents the industry
-  // outputs array of GeoJSON objects
-
-  // extracted returns the facets (# of users in industry ind) and documents
-  var extracted =
-    jsearch.facets(
-    jsearch.facet('Industries', 'industry'),
-    jsearch.documents().map({snippet: false, extract:{select: 'all'}}))
-  .where(jsearch.byExample({'$or': input.selections.industries}))
-  .result('iterator');
-
-  // extracting only the documents part of the GeoJSON files
-  // push includes the score, fitness, uri, and extracted (main info is here)
-  for (var i of extracted.documents) {
-    found.push(i);
-  }
+var industryQuery = cts.trueQuery();
+if (input.selections && input.selections.industries.length !== 0) {
+  // some industries specified, note if none specified the code works as if
+  // all industries are specified, ie. finds users from all industries.
+  industryQuery = cts.jsonPropertyValueQuery("industry", input.selections.industries);
 }
+
+var featureQuery = cts.trueQuery();
+if (input.selections && input.selections.features.length !== 0) {
+  // if no features are given, then it is as if this query isn't even included
+  // in finalQuery
+  featureQuery = cts.jsonPropertyValueQuery("features", input.selections.features);
+}
+
+
+var finalQuery = cts.andQuery([industryQuery, featureQuery, geoQueryJson]);
+var matchedUsers = cts.search(finalQuery).toArray();
+
 
 // searchResults is all users in the search regions
 // found is all users in the given industries
@@ -95,10 +93,10 @@ if (input.selections && input.selections.industries.length !== 0) { // some indu
 // allFeatures is all ML features
 
 var resultsObj = {
-  results: searchResults,
+  //results: searchResults,
   allIndustries: industries,
   allFeatures: features,
-  foundUsers: found
+  matchedUsers: matchedUsers
 };
 
 resultsObj;
