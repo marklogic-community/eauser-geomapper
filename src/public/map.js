@@ -250,7 +250,7 @@ function editFeatures() {
     initDialog();
   }
   dialog.dialog("open");
-  document.getElementById("dialogUserEmail").innerHTML = map.currUser.properties.email;
+  document.getElementById("dialogUserEmail").innerHTML = "<b> Email: </b>" + map.currUser.properties.email;
   // Clear the text area before adding new items, this method is slow
   document.getElementById("FeatureText").value = formatFeatures();
   // Get the features of the selected user
