@@ -98,25 +98,12 @@ function addMapEvents() {
 //   });
 // }
 
-function displayFeatures(features) {
-  for (var obj in features.Features) {
-    var count = features.Features[obj]; // frequency of each feature
-    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
-  }
-}
-
-function displayIndustries(industries) {
-  for (var obj in industries.Industries) {
-    var count = industries.Industries[obj]; // frequency of each industry
-    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
-  }
-}
-
 // Draw markers on map
 function drawPage(response) {
+  console.log(response);
   displayGeoJSON(response);
   displayIndustries(response.facets.Industry);
-  //displayFeatures(response.....)
+  displayFeatures(response.features.MarkLogicFeatures);
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
@@ -149,17 +136,20 @@ function fail(jqXHR, status, errorThrown) {
 }
 
 function displayFeatures(features) {
-  /*for (var obj in features.Features) {
-    var count = features.Features[obj]; // frequency of each feature
-    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox"class="fChecker"value="">'+obj.toString()+'<i>('+count.toString()+')</i>'+'</li>');
+  console.log(features);
+  for (var ndx in features) {
+    //var count = features.Features[obj]; // frequency of each feature
+
+    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
   }
   var $features =  $("#featureUL li");
   for (var i = 0; i < $features.length; i++) {
     $features[i].onclick = function(e) {
-      updateSelections("Feature", e.target.value);
+      //e.target.value not working for strings with spaces
+      updateSelections("Feature", e.target.offsetParent.innerText);
       doPost("/search.sjs", displayGeoJSON, false);
     }
-  }*/
+  }
 }
 
 function displayIndustries(industries) {
@@ -168,6 +158,7 @@ function displayIndustries(industries) {
     var count = industries[obj]; // frequency of each industry
     $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox"class="iChecker"value='+obj.toString()+'>'+obj.toString()+'<i>('+count.toString()+')</i>'+'</li>');
   }
+
 
   var $industries =  $("#industryUL li");
   for (var i = 0; i < $industries.length; i++) {
@@ -183,10 +174,11 @@ function displayIndustries(industries) {
 }
 
 function updateSelections(which, value) {
-  console.log(which + " " + value);
+  var index;
+
   if (which === "Industry") {
     // check if value is in the array
-    var index = selections.industries.indexOf(value);
+    index = selections.industries.indexOf(value);
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
       selections.industries.splice(index, 1);
@@ -196,7 +188,14 @@ function updateSelections(which, value) {
     }
   }
   else if (which === "Feature") {
-    console.log("Update feature: " + value);
+    index = selections.features.indexOf(value);
+    if (index > -1) { //unchecked the box
+      // Already in the array, aka checked already, so unchecking was done
+      selections.features.splice(index, 1);
+    }
+    else { //checked the box
+      selections.features.push(value);
+    }
   }
 }
 

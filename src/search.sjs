@@ -49,10 +49,8 @@ geoQueryJson = cts.jsonPropertyGeospatialQuery(
   "type=long-lat-point"
 );
 
-var features = {};
-if (input.getMLFeatures === true) {
-  features = cts.search(cts.directoryQuery("/config/"));
-}
+// Object to return
+var users = {};
 
 var industryQuery = cts.trueQuery();
 if (input.selections && input.selections.industries.length !== 0) {
@@ -68,7 +66,7 @@ if (input.selections && input.selections.features.length !== 0) {
   featureQuery = cts.jsonPropertyValueQuery("features", input.selections.features);
 }
 
-var users =
+users =
   jsearch.facets([
       jsearch.facet('Industry', cts.jsonPropertyReference('industry')).orderBy('frequency', 'descending').slice(0,300),
       jsearch.facet('Feature', cts.jsonPropertyReference('features')).orderBy('frequency', 'descending').slice(0,50),
@@ -90,6 +88,8 @@ for(var obj in users.documents) {
   users.documents[obj] = users.documents[obj].extracted[0];
 }
 
-users.features = features;
+if (input.firstLoad === true) {
+  users.features = cts.search(cts.directoryQuery("/config/"));
+}
 
-users; //return value
+users;
