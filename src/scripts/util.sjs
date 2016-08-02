@@ -164,17 +164,16 @@ var marketoGetLead = function(email) {
 //
 //..
 //..
-//.. Still waiting.. :'(
+//.. no point in putting it in util.sjs
+// split between insert.sjs and update.sjs
 //
 
-/*
-exports.convertToJson = convertToJson;
-exports.getCoord = getCoord;
-exports.oneDayAgo = oneDayAgo;
-exports.marketoGetLead = marketoGetLead;
-exports.removeSpaces = removeSpaces;
+// if emails are easier, we can easily pass the user's email instead of the username.
+var exists = function(username) {
+  return cts.exists(cts.elementWordQuery("username", username));
+};
 
-*/
+
 module.exports = {
   "convertToJson": convertToJson,
 
@@ -185,7 +184,9 @@ module.exports = {
 
   "marketoGetLead": marketoGetLead,
 
-  "removeSpaces": removeSpaces
+  "removeSpaces": removeSpaces,
+
+  "exists": exists
 }
 
 
