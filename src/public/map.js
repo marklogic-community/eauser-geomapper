@@ -1,10 +1,11 @@
 var style; //MapBox API
-var token; //MapbBx API
+var token; //MapBox API
 var map; // Leaflet map
 var url; // String
 var markers; //FeatureGroup
 var drawnShapes; //FeatureGroup
 var MLFeatures; // Array
+var selections; // Object
 
 // Start! Initialize the map and all things awesome.
 // For debugging, check MarkLogic's 8040_ErrorLog.txt
@@ -41,12 +42,19 @@ function start() {
 
   // Load all MarkLogic feature and industry options for dropdown menus
   // and Draw all map markers
-  doPost('/search.sjs', "", drawPage, true);
+  doPost('/search.sjs', drawPage, true);
 
   // mouse-click event for 'clear map' button
   $("#clearButton").click(removeAllFeatures);
 
-  loadMLInfo();
+  //Selections will hold info on the current state of selected options to query
+  selections = {
+    features: [],
+    industries: [],
+    date1: "",
+    date2: ""
+  };
+  //loadMLInfo();
   addMapEvents();
 }
 
@@ -65,78 +73,34 @@ function addMapEvents() {
 
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
-    doPost("/search.sjs", "name", displayGeoJSON, false);
+    doPost("/search.sjs", displayGeoJSON, false);
   });
 
   map.on('draw:edited', function (e) {
-    doPost("/search.sjs", "name", displayGeoJSON, false);
+    doPost("/search.sjs", displayGeoJSON, false);
   });
 
   map.on('draw:deleted', function (e) {
     // Update db to save latest changes.
     drawnShapes.removeLayer(e.layer);
   });
+  map.on('zoomend', function(e) {
+    doPost("/search.sjs", displayGeoJSON, false);
+  })
+
 }
 
 // Draw markers on map
 function drawPage(response) {
   displayGeoJSON(response);
-}
-
-
-function loadMLInfo() {
-  // post call to find the ML features
-  var payload = {
-    getMLFeatures: true
-  };
-
-  $.ajax({
-    type: "POST",
-    url: "search.sjs",
-    data: JSON.stringify(payload),
-    contentType: "application/json",
-    dataType: "json",
-    success: function (response) {
-      // Idea is to only call this function once and save the result
-      // so it might be faster. Called every browser refresh.
-      MLFeatures = response.allFeatures;
-    },
-    error: fail
-  });
-}
-
-// Find all items clicked (selected) in the Industry and Feature menu lists.
-// TODO make this get selected items from HTML elements.
-function getSelectedItems() {
-  var items = document.getElementsByClassName("list-group-item");
-  var selectedIndustries = [];
-  var selectedFeatures = [];
-
-  // Hard coded for now until HTML elements are created and/or real data
-  // is found
-  selectedIndustries.push('Animalia');
-  selectedIndustries.push('Qnekt');
-  selectedIndustries.push('Filodyne');
-  selectedIndustries.push('Singavera');
-
-  selectedFeatures.push('Combogene');
-  selectedFeatures.push('Elemantra');
-  selectedFeatures.push('Sequitur');
-  selectedFeatures.push('Steelfab');
-
-  var selections = {
-    industries: selectedIndustries,
-    features: selectedFeatures
-  }
-
-  return selections;
+  displayIndustries(response.facets.Industry);
+  //displayFeatures(response.)
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
-function doPost(url, str, success, firstLoad) {
+function doPost(url, success, firstLoad) {
   var payload = {
-    searchString: str,
-    selections: getSelectedItems(),
+    selections: selections,
     mapWindow: [ //Used for search if no drawn shapes
       map.getBounds().getSouth(),
       map.getBounds().getWest(),
@@ -162,10 +126,64 @@ function fail(jqXHR, status, errorThrown) {
   console.log(errorThrown);
 }
 
+function displayFeatures(features) {
+  /*for (var obj in features.Features) {
+    var count = features.Features[obj]; // frequency of each feature
+    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox"class="fChecker"value="">'+obj.toString()+'<i>('+count.toString()+')</i>'+'</li>');
+  }
+  var $features =  $("#featureUL li");
+  for (var i = 0; i < $features.length; i++) {
+    $features[i].onclick = function(e) {
+      updateSelections("Feature", e.target.value);
+      doPost("/search.sjs", displayGeoJSON, false);
+    }
+  }*/
+}
+
+function displayIndustries(industries) {
+
+  for (var obj in industries) {
+    var count = industries[obj]; // frequency of each industry
+    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox"class="iChecker"value='+obj.toString()+'>'+obj.toString()+'<i>('+count.toString()+')</i>'+'</li>');
+  }
+
+  var $industries =  $("#industryUL li");
+  for (var i = 0; i < $industries.length; i++) {
+    $industries[i].onclick = function(e) {
+      updateSelections("Industry", e.target.value);
+      if (e.target.value === 0) {}
+      else {
+        doPost("/search.sjs", displayGeoJSON, false);
+      }
+    }
+  }
+
+}
+
+function updateSelections(which, value) {
+  console.log(which + " " + value);
+  if (which === "Industry") {
+    // check if value is in the array
+    var index = selections.industries.indexOf(value);
+    if (index > -1) {
+      // Already in the array, aka checked already, so unchecking was done
+      //console.log("Unchecked then?");
+      selections.industries.splice(index, 1);
+    }
+    else {
+      //console.log("Checked then?");
+      selections.industries.push(value);
+    }
+  }
+  else if (which === "Feature") {
+    console.log("Update feature: " + value);
+  }
+}
+
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
-
-  var geojsonLayer = L.geoJson(geojsonFeatures.matchedUsers, {
+  removeAllFeatures();
+  var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
       var marker = new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
       return marker;
@@ -259,8 +277,6 @@ function editFeatures() {
   $("#userFeatures").show();
 }
 
-// firstName, lastname, email, city, state, industry, company
-
 function saveFeatureContents() {
   var featStr = $("#FeatureText").val();
   var featArr = featStr.split(",");
@@ -281,6 +297,7 @@ function formatFeatures() {
   return map.currUser.properties.features.toString();
 }
 
+// firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
   var str = "";
   if (!properties) return str;

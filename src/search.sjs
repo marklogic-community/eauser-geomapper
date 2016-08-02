@@ -54,19 +54,6 @@ if (input.getMLFeatures === true) {
   features = cts.search(cts.directoryQuery("/config/"));
 }
 
-// Need to combine the geoQuery with query for industries and features
-searchResults = cts.search(geoQueryJson).toArray();
-
-var industries;
-var found = [];
-
-if (input.firstLoad === true) {
-  industries = jsearch.facets((jsearch.facet('Industries', 'industry')
-              .orderBy('frequency')
-              .slice(0, 100)))
-              .result();
-}
-
 var industryQuery = cts.trueQuery();
 if (input.selections && input.selections.industries.length !== 0) {
   // some industries specified, note if none specified the code works as if
@@ -81,22 +68,28 @@ if (input.selections && input.selections.features.length !== 0) {
   featureQuery = cts.jsonPropertyValueQuery("features", input.selections.features);
 }
 
+var users =
+  jsearch.facets([
+      jsearch.facet('Industry', cts.jsonPropertyReference('industry')).orderBy('frequency', 'descending').slice(0,300),
+      jsearch.facet('Feature', cts.jsonPropertyReference('features')).orderBy('frequency', 'descending').slice(0,50),
+    ],
+    jsearch.documents().slice(0,300).map({extract:{select:'all'}})
+  )
+  .where(
+    cts.andQuery([
+      industryQuery,
+      featureQuery,
+      geoQueryJson
+    ]),
+    cts.directoryQuery("/config/")
+  )
+  .result();
 
-var finalQuery = cts.andQuery([industryQuery, featureQuery, geoQueryJson]);
-var matchedUsers = cts.search(finalQuery).toArray();
+// Need to transform results to only be the document contents for drawGeoJson() in map.js
+for(var obj in users.documents) {
+  users.documents[obj] = users.documents[obj].extracted[0];
+}
 
+users.features = features;
 
-// searchResults is all users in the search regions
-// found is all users in the given industries
-// if any were given; expand to include users who use
-// specified features as well.
-// allFeatures is all ML features
-
-var resultsObj = {
-  //results: searchResults,
-  allIndustries: industries,
-  allFeatures: features,
-  matchedUsers: matchedUsers
-};
-
-resultsObj;
+users; //return value

@@ -33,63 +33,108 @@
       padding-top: 50px;
       padding-bottom: 50px;
     }
+    .col-md-4 {
+      float: center;
+      margin-left: auto;
+      margin-right: auto;
 
-    .col-sm-4 {
-    /*  border: 1px solid red;*/
+      position: relative;
+      left: 75px;
     }
 
+/*    #fTitle {
+      float: left;
+    }*/
     .col-sm-8 {
     /*  border: 1px solid black;*/
     }
-
     #mapid {
-        height: 600px;
+        height: 750px;
+        width: 1000px;
     }
 
     .title {
       padding: 40px 15px;
       text-align: center;
     }
-
     li.list-group-item {
       border: none;
     }
-
     .col-xs-3 {
       border: none;
     }
     .container h3 {
       text-align: center;
     }
+
+/*    #datetimepicker {
+      float: center;
+      margin-left: auto;
+      margin-right: auto;
+    }*/
+
+    .panel-collapse, #collapse1 #collapse2 {
+      max-height: 200px;
+      overflow: hidden;
+      overflow-y: auto;
+    }
+
+/*    #selectIndustry, #selectFeature {
+      float: center;
+      margin-left: auto;
+      margin-right: auto;
+
+/*      position: relative;
+      left: 75px;*/
+/*    }/
+*/
+    .glyphicon-trash {
+      position: relative;
+      top: 12px;
+    }
+
+    .glyphicon-calendar {
+      position: relative;
+/*      left: 20px;*/
+    }
+
+
   </style>
 </head>
 
 <body>
 
-<div ng-app="detailApp" ng-controller="detailController" >
+<div ng-app="detailApp" ng-controller="detailController">
 
 <div class="title">
   <h1>Early Access User Geomapper</h1>
   <h3> This application is a MarkLogic-based visualization that provides an "executive" display for locations of all MarkLogic 9 Early Access users.</h3>
 </div>
 
-<!--
-<button ng-click="showDetail=!showDetail" ng-init="showDetail=false">
+
+<!-- <button ng-click="showDetail=!showDetail" ng-init="showDetail=false">
   Switch
-</button>
--->
+</button> -->
+
 
 <!-- MAP -->
 <div class="container" ng-hide="showDetail">
   <div class="row">
-    <div class="col-sm-4">
-      <h3>Features</h3><br>
+    <div class="col-md-4">
+      <div id="fTitle"><h3>Features</h3></div><br>
 
 <!-- Select Dates button -->
+      <div class="col-sm-7">
+        <div id="datetimepicker" class="input-append">
+        <input data-format="MM/dd/yyyy" type="text"></input>
+         <span class="glyphicon glyphicon-calendar"></span>
+        </div>
+      </div>
 <!--     <div class="col-xs-12">
       <button type="button" class="btn btn-default btn-lg" style="text-align:center">Select Dates</button>
+
     </div> -->
-      <div class="col-xs-6">
+<!--       <div class="col-xs-6">
         <div class="panel-group" id="accordion">
           <div class="panel panel-default">
             <div class="panel-heading">
@@ -97,41 +142,49 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
-      <div class="col-xs-6">
+<!--       <div class="col-xs-6">
         <button type="button" id="clearButton" class="btn btn-default btn-block">Clear Map</button>
-      </div>
-
-      <br><br><br>
+      </div> -->
+  <br><br><br>
   <!-- Select Industry -->
-      <div class="col-xs-6">
+      <div class="row" id="selectIndustry"> <!-- class="col-sm-7" -->
+        <div class="col-sm-7">
         <div class="panel-group" id="accordion">
           <div class="panel panel-default">
             <div class="panel-heading">
               <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Select Industry</a></h4>
             </div>
-            <div id="collapse1" class="panel-collapse collapse">
-              <ul class="list-group"></ul>
+            <div id="collapse1" class="panel-collapse collapse in">
+              <ul class="list-group" id="industryUL">
+              </ul>
             </div>
           </div>
         </div>
+        </div>
+<!--         <div class="col-md-1"> -->
+        <span class="glyphicon glyphicon-trash" aria-hidden="true" style="float:left"></span>
+<!--         </div> -->
       </div>
 
-<!-- Select Features -->
-      <div class="col-xs-6">
-        <div class="panel-group" id="accordion">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
-            </div>
-            <div id="collapse2" class="panel-collapse collapse">
-              <ul class="list-group"></ul>
+      <br>
+  <!-- Select Features -->
+      <div class="row" id="selectFeature">
+        <div class="col-sm-7">
+          <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
+              </div>
+                <div id="collapse2" class="panel-collapse collapse in">
+                <ul class="list-group"></ul>
+                </div>
             </div>
           </div>
         </div>
+        <span class="glyphicon glyphicon-trash" aria-hidden="true" style="float:left"></span>
       </div>
-
       <br><br><br>
 
 <!--     <div class="col-xs-12">
@@ -140,11 +193,11 @@
 
     </div>
 
-<!--  Map -->
-    <div class="col-sm-8">
-      <h3>Map Display</h3><br>
+<!--     Map -->
+    <div class="col-md-8">
+      <h3>Map Display</h3>
+      <br>
       <div id="mapid"></div>
-    </div>
 
   </div>
 </div> <!-- end of ng-hide -->
@@ -180,7 +233,7 @@
 <div id = "dialogFeatureEdit" hidden title="Edit user features">
     <div id = "userFeatures">
       <div>
-        <p id = "dialogUserEmail"><b>Email: </b></p>
+        <p id = "dialogUserEmail"></p>
       </div>
       <b> Features: </b>
       <textarea rows="3" cols="30" id="FeatureText"> </textarea>
