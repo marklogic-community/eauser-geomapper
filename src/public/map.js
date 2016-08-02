@@ -78,12 +78,6 @@ function addMapEvents() {
   });
 }
 
-// function populateMenus(response) {
-//   // clearResults();
-//   displayFeatures(response.features.facets);
-//   displayIndustries(response.industries.facets);
-// }
-
 // function clearResults() {
 //   $('#collapse1 ul').empty();
 //   $('#collapse2 ul').empty();
@@ -361,10 +355,6 @@ function formatPopup(properties) {
   return str;
 }
 
-// $(function pickDate() {
-//   $('input[name="daterange"]').daterangepicker();
-// });
-
 $(function filterDate() {
 
   $('input[name="datefilter"]').daterangepicker({
@@ -374,12 +364,19 @@ $(function filterDate() {
       }
   });
 
-  $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+  $('input[name="datefilter"]').on('apply.daterangepicker', function apply(ev, picker) {
+    console.log("hm");
       $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
-  $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
+  $('input[name="datefilter"]').on('cancel.daterangepicker', function cancel(ev, picker) {
       $(this).val('');
   });
+
+  // $('span[name="calendar"]').on("click", function apply(ev, picker) {
+  //   console.log("wat");
+  //     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+  // });
+
 
 });

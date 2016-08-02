@@ -26,9 +26,7 @@
   
 
 <!-- For the Date Range Picker -->
-<script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1/jquery.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap/latest/css/bootstrap.css"/>
 <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
 
@@ -56,13 +54,18 @@
       border: none;
     }
 
-    h3, h4 {
+    /* centers features and map display titles */
+    #featureTitle, #mapTitle {
+      text-align: center;
+    }
+
+    /* centers text on selection menu */
+    #selectIndustry h3, #selectFeature h3 {
       text-align: center;
     }
 
     /* centers the date, industry, and feature selection menu divs */
     #date, #selectIndustry, #selectFeature {
-      float: center;
       margin-left: auto;
       margin-right: auto;
     }
@@ -112,12 +115,12 @@
 <div class="container" ng-hide="showDetail">
   <div class="row">
     <div class="col-md-3">
-      <h3>Features</h3><br>
+      <h3 id="featureTitle">Features</h3><br>
 
 <!-- Select Dates button -->
       <div class="col-sm-12" id="date">
-        <input type="text" name="datefilter" size="26" value="Select Date Range"</>
-          <span class="glyphicon glyphicon-calendar"></span>
+        <input type="text" size="26" name="datefilter" value="Select Date Range"</>
+          <span class="glyphicon glyphicon-calendar" name="calendar"></span>
       </div>
 
 <!-- Clear map button -->
@@ -173,7 +176,7 @@
 
 <!--     Map -->
     <div class="col-md-9">
-      <h3>Map Display</h3>
+      <h3 id="mapTitle">Map Display</h3>
       <br>
       <div id="mapid"></div>
 
