@@ -24,26 +24,21 @@
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script> 
   
+
+<!-- For the Date Range Picker -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
+
   <!-- Private Keys -->
   <script type="text/javascript" src="private/browserKeys.js"></script>
 
 <!-- Start of CSS -->
   <style>
+
     body {
       padding-top: 50px;
       padding-bottom: 50px;
-    }
-
-    .col-sm-4 {
-    /*  border: 1px solid red;*/
-    }
-
-    .col-sm-8 {
-    /*  border: 1px solid black;*/
-    }
-
-    #mapid {
-        height: 600px;
     }
 
     .title {
@@ -58,80 +53,119 @@
     .col-xs-3 {
       border: none;
     }
-    .container h3 {
+
+    /* centers features and map display titles */
+    #featureTitle, #mapTitle {
       text-align: center;
     }
+
+    /* centers text on selection menu */
+    #selectIndustry h3, #selectFeature h3 {
+      text-align: center;
+    }
+
+    /* centers the date, industry, and feature selection menu divs */
+    #date, #selectIndustry, #selectFeature {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* alignment of glyphicons */
+    .glyphicon-trash {
+      position: relative;
+      top: 12px;
+    }
+
+    .glyphicon-calendar {
+      position: relative;
+      left: 10px;
+    }
+
+    /* scrolling feature of the menu bars */
+    .panel-collapse, #collapse1 #collapse2 {
+      max-height: 200px;
+      overflow: hidden;
+      overflow-y: auto;
+    }
+
+    #mapid {
+      height: 600px;
+    }
+
   </style>
+
 </head>
 
 <body>
 
-<div ng-app="detailApp" ng-controller="detailController" >
+<div ng-app="detailApp" ng-controller="detailController">
 
 <div class="title">
   <h1>Early Access User Geomapper</h1>
   <h3> This application is a MarkLogic-based visualization that provides an "executive" display for locations of all MarkLogic 9 Early Access users.</h3>
 </div>
 
-<!--
-<button ng-click="showDetail=!showDetail" ng-init="showDetail=false">
+
+<!-- <button ng-click="showDetail=!showDetail" ng-init="showDetail=false">
   Switch
-</button>
--->
+</button> -->
+
 
 <!-- MAP -->
 <div class="container" ng-hide="showDetail">
   <div class="row">
-    <div class="col-sm-4">
-      <h3>Features</h3><br>
+    <div class="col-md-3">
+      <h3 id="featureTitle">Features</h3><br>
 
 <!-- Select Dates button -->
-<!--     <div class="col-xs-12">
-      <button type="button" class="btn btn-default btn-lg" style="text-align:center">Select Dates</button>
-    </div> -->
-      <div class="col-xs-6">
-        <div class="panel-group" id="accordion">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title"><a data-toggle="collapse" href="#">Select Dates</a></h4>
-            </div>
-          </div>
-        </div>
+      <div class="col-sm-12" id="date">
+        <input type="text" size="26" name="datefilter" value="Select Date Range"</>
+          <span class="glyphicon glyphicon-calendar" name="calendar"></span>
       </div>
 
-      <div class="col-xs-6">
+<!-- Clear map button -->
+<!--        <div class="col-xs-6">
         <button type="button" id="clearButton" class="btn btn-default btn-block">Clear Map</button>
-      </div>
+      </div> -->
 
-      <br><br><br>
+  <br><br><br>
+
   <!-- Select Industry -->
-      <div class="col-xs-6">
+      <div class="row" id="selectIndustry">
+        <div class="col-sm-10">
         <div class="panel-group" id="accordion">
           <div class="panel panel-default">
             <div class="panel-heading">
               <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Select Industry</a></h4>
             </div>
-            <div id="collapse1" class="panel-collapse collapse">
-              <ul class="list-group"></ul>
+            <div id="collapse1" class="panel-collapse collapse in">
+              <ul class="list-group">
+              </ul>
             </div>
           </div>
         </div>
+        </div>
+        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
       </div>
 
-<!-- Select Features -->
-      <div class="col-xs-6">
-        <div class="panel-group" id="accordion">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
-            </div>
-            <div id="collapse2" class="panel-collapse collapse">
-              <ul class="list-group"></ul>
+      <br>
+
+  <!-- Select Features -->
+      <div class="row" id="selectFeature">
+        <div class="col-sm-10">
+          <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
+              </div>
+                <div id="collapse2" class="panel-collapse collapse in">
+                <ul class="list-group"></ul>
+                </div>
             </div>
           </div>
         </div>
+        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
       </div>
-
       <br><br><br>
 
 <!--     <div class="col-xs-12">
@@ -140,11 +174,11 @@
 
     </div>
 
-<!--  Map -->
-    <div class="col-sm-8">
-      <h3>Map Display</h3><br>
+<!--     Map -->
+    <div class="col-md-9">
+      <h3 id="mapTitle">Map Display</h3>
+      <br>
       <div id="mapid"></div>
-    </div>
 
   </div>
 </div> <!-- end of ng-hide -->

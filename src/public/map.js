@@ -78,9 +78,39 @@ function addMapEvents() {
   });
 }
 
+// function clearResults() {
+//   $('#collapse1 ul').empty();
+//   $('#collapse2 ul').empty();
+//   map.on('draw:deleted', function (e) {
+//     // update db to save latest changes
+//     drawnShapes.removeLayer(e.layer);
+//   });
+// }
+
+function displayFeatures(features) {
+  for (var obj in features.Features) {
+    var count = features.Features[obj]; // frequency of each feature
+    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
+  }
+}
+
+function displayIndustries(industries) {
+  for (var obj in industries.Industries) {
+    var count = industries.Industries[obj]; // frequency of each industry
+    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
+  }
+}
+
 // Draw markers on map
 function drawPage(response) {
   displayGeoJSON(response);
+
+  // displaying industries and features
+  // console.log(response);
+  // console.log(response.allFeatures.facets.Features); does not work -- no facets under allFeatures
+  // console.log(response.allIndustries.facets.Industries);
+  // displayFeatures(response.facets.Features);
+  displayIndustries(response.allIndustries.facets);
 }
 
 function loadMLInfo() {
@@ -324,3 +354,29 @@ function formatPopup(properties) {
 
   return str;
 }
+
+$(function filterDate() {
+
+  $('input[name="datefilter"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+          cancelLabel: 'Clear'
+      }
+  });
+
+  $('input[name="datefilter"]').on('apply.daterangepicker', function apply(ev, picker) {
+    console.log("hm");
+      $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+  });
+
+  $('input[name="datefilter"]').on('cancel.daterangepicker', function cancel(ev, picker) {
+      $(this).val('');
+  });
+
+  // $('span[name="calendar"]').on("click", function apply(ev, picker) {
+  //   console.log("wat");
+  //     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+  // });
+
+
+});
