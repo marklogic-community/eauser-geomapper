@@ -27,11 +27,6 @@ for (var r of records) {
       // uri template for EA users
       var uri = "/users/" + username + ".json";
 
-      //TODO: 
-      // if the person already exists in the database, 
-      // update the person (keeping the dateAdded field the same as the original!!)
-      //var changed = util.compare(uri);
-
       xdmp.log(" inserted " + username);
       xdmp.documentInsert(uri, json);
     }
