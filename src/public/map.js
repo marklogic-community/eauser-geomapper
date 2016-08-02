@@ -54,7 +54,6 @@ function start() {
     date1: "",
     date2: ""
   };
-  //loadMLInfo();
   addMapEvents();
 }
 
@@ -90,11 +89,34 @@ function addMapEvents() {
 
 }
 
+// function clearResults() {
+//   $('#collapse1 ul').empty();
+//   $('#collapse2 ul').empty();
+//   map.on('draw:deleted', function (e) {
+//     // update db to save latest changes
+//     drawnShapes.removeLayer(e.layer);
+//   });
+// }
+
+function displayFeatures(features) {
+  for (var obj in features.Features) {
+    var count = features.Features[obj]; // frequency of each feature
+    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
+  }
+}
+
+function displayIndustries(industries) {
+  for (var obj in industries.Industries) {
+    var count = industries.Industries[obj]; // frequency of each industry
+    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
+  }
+}
+
 // Draw markers on map
 function drawPage(response) {
   displayGeoJSON(response);
   displayIndustries(response.facets.Industry);
-  //displayFeatures(response.)
+  //displayFeatures(response.....)
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
@@ -165,13 +187,11 @@ function updateSelections(which, value) {
   if (which === "Industry") {
     // check if value is in the array
     var index = selections.industries.indexOf(value);
-    if (index > -1) {
+    if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
-      //console.log("Unchecked then?");
       selections.industries.splice(index, 1);
     }
-    else {
-      //console.log("Checked then?");
+    else { //checked the box
       selections.industries.push(value);
     }
   }
@@ -355,3 +375,29 @@ function formatPopup(properties) {
 
   return str;
 }
+
+$(function filterDate() {
+
+  $('input[name="datefilter"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+          cancelLabel: 'Clear'
+      }
+  });
+
+  $('input[name="datefilter"]').on('apply.daterangepicker', function apply(ev, picker) {
+    console.log("hm");
+      $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+  });
+
+  $('input[name="datefilter"]').on('cancel.daterangepicker', function cancel(ev, picker) {
+      $(this).val('');
+  });
+
+  // $('span[name="calendar"]').on("click", function apply(ev, picker) {
+  //   console.log("wat");
+  //     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+  // });
+
+
+});
