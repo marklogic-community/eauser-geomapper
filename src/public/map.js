@@ -136,36 +136,41 @@ function fail(jqXHR, status, errorThrown) {
 }
 
 function displayFeatures(features) {
-  console.log(features);
+
   for (var ndx in features) {
     //var count = features.Features[obj]; // frequency of each feature
-
     $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
   }
   var $features =  $("#featureUL li");
   for (var i = 0; i < $features.length; i++) {
     $features[i].onclick = function(e) {
       //e.target.value not working for strings with spaces
-      updateSelections("Feature", e.target.offsetParent.innerText);
-      doPost("/search.sjs", displayGeoJSON, false);
+      if (e.target.value === 0) {}
+      else {
+        updateSelections("Feature", e.target.offsetParent.innerText);
+        doPost("/search.sjs", displayGeoJSON, false);
+      }
     }
   }
 }
 
+// Industries with spaces are destroying this, only the first word before the space is represented in e.target.value
 function displayIndustries(industries) {
-
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
-    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox"class="iChecker"value='+obj.toString()+'>'+obj.toString()+'<i>('+count.toString()+')</i>'+'</li>');
+    console.log(obj);
+    // leaving out count for now, messing with checkbox value field  ...  '<i>('+count.toString()+')</i>'+
+    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox"class="iChecker"value='+obj+'>'+obj+'</li>');
   }
-
 
   var $industries =  $("#industryUL li");
   for (var i = 0; i < $industries.length; i++) {
     $industries[i].onclick = function(e) {
-      updateSelections("Industry", e.target.value);
-      if (e.target.value === 0) {}
+      if (e.target.value === 0) {
+        // e.target.value is 0 when click is on text in html and not on the check box
+      }
       else {
+        updateSelections("Industry", e.target.offsetParent.innerText);
         doPost("/search.sjs", displayGeoJSON, false);
       }
     }
@@ -208,7 +213,7 @@ function displayGeoJSON(geojsonFeatures) {
       return marker;
     },
     onEachFeature: function (feature, layer) {
-      layer.bindPopup(formatPopup(feature.properties));
+      layer.bindPopup(formatPopup(feature.preview));
     },
     style: function(feature) {
       return {color: getColor(feature)};
@@ -234,9 +239,11 @@ function removeAllFeatures() {
 // Green: 2 features
 // Yellow: 3+ features
 function getColor(user) {
-  var numFeatures = 0;
-  if (user.properties.features && user.properties.features.length) {
-    numFeatures = user.properties.features.length;
+
+  // Commented out because have no data on number of features for EA Users as of now (8/3/2016)
+  /*var numFeatures = 0;
+  if (user.preview.features && user.preview.features.length) {
+    numFeatures = user.preview.features.length;
   }
 
   var ff = 'ff';
@@ -256,7 +263,8 @@ function getColor(user) {
   }
 
   //Hexadecimal color ex: #ffff00, need 6 characters after '#'
-  return "#" + red + green + blue;
+  return "#" + red + green + blue; */
+  return "#FF0000";
 }
 
 // Initialize the dialog window .
@@ -288,7 +296,7 @@ function editFeatures() {
     initDialog();
   }
   dialog.dialog("open");
-  document.getElementById("dialogUserEmail").innerHTML = "<b> Email: </b>" + map.currUser.properties.email;
+  document.getElementById("dialogUserEmail").innerHTML = "<b> Email: </b>" + map.currUser.preview.email;
   // Clear the text area before adding new items, this method is slow
   document.getElementById("FeatureText").value = formatFeatures();
   // Get the features of the selected user
@@ -302,7 +310,7 @@ function saveFeatureContents() {
 
   // Identify the user clicked by their email
   // unique emails so cannot reuse emails for signing up for EA
-  var userEmail = map.currUser.properties.email;
+  var userEmail = map.currUser.preview.email;
   trimmedArr = featArr.map(function(s) {
     return String.prototype.trim.apply(s);
   });
@@ -313,7 +321,8 @@ function saveFeatureContents() {
 }
 
 function formatFeatures() {
-  return map.currUser.properties.features.toString();
+  //return map.currUser.preview.features.toString();
+  return "No feature data (yet)";
 }
 
 // firstName, lastname, email, city, state, industry, company
@@ -323,8 +332,10 @@ function formatPopup(properties) {
 
   map.currUser = properties;
   // EA User's name
-  if (properties.name) {
-    str += "<b>EA User:</b> " + properties.name;
+  if (properties.firstname ) {
+    str += "<b>EA User:</b> " + properties.firstname;
+    if (properties.lastname)
+      str += " " + properties.lastname;
     str += "<br>";
   }
   // EA User's company
@@ -355,7 +366,7 @@ function formatPopup(properties) {
     }
     str += "</UL>";
     str += "<br>";
-  } else if (properties.features.length === 0) {
+  } else if (properties.features && properties.features.length === 0) {
     str += "<b>Features:</b> None specified";
     str += "<br>";
   }
