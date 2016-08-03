@@ -87,6 +87,9 @@ function addMapEvents() {
   map.on('zoomend', function(e) {
     doPost("/search.sjs", displayGeoJSON, false);
   })
+  map.on('drag', function (e) {
+    doPost("/search.sjs", displayGeoJSON, false);
+  })
 
 }
 
@@ -102,6 +105,9 @@ function addMapEvents() {
 // Draw markers on map
 function drawPage(response) {
   displayGeoJSON(response);
+  console.log(response);
+  console.log(response.facets.Industry);
+
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
 }
@@ -158,7 +164,11 @@ function displayFeatures(features) {
 function displayIndustries(industries) {
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
+
     // leaving out count for now, messing with checkbox value field  ...  '<i>('+count.toString()+')</i>'+
+    // HTML:
+    // <li class="list-group-item"><input type="checkbox" class="iChecker" value="obj">obj</li>
+
     $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox"class="iChecker"value='+obj+'>'+obj+'</li>');
   }
 

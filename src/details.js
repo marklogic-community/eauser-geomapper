@@ -2,8 +2,8 @@ var app = angular.module("detailApp", ["ngRoute", "ngSanitize"]);
 
 app.controller("detailController", function($scope, $sce, $routeParams) { //, $routeParams/*, user */) {
   
-  console.log("outside " + $routeParams);
-  console.log("outside " + $routeParams["username"]);
+  // console.log("outside " + $routeParams);
+  // console.log("outside " + $routeParams["username"]);
 
   $scope.$on("$routeChangeSuccess", function() {
     console.log("inside ");
