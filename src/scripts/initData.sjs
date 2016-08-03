@@ -1,6 +1,13 @@
 // To run this, the time limit has to be extended by a lot...
 // I changed it from 3600 sec to 36000. (just to be safe :D)
 
+// (time limits of TaskServer. query console time limits no longer matter)
+
+// Batch size = 200
+
+// Variables from xdmp.spawn: 
+// streamPosition, remainingCount
+
 'use strict'
 
 var keys = require("../private/keys.sjs");
@@ -12,14 +19,14 @@ var secretkey = keys.secretkey;
 var endpoint = keys.endpoint;
 var userID = keys.userID;
 
-var streamPosition = ""
-var remainingCount = 1; // completely random.
+// grab all users whose accounts were updated after 2/2/2016 
+//  (Note: EA1 was released 2/3/2016)
+//  (Note 2: the time is completely random)
+var EA1releaseDate = "2016-02-02T11:51:08.710-08:00";
 
-while (remainingCount > 0) {
-  // grab all users whose accounts were updated after 2/2/2016 
-  //  (Note: EA1 was released 2/3/2016)
+if (remainingCount > 0) {
 
-  var timestamp = fn.currentDateTime();
+  var timestamp = fn.currentDateTime(); 
   var message = "" + timestamp + userID;
 
   var signature = xdmp.hmacSha1(secretkey, message)
@@ -36,32 +43,36 @@ while (remainingCount > 0) {
     //body
     + "<SOAP-ENV:Body>"
     + "<ns1:paramsGetMultipleLeads xmlns:ns1=\"http://www.marketo.com/mktows/\">"
-    + "<lastUpdatedAt>2016-07-19T11:51:08.710-08:00</lastUpdatedAt>"
-    + "<batchSize>100</batchSize>"
+    + "<lastUpdatedAt>" + EA1releaseDate + "</lastUpdatedAt>"
+    + "<batchSize>200</batchSize>"
     + "<streamPosition>" + streamPosition + "</streamPosition>"
     + "</ns1:paramsGetMultipleLeads>"
     + "</SOAP-ENV:Body></SOAP-ENV:Envelope>"
   );
   
-  xdmp.log("requesting StreamPosition " + streamPosition);
+  xdmp.log("Requesting streamPosition - " + streamPosition);
+  xdmp.log("Remaining Count - " + remainingCount);
+
 
   var result = xdmp.httpPost(endpoint, 
   {
     "data" : options,
-    "timeout" : 100000
+    "timeout" : 1000000
   });
   
   // get remainingCount and newStreamPosition
-  remainingCount = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/remainingCount/fn:number()");
-  streamPosition = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/newStreamPosition/fn:string()");
+  remainingCount = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/remainingCount/fn:number()").toArray()[0];
+  streamPosition = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/newStreamPosition/fn:string()").toArray()[0];
 
   // call xdmp.spawn to filter and ingest data from the batch
 
   xdmp.spawn("insert.sjs", {"result": result.toArray()[1]}, null);
 
-  
+  xdmp.spawn("initData.sjs", {"streamPosition": streamPosition, "remainingCount": remainingCount}, null);
+
 }
 
-"done";
-
+else {
+  xdmp.log("DONE");
+}
 

@@ -23,7 +23,7 @@ var getCoord = function(postalCode, country) {
     var point = res.toArray()[1].root.results[0].geometry.location;
     var lat = point.lat;
     var long = point.lng;
-    return [lat, long];
+    return [long, lat];
   }
   catch (err) {
     return null;
@@ -53,20 +53,21 @@ var removeSpaces = function(stuff, filler) {
 
 // takes a leadRecord from Marketo and transforms it into GeoJSON
 var convertToJson = function(record) {
-  
-  var preview = {};
-  
-  // preview fields
-  preview["firstname"] = record.xpath("./leadAttributeList/attribute[attrName = 'FirstName']/attrValue/fn:string()");
-  preview["lastname"] = record.xpath("./leadAttributeList/attribute[attrName = 'LastName']/attrValue/fn:string()");
-  preview["email"] = record.xpath("./Email/fn:string()");
-  preview["city"] = record.xpath("./leadAttributeList/attribute[attrName = 'City']/attrValue/fn:string()");
-  preview["state"] = record.xpath("./leadAttributeList/attribute[attrName = 'State']/attrValue/fn:string()");
-  preview["industry"] = record.xpath("./leadAttributeList/attribute[attrName = 'Main_Industry__c']/attrValue/fn:string()");
-  preview["company"] = record.xpath("./leadAttributeList/attribute[attrName = 'Company']/attrValue/fn:string()");
 
   // full detail fields
   var properties = {};
+
+  // decided to merge preview and fullDetails
+  properties["firstname"] = record.xpath("./leadAttributeList/attribute[attrName = 'FirstName']/attrValue/fn:string()");
+  properties["lastname"] = record.xpath("./leadAttributeList/attribute[attrName = 'LastName']/attrValue/fn:string()");
+  properties["email"] = record.xpath("./Email/fn:string()");
+  properties["city"] = record.xpath("./leadAttributeList/attribute[attrName = 'City']/attrValue/fn:string()");
+  properties["state"] = record.xpath("./leadAttributeList/attribute[attrName = 'State']/attrValue/fn:string()");
+  properties["industry"] = record.xpath("./leadAttributeList/attribute[attrName = 'Main_Industry__c']/attrValue/fn:string()");
+  properties["company"] = record.xpath("./leadAttributeList/attribute[attrName = 'Company']/attrValue/fn:string()");
+
+
+
   //properties["leadScore"] = record.xpath("./leadAttributeList/attribute[attrName = 'LeadScore']/attrValue/fn:string()");
   //properties["markLogicContactEmail"] = record.xpath("./leadAttributeList/attribute[attrName = 'markLogicContactEmail']/attrValue/fn:string()");
   properties["phone"] = record.xpath("./leadAttributeList/attribute[attrName = 'Phone']/attrValue/fn:string()");
@@ -92,7 +93,6 @@ var convertToJson = function(record) {
   var doc = {};
 
   doc["type"] = "Feature";
-  doc["preview"] = preview;
   doc["fullDetails"] = properties;
 
   //full copy of the leadRecord XML doc
@@ -102,7 +102,7 @@ var convertToJson = function(record) {
   
   doc["geometry"] = {
     "type": "Point",
-    "coord": coord
+    "coordinates": coord
   };
 
   return doc;
@@ -164,17 +164,16 @@ var marketoGetLead = function(email) {
 //
 //..
 //..
-//.. Still waiting.. :'(
+//.. no point in putting it in util.sjs
+// split between insert.sjs and update.sjs
 //
 
-/*
-exports.convertToJson = convertToJson;
-exports.getCoord = getCoord;
-exports.oneDayAgo = oneDayAgo;
-exports.marketoGetLead = marketoGetLead;
-exports.removeSpaces = removeSpaces;
+// if emails are easier, we can easily pass the user's email instead of the username.
+var exists = function(username) {
+  return cts.exists(cts.elementWordQuery("username", username));
+};
 
-*/
+
 module.exports = {
   "convertToJson": convertToJson,
 
@@ -185,7 +184,8 @@ module.exports = {
 
   "marketoGetLead": marketoGetLead,
 
-  "removeSpaces": removeSpaces
-}
+  "removeSpaces": removeSpaces,
 
+  "exists": exists
+}
 
