@@ -43,11 +43,11 @@ else if (input.searchRegions) {
   }
 }
 
-geoQueryJson = cts.andQuery([cts.directoryQuery("/users/"), cts.jsonPropertyGeospatialQuery(
+geoQueryJson = cts.jsonPropertyGeospatialQuery(
   "coordinates",
   searchRegions,
   "type=long-lat-point"
-)]);
+);
 
 // Object to return
 var users = {};
