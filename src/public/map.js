@@ -108,6 +108,7 @@ function drawPage(response) {
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
 function doPost(url, success, firstLoad) {
+  console.log("Doing Post!!!!!");
   var payload = {
     selections: selections,
     mapWindow: [ //Used for search if no drawn shapes
@@ -135,41 +136,50 @@ function fail(jqXHR, status, errorThrown) {
   console.log(errorThrown);
 }
 
+//features is an array []
 function displayFeatures(features) {
 
   for (var ndx in features) {
-    //var count = features.Features[obj]; // frequency of each feature
-    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
+    var count = features[ndx]; // frequency of each feature
+    $('#collapse2 ul').append('<li class="list-group-item"><input checked type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
+    selections.features.push(features[ndx].toString());
   }
-  var $features =  $("#featureUL li");
+  var $features =  $("#featureUL .fChecker");
   for (var i = 0; i < $features.length; i++) {
     $features[i].onclick = function(e) {
-      //e.target.value not working for strings with spaces
-      if (e.target.value === 0) {}
+      if (e.target.value === 0) {
+        // e.target.value is 0 when click is on text in html and not on the check box
+      }
       else {
-        updateSelections("Feature", e.target.offsetParent.innerText);
+        updateSelections("Feature", e.target.nextSibling.data);
         doPost("/search.sjs", displayGeoJSON, false);
       }
     }
   }
 }
 
-// Industries with spaces are destroying this, only the first word before the space is represented in e.target.value
+// industries is an object {}
 function displayIndustries(industries) {
+
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
-    // leaving out count for now, messing with checkbox value field  ...  '<i>('+count.toString()+')</i>'+
-    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox"class="iChecker"value='+obj+'>'+obj+'</li>');
+    $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>'+obj+'<i>('+count+')</i></li>');
+    //Add value to the selections so code works with what is being displayed
+    selections.industries.push(obj.toString());
   }
+  // Problem lives with how the UL is selected adnd what it is receiving,
+  var $industries =  $("#industryUL .iChecker");
 
-  var $industries =  $("#industryUL li");
+  // Conveniently the length property here refers to the number of elements appended to the selector
+  // aka stuff not normally there, in other words, the length is the number of industries in the UL.
+  // and they occur at properties 0 -> $industries.length (y) Thank you, God.
   for (var i = 0; i < $industries.length; i++) {
     $industries[i].onclick = function(e) {
       if (e.target.value === 0) {
         // e.target.value is 0 when click is on text in html and not on the check box
       }
       else {
-        updateSelections("Industry", e.target.offsetParent.innerText);
+        updateSelections("Industry", e.target.nextSibling.data);
         doPost("/search.sjs", displayGeoJSON, false);
       }
     }
@@ -179,7 +189,6 @@ function displayIndustries(industries) {
 
 function updateSelections(which, value) {
   var index;
-
   if (which === "Industry") {
     // check if value is in the array
     index = selections.industries.indexOf(value);
