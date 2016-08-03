@@ -5,3 +5,6 @@ src/private/*.sjs
 *2.html
 *test.sjs
 main.html
+
+data/*
+
