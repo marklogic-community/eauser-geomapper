@@ -100,7 +100,6 @@ function addMapEvents() {
 
 // Draw markers on map
 function drawPage(response) {
-  console.log(response);
   displayGeoJSON(response);
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
@@ -158,7 +157,6 @@ function displayFeatures(features) {
 function displayIndustries(industries) {
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
-    console.log(obj);
     // leaving out count for now, messing with checkbox value field  ...  '<i>('+count.toString()+')</i>'+
     $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox"class="iChecker"value='+obj+'>'+obj+'</li>');
   }
@@ -239,32 +237,26 @@ function removeAllFeatures() {
 // Green: 2 features
 // Yellow: 3+ features
 function getColor(user) {
+  return "#FF0000";
 
   // Commented out because have no data on number of features for EA Users as of now (8/3/2016)
-  /*var numFeatures = 0;
+  // Will tinker with colors when feature data is available
+
+  /*var numFeatures = 0; // 0 features
+  var color = "#000000";
   if (user.preview.features && user.preview.features.length) {
     numFeatures = user.preview.features.length;
   }
-
-  var ff = 'ff';
-  var red = '00', green = '00', blue = '00';
-
-  if (numFeatures === 0) { }// do nothing, color is black
-  else if (numFeatures === 1) {
-    red = ff;
+  if (numFeatures === 1) {
+    color = "#FF0000"; //red
   }
   else if (numFeatures === 2) {
-    red = '09';
-    green = ff;
+    color = "#00FF00"; // green
   }
-  else {
-    green = ff;
-    red = ff;
+  else if (numFeatures >= 3) { //blue
+    color = "#0000FF";
   }
-
-  //Hexadecimal color ex: #ffff00, need 6 characters after '#'
-  return "#" + red + green + blue; */
-  return "#FF0000";
+  return color */
 }
 
 // Initialize the dialog window .
@@ -396,7 +388,6 @@ $(function filterDate() {
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function apply(ev, picker) {
-    console.log("hm");
       $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
