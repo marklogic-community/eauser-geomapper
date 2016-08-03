@@ -18,7 +18,7 @@ function start() {
 
   // Leaflet's map initialization method
   // 'mapid' is the div's name where the map will be found on the web page.
-  map = L.map('mapid').setView([0, 0], 2);
+  map = L.map('mapid', {"minZoom": 2}).setView([0, 0], 2);
   url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
   L.tileLayer(url,
@@ -195,6 +195,10 @@ function fail(jqXHR, status, errorThrown) {
 
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
+
+  console.log(geojsonFeatures);
+
+
   var geojsonLayer = L.geoJson(geojsonFeatures.results, {
     pointToLayer: function (feature, latlng) {
       var marker = new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
