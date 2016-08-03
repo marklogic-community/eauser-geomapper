@@ -22,8 +22,7 @@
 
   <!-- Angular -->
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script> 
-  
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script>
 
 <!-- For the Date Range Picker -->
 <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -35,61 +34,51 @@
 
 <!-- Start of CSS -->
   <style>
-
     body {
       padding-top: 50px;
       padding-bottom: 50px;
     }
-
     .title {
       padding: 40px 15px;
       text-align: center;
     }
-
     li.list-group-item {
       border: none;
     }
-
     .col-xs-3 {
       border: none;
     }
-
     /* centers features and map display titles */
     #featureTitle, #mapTitle {
       text-align: center;
     }
-
     /* centers text on selection menu */
     #selectIndustry h3, #selectFeature h3 {
       text-align: center;
     }
-
     /* centers the date, industry, and feature selection menu divs */
     #date, #selectIndustry, #selectFeature {
       margin-left: auto;
       margin-right: auto;
     }
-
     /* alignment of glyphicons */
     .glyphicon-trash {
       position: relative;
       top: 12px;
     }
-
     .glyphicon-calendar {
       position: relative;
       left: 10px;
     }
-
     /* scrolling feature of the menu bars */
     .panel-collapse, #collapse1 #collapse2 {
       max-height: 200px;
       overflow: hidden;
       overflow-y: auto;
     }
-
     #mapid {
-      height: 600px;
+      height: 750px;
+      width: 1000px;
     }
 
   </style>
@@ -139,7 +128,7 @@
               <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Select Industry</a></h4>
             </div>
             <div id="collapse1" class="panel-collapse collapse in">
-              <ul class="list-group">
+              <ul class="list-group" id="industryUL">
               </ul>
             </div>
           </div>
@@ -159,7 +148,7 @@
                 <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
               </div>
                 <div id="collapse2" class="panel-collapse collapse in">
-                <ul class="list-group"></ul>
+                <ul class="list-group" id="featureUL"></ul>
                 </div>
             </div>
           </div>
@@ -213,6 +202,9 @@
 <script type="text/javascript" src="public/map.js"></script>
 <div id = "dialogFeatureEdit" hidden title="Edit user features">
     <div id = "userFeatures">
+      <div>
+        <p id = "dialogUserEmail"></p>
+      </div>
       <b> Features: </b>
       <textarea rows="3" cols="30" id="FeatureText"> </textarea>
     </div>

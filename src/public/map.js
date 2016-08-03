@@ -1,10 +1,11 @@
 var style; //MapBox API
-var token; //MapbBx API
+var token; //MapBox API
 var map; // Leaflet map
 var url; // String
 var markers; //FeatureGroup
 var drawnShapes; //FeatureGroup
 var MLFeatures; // Array
+var selections; // Object
 
 // Start! Initialize the map and all things awesome.
 // For debugging, check MarkLogic's 8040_ErrorLog.txt
@@ -41,12 +42,18 @@ function start() {
 
   // Load all MarkLogic feature and industry options for dropdown menus
   // and Draw all map markers
-  doPost('/search.sjs', "", drawPage, true);
+  doPost('/search.sjs', drawPage, true);
 
   // mouse-click event for 'clear map' button
   $("#clearButton").click(removeAllFeatures);
 
-  loadMLInfo();
+  //Selections will hold info on the current state of selected options to query
+  selections = {
+    features: [],
+    industries: [],
+    date1: "",
+    date2: ""
+  };
   addMapEvents();
 }
 
@@ -65,17 +72,21 @@ function addMapEvents() {
 
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
-    doPost("/search.sjs", "name", displayGeoJSON, false);
+    doPost("/search.sjs", displayGeoJSON, false);
   });
 
   map.on('draw:edited', function (e) {
-    doPost("/search.sjs", "name", displayGeoJSON, false);
+    doPost("/search.sjs", displayGeoJSON, false);
   });
 
   map.on('draw:deleted', function (e) {
     // Update db to save latest changes.
     drawnShapes.removeLayer(e.layer);
   });
+  map.on('zoomend', function(e) {
+    doPost("/search.sjs", displayGeoJSON, false);
+  })
+
 }
 
 // function clearResults() {
@@ -87,93 +98,23 @@ function addMapEvents() {
 //   });
 // }
 
-function displayFeatures(features) {
-  for (var obj in features.Features) {
-    var count = features.Features[obj]; // frequency of each feature
-    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
-  }
-}
-
-function displayIndustries(industries) {
-  for (var obj in industries.Industries) {
-    var count = industries.Industries[obj]; // frequency of each industry
-    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox" value=""> '+ obj.toString() + ' <i>(' + count.toString() + ')</i>' + '</li>');
-  }
-}
-
 // Draw markers on map
 function drawPage(response) {
   displayGeoJSON(response);
-
-  // displaying industries and features
-  // console.log(response);
-  // console.log(response.allFeatures.facets.Features); does not work -- no facets under allFeatures
-  // console.log(response.allIndustries.facets.Industries);
-  // displayFeatures(response.facets.Features);
-  displayIndustries(response.allIndustries.facets);
-}
-
-function loadMLInfo() {
-  // post call to find the ML features
-  var payload = {
-    getMLFeatures: true
-  };
-
-  $.ajax({
-    type: "POST",
-    url: "search.sjs",
-    data: JSON.stringify(payload),
-    contentType: "application/json",
-    dataType: "json",
-    success: function (response) {
-      // Idea is to only call this function once and save the result
-      // so it might be faster. Called every browser refresh.
-      MLFeatures = response.allFeatures;
-    },
-    error: fail
-  });
-}
-
-// Find all items clicked (selected) in the Industry and Feature menu lists.
-// TODO make this work. First need to grab the html element, right?
-function getSelectedItems() {
-  var items = document.getElementsByClassName("list-group-item");
-  var selectedIndustries = [];
-  var selectedFeatures = [];
-
-  // hard coded for now till html elements are created and/or real data is gotten
-  selectedIndustries.push('Animalia');
-  selectedIndustries.push('Qnekt');
-  selectedIndustries.push('Filodyne');
-  selectedIndustries.push('Singavera');
-
-  selectedFeatures.push('Combogene');
-  selectedFeatures.push('Elemantra');
-  selectedFeatures.push('Sequitur');
-  selectedFeatures.push('Steelfab');
-
-  var selections = {
-    industries: selectedIndustries,
-    features: selectedFeatures
-  }
-
-  return selections;
+  displayIndustries(response.facets.Industry);
+  displayFeatures(response.features.MarkLogicFeatures);
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
-// industries is an array of strings ex: ['Dyno', 'Earwax', 'Cubix']
-function doPost(url, str, success, firstLoad) {
+function doPost(url, success, firstLoad) {
   var payload = {
-    searchString: str,
-    selections: getSelectedItems(),
-    //mapWindow is used for search if there are no drawn shapes on map
-    mapWindow: [
+    selections: selections,
+    mapWindow: [ //Used for search if no drawn shapes
       map.getBounds().getSouth(),
       map.getBounds().getWest(),
       map.getBounds().getNorth(),
       map.getBounds().getEast()
     ],
-
     firstLoad: firstLoad,
     searchRegions: drawnShapes.toGeoJSON()
   };
@@ -193,15 +134,84 @@ function fail(jqXHR, status, errorThrown) {
   console.log(errorThrown);
 }
 
+function displayFeatures(features) {
+
+  for (var ndx in features) {
+    //var count = features.Features[obj]; // frequency of each feature
+    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
+  }
+  var $features =  $("#featureUL li");
+  for (var i = 0; i < $features.length; i++) {
+    $features[i].onclick = function(e) {
+      //e.target.value not working for strings with spaces
+      if (e.target.value === 0) {}
+      else {
+        updateSelections("Feature", e.target.offsetParent.innerText);
+        doPost("/search.sjs", displayGeoJSON, false);
+      }
+    }
+  }
+}
+
+// Industries with spaces are destroying this, only the first word before the space is represented in e.target.value
+function displayIndustries(industries) {
+  for (var obj in industries) {
+    var count = industries[obj]; // frequency of each industry
+    // leaving out count for now, messing with checkbox value field  ...  '<i>('+count.toString()+')</i>'+
+    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox"class="iChecker"value='+obj+'>'+obj+'</li>');
+  }
+
+  var $industries =  $("#industryUL li");
+  for (var i = 0; i < $industries.length; i++) {
+    $industries[i].onclick = function(e) {
+      if (e.target.value === 0) {
+        // e.target.value is 0 when click is on text in html and not on the check box
+      }
+      else {
+        updateSelections("Industry", e.target.offsetParent.innerText);
+        doPost("/search.sjs", displayGeoJSON, false);
+      }
+    }
+  }
+
+}
+
+function updateSelections(which, value) {
+  var index;
+
+  if (which === "Industry") {
+    // check if value is in the array
+    index = selections.industries.indexOf(value);
+    if (index > -1) { //unchecked the box
+      // Already in the array, aka checked already, so unchecking was done
+      selections.industries.splice(index, 1);
+    }
+    else { //checked the box
+      selections.industries.push(value);
+    }
+  }
+  else if (which === "Feature") {
+    index = selections.features.indexOf(value);
+    if (index > -1) { //unchecked the box
+      // Already in the array, aka checked already, so unchecking was done
+      selections.features.splice(index, 1);
+    }
+    else { //checked the box
+      selections.features.push(value);
+    }
+  }
+}
+
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
-  var geojsonLayer = L.geoJson(geojsonFeatures.results, {
+  removeAllFeatures();
+  var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
       var marker = new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
       return marker;
     },
     onEachFeature: function (feature, layer) {
-      layer.bindPopup(formatPopup(feature.properties));
+      layer.bindPopup(formatPopup(feature.preview));
     },
     style: function(feature) {
       return {color: getColor(feature)};
@@ -221,22 +231,32 @@ function removeAllFeatures() {
   markers.clearLayers();
 }
 
-// The brighter the red, the more ML features the EA user uses.
-// 0 features is black circle marker
-// 3+ creates a bright red circle marker
-// f is a EA user
+// Color of map marker corresponds to number of features the user uses
+// black: 0 features
+// red: 1 feature
+// Green: 2 features
+// Yellow: 3+ features
 function getColor(user) {
-  var numFeatures = 0;
-  if (user.properties.features && user.properties.features.length) {
-    numFeatures = user.properties.features.length;
-  } // 57 + 66(3) = 255
-  var red = 57 + 66 * numFeatures;
-  // Color doesn't display correctly if > 255
-  red = red > 255 ? 255 : red;
-  //toString(16) converts number to base 16 string ex. 10 -> a
-  var c = "#"+red.toString(16)+(50).toString(16)+(50).toString(16);
+  return "#FF0000";
 
-  return c;
+  // Commented out because have no data on number of features for EA Users as of now (8/3/2016)
+  // Will tinker with colors when feature data is available
+
+  /*var numFeatures = 0; // 0 features
+  var color = "#000000";
+  if (user.preview.features && user.preview.features.length) {
+    numFeatures = user.preview.features.length;
+  }
+  if (numFeatures === 1) {
+    color = "#FF0000"; //red
+  }
+  else if (numFeatures === 2) {
+    color = "#00FF00"; // green
+  }
+  else if (numFeatures >= 3) { //blue
+    color = "#0000FF";
+  }
+  return color */
 }
 
 // Initialize the dialog window .
@@ -268,6 +288,7 @@ function editFeatures() {
     initDialog();
   }
   dialog.dialog("open");
+  document.getElementById("dialogUserEmail").innerHTML = "<b> Email: </b>" + map.currUser.preview.email;
   // Clear the text area before adding new items, this method is slow
   document.getElementById("FeatureText").value = formatFeatures();
   // Get the features of the selected user
@@ -275,15 +296,13 @@ function editFeatures() {
   $("#userFeatures").show();
 }
 
-// firstName, lastname, email, city, state, industry, company
-
 function saveFeatureContents() {
   var featStr = $("#FeatureText").val();
   var featArr = featStr.split(",");
 
   // Identify the user clicked by their email
   // unique emails so cannot reuse emails for signing up for EA
-  var userEmail = map.currUser.properties.email;
+  var userEmail = map.currUser.preview.email;
   trimmedArr = featArr.map(function(s) {
     return String.prototype.trim.apply(s);
   });
@@ -294,17 +313,21 @@ function saveFeatureContents() {
 }
 
 function formatFeatures() {
-  return map.currUser.properties.features.toString();
+  //return map.currUser.preview.features.toString();
+  return "No feature data (yet)";
 }
 
+// firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
   var str = "";
   if (!properties) return str;
 
   map.currUser = properties;
   // EA User's name
-  if (properties.name) {
-    str += "<b>EA User:</b> " + properties.name;
+  if (properties.firstname ) {
+    str += "<b>EA User:</b> " + properties.firstname;
+    if (properties.lastname)
+      str += " " + properties.lastname;
     str += "<br>";
   }
   // EA User's company
@@ -335,7 +358,7 @@ function formatPopup(properties) {
     }
     str += "</UL>";
     str += "<br>";
-  } else if (properties.features.length === 0) {
+  } else if (properties.features && properties.features.length === 0) {
     str += "<b>Features:</b> None specified";
     str += "<br>";
   }
@@ -365,7 +388,6 @@ $(function filterDate() {
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function apply(ev, picker) {
-    console.log("hm");
       $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
