@@ -211,7 +211,7 @@ function displayGeoJSON(geojsonFeatures) {
       return marker;
     },
     onEachFeature: function (feature, layer) {
-      layer.bindPopup(formatPopup(feature.preview));
+      layer.bindPopup(formatPopup(feature.fullDetails));
     },
     style: function(feature) {
       return {color: getColor(feature)};
@@ -319,6 +319,7 @@ function formatFeatures() {
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
+  console.log(properties);
   var str = "";
   if (!properties) return str;
 
