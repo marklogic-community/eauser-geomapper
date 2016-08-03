@@ -1,6 +1,16 @@
-var app = angular.module("detailApp", ["ngSanitize"]);
+var app = angular.module("detailApp", ["ngRoute", "ngSanitize"]);
 
-app.controller("detailController", function($scope, $sce) { //, $routeParams/*, user */) {
+app.controller("detailController", function($scope, $sce, $routeParams) { //, $routeParams/*, user */) {
+  
+  console.log("outside " + $routeParams);
+  console.log("outside " + $routeParams["username"]);
+
+  $scope.$on("$routeChangeSuccess", function() {
+    console.log("inside ");
+    console.log($routeParams);
+    console.log($routeParams.username);
+  })
+
   $scope.showDetail = false;
 
   //for Option 2 (description in map.html),
@@ -58,6 +68,7 @@ app.controller("detailController", function($scope, $sce) { //, $routeParams/*, 
     }
   };
 
+
   //Will use to create an editable features list (with checkboxes)
   // completely aesthetic at the moment.
   $scope.featureCheckboxes = function() {
@@ -80,6 +91,10 @@ app.controller("detailController", function($scope, $sce) { //, $routeParams/*, 
     // need to keep track of changes and update MarkLogic accordingly.
   };
 
+  if ($routeParams.username) {
+    $scope.user.fullDetails.username = $routeParams.username;
+  }
+
 });
 
 // NOTE: (7/28/16) 
@@ -88,8 +103,9 @@ app.controller("detailController", function($scope, $sce) { //, $routeParams/*, 
 // We will resolve this with Daphne next week.
 
 
-app.controller("mapController", function($scope) {
 /*
+app.controller("mapController", function($scope) {
+
   // a click has been noticed. Check if a popup has appeared.
   // if yes, hold onto the username, in case they ask for full details.
   $scope.checkUsername = function() {
@@ -97,25 +113,20 @@ app.controller("mapController", function($scope) {
     document.getElementById("")
       .getElementsByClassName("")[0] // examples..
   };
-*/
 });
+*/
 
-/*
 app.config(function($routeProvider) {
   $routeProvider
-    .when("/[WILDCARD*]/detail/:username", {
-      templateUrl: "details2.html",
+    .when("/details.html/:username", {
+      templateUrl: "details.html",
       controller: "detailController"
-    })
-    .when("/main.html", {
-      templateUrl: "map2.html",
-      controller: "mapController"
     })
     .otherwise( {
       redirectTo: "/"
     });
 });
-*/
+
 //should probably have this be a single-page application... That way passing info to the scope for display is easier.
 
 //also, can just hide the map page.

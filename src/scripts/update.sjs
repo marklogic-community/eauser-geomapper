@@ -24,21 +24,35 @@ for (var r of records) {
       // picked "+" over "-" because some users have already used "-" in their username.
       username = util.removeSpaces("" + username, "+");
 
+      // check if the user exists already in the database
+
+      var exists = util.exists(username);
+
       // uri template for EA users
       var uri = "/users/" + username + ".json";
 
-      xdmp.log(" inserted " + username);
-      xdmp.documentInsert(uri, json);
-    }
+      // if the user already exists, update the different fields, and update "lastUpdated"
+      if (exists) {
+        // find the old dateAdded field
+        var oldDoc = cts.doc(uri);
+        var dateAdded = oldDoc.root.fullDetails.dateAdded;
 
+        // the new document will preserve the dateAdded field.
+        json.fullDetails.dateAdded = dateAdded;
+
+        xdmp.nodeReplace(oldDoc, json);
+        xdmp.log(" updated " + username);
+      }
+      // if not, insert it normally.
+      else {
+        xdmp.log(" inserted " + username);
+        xdmp.documentInsert(uri, json);
+      }
+    }
     // else they're not an eauser. So we will ignore them.
   }
   catch (error) {
-    // Heh. What error? (insert devilish grin)
-    //  but in all seriousness, we should probably record this person 
-    //  in order to manually check what's going on..
     try {
-      // this will error if rec is undefined... which is why there's a try-catch in a try-catch :p
       xdmp.log("Error: " + error, "warning");
       xdmp.log("Failed: " + rec.xpath("Email/fn:string()"), "warning");
     }
