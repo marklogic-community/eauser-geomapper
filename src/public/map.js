@@ -44,7 +44,8 @@ function start() {
   doPost('/search.sjs', "", drawPage, true);
 
   // mouse-click event for 'clear map' button
-  $("#clearButton").click(removeAllFeatures);
+  // $("#clearButton").click(removeAllFeatures);
+  $('span[name="trashFeature"]').click(removeAllFeatures);
 
   loadMLInfo();
   addMapEvents();
@@ -355,6 +356,8 @@ function formatPopup(properties) {
   return str;
 }
 
+
+
 $(function filterDate() {
 
   $('input[name="datefilter"]').daterangepicker({
@@ -364,19 +367,28 @@ $(function filterDate() {
       }
   });
 
-  $('input[name="datefilter"]').on('apply.daterangepicker', function apply(ev, picker) {
-    console.log("hm");
+  $('span[name="calendar"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+          cancelLabel: 'Clear'
+      }
+  });
+
+  $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
       $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
-  $('input[name="datefilter"]').on('cancel.daterangepicker', function cancel(ev, picker) {
+  $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
       $(this).val('');
   });
 
-  // $('span[name="calendar"]').on("click", function apply(ev, picker) {
-  //   console.log("wat");
-  //     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-  // });
+  $('span[name="calendar"]').on('apply.daterangepicker', function (ev, picker) {
+      $('input[name="datefilter"]').val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+  });
+
+  $('span[name="calendar"]').on('cancel.daterangepicker', function (ev, picker) {
+      $('input[name="datefilter"]').val('');
+  });
 
 
 });
