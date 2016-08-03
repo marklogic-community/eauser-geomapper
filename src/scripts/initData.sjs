@@ -19,9 +19,12 @@ var secretkey = keys.secretkey;
 var endpoint = keys.endpoint;
 var userID = keys.userID;
 
+// grab all users whose accounts were updated after 2/2/2016 
+//  (Note: EA1 was released 2/3/2016)
+//  (Note 2: the time is completely random)
+var EA1releaseDate = "2016-02-02T11:51:08.710-08:00";
+
 if (remainingCount > 0) {
-  // grab all users whose accounts were updated after 2/2/2016 
-  //  (Note: EA1 was released 2/3/2016)
 
   var timestamp = fn.currentDateTime(); 
   var message = "" + timestamp + userID;
@@ -40,7 +43,7 @@ if (remainingCount > 0) {
     //body
     + "<SOAP-ENV:Body>"
     + "<ns1:paramsGetMultipleLeads xmlns:ns1=\"http://www.marketo.com/mktows/\">"
-    + "<lastUpdatedAt>2016-02-02T11:51:08.710-08:00</lastUpdatedAt>"
+    + "<lastUpdatedAt>" + EA1releaseDate + "</lastUpdatedAt>"
     + "<batchSize>200</batchSize>"
     + "<streamPosition>" + streamPosition + "</streamPosition>"
     + "</ns1:paramsGetMultipleLeads>"
