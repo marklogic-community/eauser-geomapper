@@ -206,6 +206,7 @@ function updateSelections(which, value) {
 function displayGeoJSON(geojsonFeatures) {
   removeAllFeatures();
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
+    pointToLayer: function (feature, latlng) {
       var marker = new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
       return marker;
     },
