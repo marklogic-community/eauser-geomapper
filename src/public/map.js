@@ -74,16 +74,17 @@ function addMapEvents() {
     drawnShapes.addLayer(e.layer);
     doPost("/search.sjs", displayGeoJSON, false);
   });
-
   map.on('draw:edited', function (e) {
     doPost("/search.sjs", displayGeoJSON, false);
   });
-
   map.on('draw:deleted', function (e) {
     // Update db to save latest changes.
     drawnShapes.removeLayer(e.layer);
   });
-  map.on('zoomend', function(e) {
+  map.on('zoomend', function (e) {
+    doPost("/search.sjs", displayGeoJSON, false);
+  })
+  map.on('drag', function (e) {
     doPost("/search.sjs", displayGeoJSON, false);
   })
 
@@ -207,7 +208,7 @@ function displayGeoJSON(geojsonFeatures) {
   removeAllFeatures();
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
-      var marker = new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
+      var marker = new L.CircleMarker(latlng, {radius: 3, fillOpacity: 0.85});
       return marker;
     },
     onEachFeature: function (feature, layer) {
@@ -280,22 +281,6 @@ function initDialog() {
   });
 }
 
-function editFeatures() {
-  var dialog;
-
-  dialog = $("#dialogFeatureEdit");
-  if (dialog.dialog("instance") === undefined) {
-    initDialog();
-  }
-  dialog.dialog("open");
-  document.getElementById("dialogUserEmail").innerHTML = "<b> Email: </b>" + map.currUser.preview.email;
-  // Clear the text area before adding new items, this method is slow
-  document.getElementById("FeatureText").value = formatFeatures();
-  // Get the features of the selected user
-
-  $("#userFeatures").show();
-}
-
 function saveFeatureContents() {
   var featStr = $("#FeatureText").val();
   var featArr = featStr.split(",");
@@ -319,14 +304,14 @@ function formatFeatures() {
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
-  console.log(properties);
+
   var str = "";
   if (!properties) return str;
 
   map.currUser = properties;
   // EA User's name
   if (properties.firstname ) {
-    str += "<b>EA User:</b> " + properties.firstname;
+    str += "<b>EA User Name:</b> " + properties.firstname;
     if (properties.lastname)
       str += " " + properties.lastname;
     str += "<br>";
@@ -363,7 +348,8 @@ function formatPopup(properties) {
     str += "<b>Features:</b> None specified";
     str += "<br>";
   }
-  str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
+  // Edit features inside of the details.html page
+  //str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
 
   // Option 1:
   // Show full detail button (could also look like a link)
@@ -382,18 +368,18 @@ function formatPopup(properties) {
 $(function filterDate() {
 
   $('input[name="datefilter"]').daterangepicker({
-      autoUpdateInput: false,
-      locale: {
-          cancelLabel: 'Clear'
-      }
+    autoUpdateInput: false,
+    locale: {
+      cancelLabel: 'Clear'
+    }
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function apply(ev, picker) {
-      $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
   $('input[name="datefilter"]').on('cancel.daterangepicker', function cancel(ev, picker) {
-      $(this).val('');
+    $(this).val('');
   });
 
   // $('span[name="calendar"]').on("click", function apply(ev, picker) {
