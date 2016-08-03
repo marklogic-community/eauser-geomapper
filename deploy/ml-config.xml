@@ -244,7 +244,6 @@
           <name xmlns="http://marklogic.com/ns/sample">bob<name>
 -->
 
-
         <range-element-index>
           <scalar-type>string</scalar-type>
           <namespace-uri></namespace-uri>
@@ -252,15 +251,6 @@
           <collation>http://marklogic.com/collation/en/S1</collation>
           <range-value-positions>false</range-value-positions>
         </range-element-index>
-
-         <range-element-index>
-          <scalar-type>string</scalar-type>
-          <namespace-uri></namespace-uri>
-          <localname>feature</localname>
-          <collation>http://marklogic.com/collation/en/S1</collation>
-          <range-value-positions>false</range-value-positions>
-        </range-element-index>
-
 
         <range-element-index>
           <scalar-type>string</scalar-type>
