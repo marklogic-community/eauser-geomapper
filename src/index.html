@@ -25,15 +25,15 @@
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script> 
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
 
-<!-- For the Date Range Picker -->
-<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
+  <!-- For the Date Range Picker -->
+  <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
 
   <!-- Private Keys -->
   <script type="text/javascript" src="private/browserKeys.js"></script>
 
-<!-- Start of CSS -->
+  <!-- Start of CSS -->
   <style>
     body {
       padding-top: 50px;
@@ -118,7 +118,7 @@
         <button type="button" id="clearButton" class="btn btn-default btn-block">Clear Map</button>
       </div> -->
 
-  <br><br><br>
+      <br><br><br>
 
   <!-- Select Industry -->
       <div class="row" id="selectIndustry">
@@ -148,9 +148,9 @@
               <div class="panel-heading">
                 <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
               </div>
-                <div id="collapse2" class="panel-collapse collapse in">
+              <div id="collapse2" class="panel-collapse collapse in">
                 <ul class="list-group" id="featureUL"></ul>
-                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -170,29 +170,29 @@
       <br>
       <div id="mapid"></div>
 
-  </div>
-</div> <!-- end of ng-hide -->
+    </div>
+  </div> <!-- end of ng-hide -->
 
-<!-- USER DETAILS -->
-<div class="container-fluid" ng-show="showDetail">
-  <h3>User Details:</h3>
-  <br/>
+  <!-- USER DETAILS -->
+  <div class="container-fluid" ng-show="showDetail">
+    <h3>User Details:</h3>
+    <br/>
 
-  <table class="table table-hover">
-    <tr>
-      <td>First Name</td>
-      <td>{{user.firstName}}</td>
-    </tr>
-    <tr>
-      <td>Last Name</td>
-      <td>{{user.lastName}}</td>
-    </tr>
-    <tr>
-      <td>Email Address</td>
-      <td>{{user.email}}</td>
-    </tr>
-  </table>
-</div> <!-- end of ng-show -->
+    <table class="table table-hover">
+      <tr>
+        <td>First Name</td>
+        <td>{{user.firstName}}</td>
+      </tr>
+      <tr>
+        <td>Last Name</td>
+        <td>{{user.lastName}}</td>
+      </tr>
+      <tr>
+        <td>Email Address</td>
+        <td>{{user.email}}</td>
+      </tr>
+    </table>
+  </div> <!-- end of ng-show -->
 
 </div> <!-- end of ng-app and ng-controller -->
 
@@ -202,13 +202,13 @@
 <!-- Displaying the map (in JS) -->
 <script type="text/javascript" src="public/map.js"></script>
 <div id = "dialogFeatureEdit" hidden title="Edit user features">
-    <div id = "userFeatures">
-      <div>
-        <p id = "dialogUserEmail"></p>
-      </div>
-      <b> Features: </b>
-      <textarea rows="3" cols="30" id="FeatureText"> </textarea>
+  <div id = "userFeatures">
+    <div>
+      <p id = "dialogUserEmail"></p>
     </div>
+    <b> Features: </b>
+    <textarea rows="3" cols="30" id="FeatureText"> </textarea>
+  </div>
 </div>
 
 </body>
