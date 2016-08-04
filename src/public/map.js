@@ -40,13 +40,6 @@ function start() {
   map.addLayer(markers);
   map.addLayer(drawnShapes);
 
-  // Load all MarkLogic feature and industry options for dropdown menus
-  // and Draw all map markers
-  doPost('/search.sjs', drawPage, true);
-
-  // mouse-click event for 'clear map' button
-  $("#clearButton").click(removeAllFeatures);
-
   //Selections will hold info on the current state of selected options to query
   selections = {
     features: [],
@@ -54,10 +47,18 @@ function start() {
     date1: "",
     date2: ""
   };
+
+  // Load all MarkLogic feature and industry options for dropdown menus
+  doPost('/search.sjs', drawPage, true);
+
+  // After all industries and features are known, fetch the users from the database and display them
+  doPost('/search.sjs', displayGeoJSON, false);
+
   addMapEvents();
 }
 
 function addMapEvents() {
+  //drawControl is the map element that allows drawing and deleting of shapes/layers
   var drawControl = new L.Control.Draw({
     edit: { //allows editing/deleting of drawn shapes on map
       featureGroup: drawnShapes
@@ -70,20 +71,22 @@ function addMapEvents() {
   });
   map.addControl(drawControl);
 
+  // Events
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
     doPost("/search.sjs", displayGeoJSON, false);
   });
-
   map.on('draw:edited', function (e) {
     doPost("/search.sjs", displayGeoJSON, false);
   });
-
   map.on('draw:deleted', function (e) {
     // Update db to save latest changes.
     drawnShapes.removeLayer(e.layer);
   });
-  map.on('zoomend', function(e) {
+  map.on('zoomend', function (e) {
+    doPost("/search.sjs", displayGeoJSON, false);
+  })
+  map.on('drag', function (e) {
     doPost("/search.sjs", displayGeoJSON, false);
   })
 
@@ -100,13 +103,13 @@ function addMapEvents() {
 
 // Draw markers on map
 function drawPage(response) {
-  displayGeoJSON(response);
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
 function doPost(url, success, firstLoad) {
+
   var payload = {
     selections: selections,
     mapWindow: [ //Used for search if no drawn shapes
@@ -134,41 +137,52 @@ function fail(jqXHR, status, errorThrown) {
   console.log(errorThrown);
 }
 
+//features is an array []
 function displayFeatures(features) {
 
   for (var ndx in features) {
-    //var count = features.Features[obj]; // frequency of each feature
-    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
+    var count = features[ndx]; // frequency of each feature
+    $('#collapse2 ul').append('<li class="list-group-item"><input checked type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
+    // Commented out because no feature data yet in database
+    //selections.features.push(features[ndx].toString());
   }
-  var $features =  $("#featureUL li");
+  var $features =  $("#featureUL .fChecker");
   for (var i = 0; i < $features.length; i++) {
     $features[i].onclick = function(e) {
-      //e.target.value not working for strings with spaces
-      if (e.target.value === 0) {}
+      if (e.target.value === 0) {
+        // e.target.value is 0 when click is on text in html and not on the check box
+      }
       else {
-        updateSelections("Feature", e.target.offsetParent.innerText);
-        doPost("/search.sjs", displayGeoJSON, false);
+        // Commented out for now because no feature data in database.
+        //updateSelections("Feature", e.target.nextSibling.data);
+        //doPost("/search.sjs", displayGeoJSON, false);
       }
     }
   }
 }
 
-// Industries with spaces are destroying this, only the first word before the space is represented in e.target.value
+// industries is an object {}
 function displayIndustries(industries) {
+
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
-    // leaving out count for now, messing with checkbox value field  ...  '<i>('+count.toString()+')</i>'+
-    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox"class="iChecker"value='+obj+'>'+obj+'</li>');
+    $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>'+obj+'<i>('+count+')</i></li>');
+    //Add value to the selections so code works with what is being displayed
+    selections.industries.push(obj.toString());
   }
+  // Problem lives with how the UL is selected adnd what it is receiving,
+  var $industries =  $("#industryUL .iChecker");
 
-  var $industries =  $("#industryUL li");
+  // Conveniently the length property here refers to the number of elements appended to the selector
+  // AKA stuff not normally there, in other words, the length is the number of industries in the UL.
+  // and they occur at properties 0 -> $industries.length (y) Thank you, God.
   for (var i = 0; i < $industries.length; i++) {
     $industries[i].onclick = function(e) {
       if (e.target.value === 0) {
         // e.target.value is 0 when click is on text in html and not on the check box
       }
       else {
-        updateSelections("Industry", e.target.offsetParent.innerText);
+        updateSelections("Industry", e.target.nextSibling.data);
         doPost("/search.sjs", displayGeoJSON, false);
       }
     }
@@ -178,12 +192,11 @@ function displayIndustries(industries) {
 
 function updateSelections(which, value) {
   var index;
-
   if (which === "Industry") {
-    // check if value is in the array
+    // Check if value is in the array
     index = selections.industries.indexOf(value);
     if (index > -1) { //unchecked the box
-      // Already in the array, aka checked already, so unchecking was done
+      // Already in the array, aka box was checked, so unchecking was just done
       selections.industries.splice(index, 1);
     }
     else { //checked the box
@@ -207,11 +220,11 @@ function displayGeoJSON(geojsonFeatures) {
   removeAllFeatures();
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
-      var marker = new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
+      var marker = new L.CircleMarker(latlng, {radius: 3, fillOpacity: 0.85});
       return marker;
     },
     onEachFeature: function (feature, layer) {
-      layer.bindPopup(formatPopup(feature.preview));
+      layer.bindPopup(formatPopup(feature.fullDetails));
     },
     style: function(feature) {
       return {color: getColor(feature)};
@@ -280,22 +293,6 @@ function initDialog() {
   });
 }
 
-function editFeatures() {
-  var dialog;
-
-  dialog = $("#dialogFeatureEdit");
-  if (dialog.dialog("instance") === undefined) {
-    initDialog();
-  }
-  dialog.dialog("open");
-  document.getElementById("dialogUserEmail").innerHTML = "<b> Email: </b>" + map.currUser.preview.email;
-  // Clear the text area before adding new items, this method is slow
-  document.getElementById("FeatureText").value = formatFeatures();
-  // Get the features of the selected user
-
-  $("#userFeatures").show();
-}
-
 function saveFeatureContents() {
   var featStr = $("#FeatureText").val();
   var featArr = featStr.split(",");
@@ -319,13 +316,14 @@ function formatFeatures() {
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
+
   var str = "";
   if (!properties) return str;
 
   map.currUser = properties;
   // EA User's name
   if (properties.firstname ) {
-    str += "<b>EA User:</b> " + properties.firstname;
+    str += "<b>EA User Name:</b> " + properties.firstname;
     if (properties.lastname)
       str += " " + properties.lastname;
     str += "<br>";
@@ -362,7 +360,8 @@ function formatPopup(properties) {
     str += "<b>Features:</b> None specified";
     str += "<br>";
   }
-  str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
+  // Edit features inside of the details.html page
+  //str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
 
   // Option 1:
   // Show full detail button (could also look like a link)
@@ -381,22 +380,21 @@ function formatPopup(properties) {
 $(function filterDate() {
 
   $('input[name="datefilter"]').daterangepicker({
-      autoUpdateInput: false,
-      locale: {
-          cancelLabel: 'Clear'
-      }
+    autoUpdateInput: false,
+    locale: {
+      cancelLabel: 'Clear'
+    }
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function apply(ev, picker) {
-      $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
   $('input[name="datefilter"]').on('cancel.daterangepicker', function cancel(ev, picker) {
-      $(this).val('');
+    $(this).val('');
   });
 
   // $('span[name="calendar"]').on("click", function apply(ev, picker) {
-  //   console.log("wat");
   //     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   // });
 
