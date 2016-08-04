@@ -1,36 +1,48 @@
-var app = angular.module("detailApp", ["ngRoute", "ngSanitize"]);
+// url will be the form http://host.whatever/details22.html?username={{username}}
 
-app.controller("detailController", function($scope, $sce, $routeParams) { //, $routeParams/*, user */) {
-  
-  console.log("outside " + $routeParams);
-  console.log("outside " + $routeParams["username"]);
+// from http://stackoverflow.com/questions/19491336/get-url-parameter-jquery-or-how-to-get-query-string-values-in-js
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
 
-  $scope.$on("$routeChangeSuccess", function() {
-    console.log("inside ");
-    console.log($routeParams);
-    console.log($routeParams.username);
-  })
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
 
-  $scope.showDetail = false;
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
 
-  //for Option 2 (description in map.html),
-  //use $routeParams.username to find $scope.user
-  //$scope.user = user;
+var username = getUrlParameter("username");
 
-  // Kevin's data for testing purposes.
-  $scope.user = 
-  {
+$(document).ready(function() {
+  payload = {"username": username};
+  $.ajax({
+    type: "POST",
+    url: "/scripts/findUser.sjs",
+    data: JSON.stringify(payload),
+    contentType: "application/json",
+    dataType: "json",
+    success: display, 
+    error: fail
+  });
+});
+
+///////////////////////////////////////////////////
+// for testing purposes:
+var user =   {
     "type": "Feature", 
-    "preview": {
+    "fullDetails": {
       "firstname": "Kevin", 
       "lastname": "Costello", 
       "email": "hiKeven@what.com", 
       "city": "San Carlos", 
       "state": "CA", 
       "industry": "Technology - Software", 
-      "company": "MarkLogic"
-    }, 
-    "fullDetails": {
+      "company": "MarkLogic",
       "phone": "123-456-7890", 
       "accountType": "Customer", 
       "address": "999 Skyway Rd Ste 200", 
@@ -67,68 +79,70 @@ app.controller("detailController", function($scope, $sce, $routeParams) { //, $r
       ]
     }
   };
+////////////////////////////////////
 
+function display(user) { // change this "user" parameter to anything else to view the test data
 
-  //Will use to create an editable features list (with checkboxes)
-  // completely aesthetic at the moment.
-  $scope.featureCheckboxes = function() {
+  // user details
+  $("#firstname").append(user.fullDetails.firstname);
+  $("#lastname").append(user.fullDetails.lastname);
+  $("#email").append(user.fullDetails.email);
+  $("#address").append(user.fullDetails.address);
+  $("#city").append(user.fullDetails.city);
+  $("#state").append(user.fullDetails.state);
+  $("#postalCode").append(user.fullDetails.postalCode);
+  $("#country").append(user.fullDetails.country);
+  $("#region").append(user.fullDetails.region);
+  $("#industry").append(user.fullDetails.industry);
 
-    var str = "";
-
-    for (feature in $scope.user.features) {
+  // features (checkboxes)
+  if(user.features) {
+    for (item in user.features) {
       var checked = "";
-      if ($scope.user.features.feature) {
+      if (user.features[item]) {
         checked = "checked";
       }
-
-      //checkboxes not displaying
-      // will discuss with Daphne the quickest way to make the editable features list.
-      str += $sce.trustAsHtml("<label><input type=\"checkbox\" value=\"\"" + checked + ">" + feature + "</label><br/>");
+      $("#features").append("<label><input type=\"checkbox\" value=\"\"" + checked + ">&nbsp;&nbsp;&nbsp;  " + item + "</label><br/><br/>");
     }
-
-    return str;
-    // TODO:
-    // need to keep track of changes and update MarkLogic accordingly.
-  };
-
-  if ($routeParams.username) {
-    $scope.user.fullDetails.username = $routeParams.username;
+  }
+  else {
+    $("#features").append("<h5>No features to list</h5");
   }
 
-});
+  // company details
+  $("#company").append(user.fullDetails.company);
+  $("#revenueRange").append(user.fullDetails.revenueRange);
+  $("#numEmployees").append(user.fullDetails.numEmployees);
+  $("#website").append(user.fullDetails.website);
 
-// NOTE: (7/28/16) 
-// Everything below this line was an experiment to get the view to 
-// change from the map to the full detail page. 
-// We will resolve this with Daphne next week.
+  // Marketo xml source
+  $("#source").append(encodeXml(user.source));
 
+  // Marklogic account info
+  $("#accountType").append(user.fullDetails.accountType);
+  $("#username").append(user.fullDetails.username);
+  $("#registeredForEAML8").append(user.fullDetails.registeredForEAML8);
+  $("#hasAccessToEAML9").append(user.fullDetails.hasAccessToEAML9);
+  $("#registeredForNoSQLforDummies").append(user.fullDetails.registeredForNoSQLforDummies);
+  $("#registrationDate").append(user.fullDetails.registrationDate);
+  $("#leadSource").append(user.fullDetails.leadSource);
 
-/*
-app.controller("mapController", function($scope) {
+};
 
-  // a click has been noticed. Check if a popup has appeared.
-  // if yes, hold onto the username, in case they ask for full details.
-  $scope.checkUsername = function() {
-    // scan DOM for the popup.
-    document.getElementById("")
-      .getElementsByClassName("")[0] // examples..
-  };
-});
-*/
+// from http://stackoverflow.com/questions/2959642/how-to-make-a-valid-string-for-xml-in-javascript
+function encodeXml(s) {
+  return (s
+    .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&apos;')
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\t/g, '&#x9;').replace(/\n/g, '&#xA;').replace(/\r/g, '&#xD;')
+  );
+}
 
-app.config(function($routeProvider) {
-  $routeProvider
-    .when("/details.html/:username", {
-      templateUrl: "details.html",
-      controller: "detailController"
-    })
-    .otherwise( {
-      redirectTo: "/"
-    });
-});
-
-//should probably have this be a single-page application... That way passing info to the scope for display is easier.
-
-//also, can just hide the map page.
-//also, it should hold the results of any search the user just performed, correct?
+function fail(jqXHR, status, errorThrown) 
+{
+  console.log("Failed to receive data: ");
+  console.log(jqXHR);
+  console.log(status);
+  console.log(errorThrown)
+};
 
