@@ -40,10 +40,15 @@ function start() {
   map.addLayer(markers);
   map.addLayer(drawnShapes);
 
+  // mouse-click event for 'clear map' button
+  // $("#clearButton").click(removeAllFeatures);
+  // $('span[name="trashFeature"]').click(removeAllFeatures);
+
   //Selections will hold info on the current state of selected options to query
   selections = {
     features: [],
     industries: [],
+    companies: [],
     date1: "",
     date2: ""
   };
@@ -83,12 +88,6 @@ function addMapEvents() {
     // Update db to save latest changes.
     drawnShapes.removeLayer(e.layer);
   });
-  map.on('zoomend', function (e) {
-    doPost("/search.sjs", displayGeoJSON, false);
-  })
-  map.on('drag', function (e) {
-    doPost("/search.sjs", displayGeoJSON, false);
-  })
 
 }
 
@@ -105,6 +104,7 @@ function addMapEvents() {
 function drawPage(response) {
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
+  displayCompanies(response.facets.Company);
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
@@ -190,6 +190,29 @@ function displayIndustries(industries) {
 
 }
 
+// companies is an object {}
+function displayCompanies(companies) {
+  for (var obj in companies) {
+    // does not include the count -- assuming that there is only one user for most companies
+
+    $('#collapse3 ul').append('<li class="list-group-item"><input checked type="checkbox" class="cChecker" value='+ obj+ '>' + obj + '</li>');
+    selections.companies.push(obj.toString());
+  }
+  var $companies = $("#companyUL .cChecker");
+
+  for (var i = 0; i < $companies.length; i++) {
+    $companies[i].onclick = function(e) {
+      if (e.target.value == 0) {
+        // e.target.value is 0 when click is on text in html and not on the check box
+      }
+      else {
+        updateSelections("Company", e.target.nextSibling.data);
+        doPost("/search.sjs", displayGeoJSON, false);
+      }
+    }
+  }
+}
+
 function updateSelections(which, value) {
   var index;
   if (which === "Industry") {
@@ -211,6 +234,18 @@ function updateSelections(which, value) {
     }
     else { //checked the box
       selections.features.push(value);
+    }
+  }
+
+  else if (which === "Company") {
+    index = selections.companies.indexOf(value);
+
+    if (index > -1) { //unchecked the box
+      // Already in the array, aka checked already, so unchecking was done
+      selections.companies.splice(index, 1);
+    }
+    else { // checked the box
+      selections.companies.push(value);
     }
   }
 }
@@ -304,14 +339,9 @@ function saveFeatureContents() {
     return String.prototype.trim.apply(s);
   });
 
-  // ***** TODO ****
-  // AJAX call to MarkLogic and send the features in the
-  // textarea as params to save into ML, use email to find user in database
-}
-
-function formatFeatures() {
-  //return map.currUser.preview.features.toString();
-  return "No feature data (yet)";
+//   // ***** TODO ****
+//   // AJAX call to MarkLogic and send the features in the
+//   // textarea as params to save into ML, use email to find user in database
 }
 
 // firstName, lastname, email, city, state, industry, company
@@ -356,21 +386,21 @@ function formatPopup(properties) {
     }
     str += "</UL>";
     str += "<br>";
-  } else if (properties.features && properties.features.length === 0) {
+    }
+  else if (properties.features && properties.features.length === 0) {
     str += "<b>Features:</b> None specified";
     str += "<br>";
   }
   // Edit features inside of the details.html page
-  //str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
+  // str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
 
-  //str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
+  // str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
   var username = "" + properties.username;
   str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"username\" value=\"" + username + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>"
   return str;
 }
 
-
-
+// Date Range Picker
 $(function filterDate() {
 
   $('input[name="datefilter"]').daterangepicker({
@@ -380,17 +410,27 @@ $(function filterDate() {
     }
   });
 
-  $('input[name="datefilter"]').on('apply.daterangepicker', function apply(ev, picker) {
+  $('span[name="calendar"]').daterangepicker({
+      autoUpdateInput: false,
+      locale: {
+        cancelLabel: 'Clear'
+      }
+  });
+
+  $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
-  $('input[name="datefilter"]').on('cancel.daterangepicker', function cancel(ev, picker) {
+  $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
     $(this).val('');
   });
 
-  // $('span[name="calendar"]').on("click", function apply(ev, picker) {
-  //     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-  // });
+  $('span[name="calendar"]').on('apply.daterangepicker', function (ev, picker) {
+    $('input[name="datefilter"]').val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+  });
 
+  $('span[name="calendar"]').on('cancel.daterangepicker', function (ev, picker) {
+    $('input[name="datefilter"]').val('');
+  });
 
 });
