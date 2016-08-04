@@ -1,25 +1,21 @@
 <!DOCTYPE html>
+
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <head>
-
   <!-- jQuery, required by Bootstrap -->
   <script src="jquery-1.12.1.min.js"></script>
+  <script src="jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="jquery-ui.min.css">
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
-  <!-- Angular -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script> 
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
-
   <!-- Start of CSS -->
   <style>
     body {
-      padding-top: 50px;
-      padding-bottom: 50px;
+      padding: 50px;
     }
     .col-sm-4 {
     /*  border: 1px solid red;*/
@@ -43,10 +39,6 @@
     .container h3 {
       text-align: center;
     }
-    .container-fluid {
-      padding-left: 40px;
-      padding-right: 40px;
-    }
     textarea {
       width: 100%;
       height: 70px;
@@ -60,135 +52,129 @@
   <h1>Early Access User Geomapper</h1>
 </div>
 
-<div ng-app="detailApp" ng-controller="detailController" class="container-fluid">
+<div class="row">
+  <div class="col-sm-6">
+    <h4>User Details:</h4>
+    <br/>
+    <table class="table table-hover">
+      <tr>
+        <td>First Name</td>
+        <td id="firstname"></td>
+      </tr>
+      <tr>
+        <td>Last Name</td>
+        <td id="lastname"></td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td id="email"></td>
+      </tr>
+      <tr>
+        <td>Address</td>
+        <td id="address"></td>
+      </tr>
+      <tr>
+        <td>City</td>
+        <td id="city"></td>
+      </tr>
+      <tr>
+        <td>State</td>
+        <td id="state"></td>
+      </tr>
+      <tr>
+        <td>Postal Code</td>
+        <td id="postalCode"></td>
+      </tr>
+      <tr>
+        <td>Country</td>
+        <td id="country"></td>
+      </tr>
+      <tr>
+        <td>Geographical Region</td>
+        <td id="region"></td>
+      </tr>
+      <tr>
+        <td>Industry</td>
+        <td id="industry"></td>
+      </tr>
+    </table>
+  </div>
 
-  <div class="row">
-    <div class="col-sm-6">
-      <h4>User Details:</h4>
+  <div class="col-sm-6">
+    <h4>Features</h4>
+    <br/>
+    <div id="features"></div>
+  </div>
+</div> <!-- end of first row -->
+
+<br/>
+
+<div class="row">
+  <div class="col-sm-6">
+    <h4>Company info:</h4>
+    <br/>
+    <table class="table table-hover">
+      <tr>
+        <td>Company</td>
+        <td id="company"></td>
+      </tr>
+      <tr>
+        <td>Revenue Range</td>
+        <td id="revenueRange"></td>
+      </tr>
+      <tr>
+        <td>Number of Employees</td>
+        <td id="numEmployees"></td>
+      </tr>
+      <tr>
+        <td>Website</td>
+        <td id="website"></td>
+      </tr>
+    </table>
+
+
+    <div>
+      <h4>Marketo XML Source</h4>
       <br/>
-      <table class="table table-hover">
-        <tr>
-          <td>First Name</td>
-          <td>{{user.preview.firstname}}</td>
-        </tr>
-        <tr>
-          <td>Last Name</td>
-          <td>{{user.preview.lastname}}</td>
-        </tr>
-        <tr>
-          <td>Email</td>
-          <td>{{user.preview.email}}</td>
-        </tr>
-        <tr>
-          <td>Address</td>
-          <td>{{user.fullDetails.address}}</td>
-        </tr>
-        <tr>
-          <td>City</td>
-          <td>{{user.preview.city}}</td>
-        </tr>
-        <tr>
-          <td>State</td>
-          <td>{{user.preview.state}}</td>
-        </tr>
-        <tr>
-          <td>Postal Code</td>
-          <td>{{user.fullDetails.postalCode}}</td>
-        </tr>
-        <tr>
-          <td>Country</td>
-          <td>{{user.fullDetails.country}}</td>
-        </tr>
-        <tr>
-          <td>Geographical Region</td>
-          <td>{{user.fullDetails.region}}</td>
-        </tr>
-        <tr>
-          <td>Industry</td>
-          <td>{{user.preview.industry}}</td>
-        </tr>
-      </table>
+      <textarea readonly id="source"></textarea>
     </div>
+  </div>
 
-    <div class="col-sm-6">
-      <h4>Features</h4>
-      <br/>
-      <div ng-bind-html="featureCheckboxes()"></div>
-    </div>
-  </div> <!-- end of first row -->
-
-  <br/>
-
-  <div class="row">
-    <div class="col-sm-6">
-      <h4>Company info:</h4>
-      <br/>
-      <table class="table table-hover">
-        <tr>
-          <td>Company</td>
-          <td>{{user.preview.company}}</td>
-        </tr>
-        <tr>
-          <td>Revenue Range</td>
-          <td>{{user.fullDetails.revenueRange}}</td>
-        </tr>
-        <tr>
-          <td>Number of Employees</td>
-          <td>{{user.fullDetails.numEmployees}}</td>
-        </tr>
-        <tr>
-          <td>Website</td>
-          <td>{{user.fullDetails.website}}</td>
-        </tr>
-      </table>
-
-
-      <div>
-        <h4>Marketo XML Source</h4>
-        <br/>
-
-        <textarea readonly>{{user.source}}</textarea>
-
-      </div>
-    </div>
-
-    <div class="col-sm-6">
-      <h4>MarkLogic Account info:</h4>
-      <br/>
-      <table class="table table-hover">  
-        <tr>
-          <td>Account Type</td>
-          <td>{{user.fullDetails.accountType}}</td>
-        </tr>
-        <tr>
-          <td>username</td>
-          <td>{{user.fullDetails.username}}</td>
-        </tr>
-        <tr>
-          <td>Registered for EAML8?</td>
-          <td>{{user.fullDetails.registeredForEAML8}}</td>
-        </tr>
-        <tr>
-          <td>Has Access to EAML9?</td>
-          <td>{{user.fullDetails.hasAccessToEAML9}}</td>
-        </tr>
-        <tr>
-          <td>Registered for NoSQL for Dummies?</td>
-          <td>{{user.fullDetails.registeredForNoSQLforDummies}}</td>
-        </tr>
-        <tr>
-          <td>Registration Date</td>
-          <td>{{user.fullDetails.registrationDate}}</td>
-        </tr>
-        <tr>
-          <td>Lead Source</td>
-          <td>{{user.fullDetails.leadSource}}</td>
-        </tr>
-      </table>
-    </div>
-  </div> <!-- end of second row -->
-
-</div>
+  <div class="col-sm-6">
+    <h4>MarkLogic Account info:</h4>
+    <br/>
+    <table class="table table-hover">  
+      <tr>
+        <td>Account Type</td>
+        <td id="accountType"></td>
+      </tr>
+      <tr>
+        <td>username</td>
+        <td id="username"></td>
+      </tr>
+      <tr>
+        <td>Registered for EAML8?</td>
+        <td id="registeredForEAML8"></td>
+      </tr>
+      <tr>
+        <td>Has Access to EAML9?</td>
+        <td id="hasAccessToEAML9"></td>
+      </tr>
+      <tr>
+        <td>Registered for NoSQL for Dummies?</td>
+        <td id="registeredForNoSQLforDummies"></td>
+      </tr>
+      <tr>
+        <td>Registration Date</td>
+        <td id="registrationDate"></td>
+      </tr>
+      <tr>
+        <td>Lead Source</td>
+        <td id="leadSource"></td>
+      </tr>
+    </table>
+  </div>
+</div> <!-- end of second row -->
 
 <script src="details.js"></script>
 
