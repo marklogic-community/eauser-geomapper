@@ -81,25 +81,46 @@ function addMapEvents() {
   });
   map.on('draw:deleted', function (e) {
     // Update db to save latest changes.
-    drawnShapes.removeLayer(e.layer);
+
+    // Loop through each deleted layer
+    /// (More than one could have been deleted)
+    console.log(map);
+    for (var i in e.layers._layers) {
+      removeMarkers(e.layers._layers[i].getBounds());
+    }
+
   });
-  map.on('zoomend', function (e) {
-    doPost("/search.sjs", displayGeoJSON, false);
-  })
-  map.on('drag', function (e) {
-    doPost("/search.sjs", displayGeoJSON, false);
-  })
+  // May need to search entire map if no drawn layers,
+  // if zoom and dragging events are removed.
 
 }
 
-// function clearResults() {
-//   $('#collapse1 ul').empty();
-//   $('#collapse2 ul').empty();
-//   map.on('draw:deleted', function (e) {
-//     // update db to save latest changes
-//     drawnShapes.removeLayer(e.layer);
-//   });
-// }
+// Check if markers are contained in bounds.
+// Remove all markers from map that are contained in bounds and not contained
+// in any drawn shapes on the map (if any);
+function removeMarkers(bounds) {
+  // loop through all markers on map
+  // and find if any are contained in bounds
+  // delete markers if they are contained in bounds
+  // and no other drawn shapes
+
+  var markersObj;
+  for (var obj in markers._layers) {
+    // markersObj is an object of all marker objects currently on the map
+    markersObj = markers._layers[obj]._layers;
+
+  }
+  console.log(bounds);
+  if (markersObj) {
+    for (var obj in markersObj) {
+
+      if (bounds.contains(markersObj[obj].getLatLng())) {
+         map.removeLayer(markersObj[obj]);
+      }
+
+    }
+  }
+}
 
 // Draw markers on map
 function drawPage(response) {
@@ -113,6 +134,7 @@ function doPost(url, success, firstLoad) {
   var payload = {
     selections: selections,
     mapWindow: [ //Used for search if no drawn shapes
+      // TODO change to be entire map range, not just current view
       map.getBounds().getSouth(),
       map.getBounds().getWest(),
       map.getBounds().getNorth(),
@@ -240,7 +262,7 @@ function displayGeoJSON(geojsonFeatures) {
 }
 
 function removeAllFeatures() {
-  drawnShapes.clearLayers();
+  //drawnShapes.clearLayers();
   markers.clearLayers();
 }
 
