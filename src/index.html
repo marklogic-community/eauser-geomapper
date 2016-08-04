@@ -14,25 +14,20 @@
   <script src="jquery-ui.min.js"></script>
   <link rel="stylesheet" href="jquery-ui.min.css">
 
-
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
-  <!-- Angular -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script>
-
-<!-- For the Date Range Picker -->
-<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
+  <!-- For the Date Range Picker -->
+  <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css"/>
 
   <!-- Private Keys -->
   <script type="text/javascript" src="private/browserKeys.js"></script>
 
-<!-- Start of CSS -->
+  <!-- Start of CSS -->
   <style>
     body {
       padding-top: 50px;
@@ -87,21 +82,13 @@
 
 <body>
 
-<div ng-app="detailApp" ng-controller="detailController">
-
 <div class="title">
   <h1>EA Tracker</h1>
   <h3> <i>This application is a MarkLogic 9-based visualization that provides an "executive" display for locations of all MarkLogic 9 Early Access users. </i></h3>
 </div>
 
-
-<!-- <button ng-click="showDetail=!showDetail" ng-init="showDetail=false">
-  Switch
-</button> -->
-
-
 <!-- MAP -->
-<div class="container" ng-hide="showDetail">
+<div class="container">
   <div class="row">
     <div class="col-md-3">
       <h3 id="featureTitle"></h3><br>
@@ -117,7 +104,7 @@
         <button type="button" id="clearButton" class="btn btn-default btn-block">Clear Map</button>
       </div> -->
 
-  <br><br><br>
+      <br><br><br>
 
   <!-- Select Industry -->
       <div class="row" id="selectIndustry">
@@ -147,9 +134,9 @@
               <div class="panel-heading">
                 <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
               </div>
-                <div id="collapse2" class="panel-collapse collapse in">
+              <div id="collapse2" class="panel-collapse collapse in">
                 <ul class="list-group" id="featureUL"></ul>
-                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -169,45 +156,21 @@
       <br>
       <div id="mapid"></div>
 
-  </div>
-</div> <!-- end of ng-hide -->
+    </div>
+  </div> 
 
-<!-- USER DETAILS -->
-<div class="container-fluid" ng-show="showDetail">
-  <h3>User Details:</h3>
-  <br/>
-
-  <table class="table table-hover">
-    <tr>
-      <td>First Name</td>
-      <td>{{user.firstName}}</td>
-    </tr>
-    <tr>
-      <td>Last Name</td>
-      <td>{{user.lastName}}</td>
-    </tr>
-    <tr>
-      <td>Email Address</td>
-      <td>{{user.email}}</td>
-    </tr>
-  </table>
-</div> <!-- end of ng-show -->
-
-</div> <!-- end of ng-app and ng-controller -->
-
-<!-- Displaying user details (Angular controller) -->
-<script src="details.js"></script>
 
 <!-- Displaying the map (in JS) -->
 <script type="text/javascript" src="public/map.js"></script>
+
 <div id = "dialogFeatureEdit" hidden title="Edit user features">
-    <div id = "userFeatures">
-      <div>
-        <p id = "dialogUserEmail"></p>
-      </div>
-      <b> Features: </b>
-      <textarea rows="3" cols="30" id="FeatureText"> </textarea>
+  <div id = "userFeatures">
+    <div>
+      <p id = "dialogUserEmail"></p>
     </div>
+    <b> Features: </b>
+    <textarea rows="3" cols="30" id="FeatureText"> </textarea>
+  </div>
 </div>
 
 </body>

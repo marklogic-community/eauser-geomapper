@@ -19,7 +19,7 @@ function start() {
 
   // Leaflet's map initialization method
   // 'mapid' is the div's name where the map will be found on the web page.
-  map = L.map('mapid').setView([0, 0], 2);
+  map = L.map('mapid', {"minZoom": 2}).setView([0, 0], 2);
   url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
   L.tileLayer(url,
@@ -411,19 +411,13 @@ function formatPopup(properties) {
   // Edit features inside of the details.html page
   //str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
 
-  // Option 1:
-  // Show full detail button (could also look like a link)
-  //  manually compile and link a button controlled by ng-click.
-  str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
-
-  // Option 2:
-  // Show full detai link.
-  //  changes the hash to #/detail/username,
-  //  use the username to pull the full document from MarkLogic
-  //str += "<a href=\"#/detail/" + properties.name + "\">Show Full Detail</a>";
-
+  //str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
+  var username = "" + properties.username;
+  str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"username\" value=\"" + username + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>"
   return str;
 }
+
+
 
 $(function filterDate() {
 
