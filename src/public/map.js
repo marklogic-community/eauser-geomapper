@@ -84,12 +84,6 @@ function addMapEvents() {
     // Update db to save latest changes.
     drawnShapes.removeLayer(e.layer);
   });
-  map.on('zoomend', function(e) {
-    doPost("/search.sjs", displayGeoJSON, false);
-  })
-  map.on('drag', function (e) {
-    doPost("/search.sjs", displayGeoJSON, false);
-  })
 
 }
 
