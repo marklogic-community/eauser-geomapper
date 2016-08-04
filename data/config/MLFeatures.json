@@ -1,5 +1,5 @@
 {
-  "MarkLogicFeatures": [
+  "MarkLogicFeatures": {
     "Data Integration": [
       "Entity Services",
       "Data Movement SDK",
@@ -23,5 +23,5 @@
       "JavaScript",
       "Query Console"
     ]
-  ]
+  }
 }
