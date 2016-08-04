@@ -387,7 +387,7 @@ function formatPopup(properties) {
     str += "</UL>";
     str += "<br>";
     }
-   else if (properties.features && properties.features.length === 0) {
+  else if (properties.features && properties.features.length === 0) {
     str += "<b>Features:</b> None specified";
     str += "<br>";
   }
@@ -413,26 +413,24 @@ $(function filterDate() {
   $('span[name="calendar"]').daterangepicker({
       autoUpdateInput: false,
       locale: {
-          cancelLabel: 'Clear'
+        cancelLabel: 'Clear'
       }
   });
 
   $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
-
-      $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
   $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
-      $(this).val('');
+    $(this).val('');
   });
 
   $('span[name="calendar"]').on('apply.daterangepicker', function (ev, picker) {
-      $('input[name="datefilter"]').val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+    $('input[name="datefilter"]').val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   });
 
   $('span[name="calendar"]').on('cancel.daterangepicker', function (ev, picker) {
-      $('input[name="datefilter"]').val('');
+    $('input[name="datefilter"]').val('');
   });
-
 
 });
