@@ -33,7 +33,7 @@ $(document).ready(function() {
 
 ///////////////////////////////////////////////////
 // for testing purposes:
-var user =   {
+var user_test =   {
     "type": "Feature", 
     "fullDetails": {
       "firstname": "Kevin", 
@@ -81,7 +81,7 @@ var user =   {
   };
 ////////////////////////////////////
 
-function display(user) { // change this "user" parameter to anything else to view the test data
+function display(user) {
 
   // user details
   $("#firstname").append(user.fullDetails.firstname);
