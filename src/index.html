@@ -54,11 +54,11 @@
       text-align: center;
     }
     /* centers text on selection menu */
-    #selectIndustry h3, #selectFeature h3 {
+    #selectIndustry h3, #selectFeature h3, #selectCompany h3 {
       text-align: center;
     }
-    /* centers the date, industry, and feature selection menu divs */
-    #date, #selectIndustry, #selectFeature {
+    /* centers the date, industry, feature, and company selection menu divs */
+    #date, #selectIndustry, #selectFeature, #selectCompany {
       margin-left: auto;
       margin-right: auto;
     }
@@ -72,7 +72,7 @@
       left: 10px;
     }
     /* scrolling feature of the menu bars */
-    .panel-collapse, #collapse1 #collapse2 {
+    .panel-collapse, #collapse1 #collapse2 #collapse3 {
       max-height: 200px;
       overflow: hidden;
       overflow-y: auto;
@@ -156,13 +156,29 @@
         </div>
         <span class="glyphicon glyphicon-trash" name="trashFeature" aria-hidden="true"></span>
       </div>
-      <br><br><br>
 
-<!--     <div class="col-xs-12">
-      <button type="button" class="btn btn-default btn-lg" style="text-align:center">Draw Regions</button>
-    </div> -->
+      <br>
+
+  <!-- Select Company -->
+  <div class="row" id="selectCompany">
+    <div class="col-sm-10">
+      <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Select Company</a></h4>
+          </div>
+            <div id="collapse3" class="panel-collapse collapse in">
+            <ul class="list-group" id="companyUL"></ul>
+            </div>
+        </div>
+      </div>
+    </div>
+      <span class="glyphicon glyphicon-trash" name="trashFeature" aria-hidden="true"></span>
+  </div>
 
     </div>
+
+    <br>
 
 <!--     Map -->
     <div class="col-md-9">

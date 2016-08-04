@@ -52,6 +52,7 @@ function start() {
   selections = {
     features: [],
     industries: [],
+    companies: [],
     date1: "",
     date2: ""
   };
@@ -99,12 +100,9 @@ function addMapEvents() {
 // Draw markers on map
 function drawPage(response) {
   displayGeoJSON(response);
-
-  console.log(response);
-  console.log(response.facets.Industry);
-
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
+  displayCompanies(response.facets.Company);
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
@@ -136,46 +134,51 @@ function fail(jqXHR, status, errorThrown) {
   console.log(errorThrown);
 }
 
+//features is an array []
 function displayFeatures(features) {
 
   for (var ndx in features) {
-    //var count = features.Features[obj]; // frequency of each feature
-    $('#collapse2 ul').append('<li class="list-group-item"><input type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
+    var count = features[ndx]; // frequency of each feature
+    $('#collapse2 ul').append('<li class="list-group-item"><input checked type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
+    // Commented out because no feature data yet in database
+    //selections.features.push(features[ndx].toString());
   }
-  var $features =  $("#featureUL li");
+  var $features =  $("#featureUL .fChecker");
   for (var i = 0; i < $features.length; i++) {
     $features[i].onclick = function(e) {
-      //e.target.value not working for strings with spaces
-      if (e.target.value === 0) {}
+      if (e.target.value === 0) {
+        // e.target.value is 0 when click is on text in html and not on the check box
+      }
       else {
-        updateSelections("Feature", e.target.offsetParent.innerText);
-        doPost("/search.sjs", displayGeoJSON, false);
+        // Commented out for now because no feature data in database.
+        //updateSelections("Feature", e.target.nextSibling.data);
+        //doPost("/search.sjs", displayGeoJSON, false);
       }
     }
   }
 }
 
-// Industries with spaces are destroying this, only the first word before the space is represented in e.target.value
+// industries is an object {}
 function displayIndustries(industries) {
+
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
-    console.log(count);
-
-    // leaving out count for now, messing with checkbox value field  ...  '<i>('+count.toString()+')</i>'+
-    // HTML:
-    // <li class="list-group-item"><input type="checkbox" class="iChecker" value="obj">obj</li>
-
-    $('#collapse1 ul').append('<li class="list-group-item"><input type="checkbox" class="iChecker" value="obj">'+ obj + '<i>('+ count +')</i>'+'</li>');
+    $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>'+obj+'<i>('+count+')</i></li>');
+    //Add value to the selections so code works with what is being displayed
+    selections.industries.push(obj.toString());
   }
-
-  var $industries =  $("#industryUL li");
+  // Problem lives with how the UL is selected adnd what it is receiving,
+  var $industries =  $("#industryUL .iChecker");
+  // Conveniently the length property here refers to the number of elements appended to the selector
+  // AKA stuff not normally there, in other words, the length is the number of industries in the UL.
+  // and they occur at properties 0 -> $industries.length (y) Thank you, God.
   for (var i = 0; i < $industries.length; i++) {
     $industries[i].onclick = function(e) {
       if (e.target.value === 0) {
         // e.target.value is 0 when click is on text in html and not on the check box
       }
       else {
-        updateSelections("Industry", e.target.offsetParent.innerText);
+        updateSelections("Industry", e.target.nextSibling.data);
         doPost("/search.sjs", displayGeoJSON, false);
       }
     }
@@ -183,9 +186,33 @@ function displayIndustries(industries) {
 
 }
 
+// companies is an object {}
+function displayCompanies(companies) {
+  for (var obj in companies) {
+    // does not include the count -- assuming that there is only one user for most companies
+
+    $('#collapse3 ul').append('<li class="list-group-item"><input checked type="checkbox" class="cChecker" value='+ obj+ '>' + obj + '</li>');
+    selections.companies.push(obj.toString());
+  }
+  var $companies = $("#companyUL .cChecker");
+
+  for (var i = 0; i < $companies.length; i++) {
+    $companies[i].onclick = function(e) {
+      if (e.target.value == 0) {
+        // e.target.value is 0 when click is on text in html and not on the check box
+      }
+      else {
+        updateSelections("Company", e.target.nextSibling.data);
+        doPost("/search.sjs", displayGeoJSON, false);
+      }
+    }
+  }
+}
+
 function updateSelections(which, value) {
   var index;
 
+  // console.log(value);
   if (which === "Industry") {
     // check if value is in the array
     index = selections.industries.indexOf(value);
@@ -207,6 +234,18 @@ function updateSelections(which, value) {
       selections.features.push(value);
     }
   }
+
+  else if (which === "Company") {
+    index = selections.companies.indexOf(value);
+
+    if (index > -1) { //unchecked the box
+      // Already in the array, aka checked already, so unchecking was done
+      selections.companies.splice(index, 1);
+    }
+    else { // checked the box
+      selections.companies.push(value);
+    }
+  }
 }
 
 // Draw geojson data on map, data will originate from Marketo
@@ -218,7 +257,7 @@ function displayGeoJSON(geojsonFeatures) {
       return marker;
     },
     onEachFeature: function (feature, layer) {
-      layer.bindPopup(formatPopup(feature.preview));
+      layer.bindPopup(formatPopup(feature.fullDetails));
     },
     style: function(feature) {
       return {color: getColor(feature)};
@@ -314,25 +353,21 @@ function saveFeatureContents() {
     return String.prototype.trim.apply(s);
   });
 
-  // ***** TODO ****
-  // AJAX call to MarkLogic and send the features in the
-  // textarea as params to save into ML, use email to find user in database
-}
-
-function formatFeatures() {
-  //return map.currUser.preview.features.toString();
-  return "No feature data (yet)";
+//   // ***** TODO ****
+//   // AJAX call to MarkLogic and send the features in the
+//   // textarea as params to save into ML, use email to find user in database
 }
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
+
   var str = "";
   if (!properties) return str;
 
   map.currUser = properties;
   // EA User's name
   if (properties.firstname ) {
-    str += "<b>EA User:</b> " + properties.firstname;
+    str += "<b>EA User Name:</b> " + properties.firstname;
     if (properties.lastname)
       str += " " + properties.lastname;
     str += "<br>";
@@ -365,10 +400,12 @@ function formatPopup(properties) {
     }
     str += "</UL>";
     str += "<br>";
-  } else if (properties.features && properties.features.length === 0) {
+    }
+   else if (properties.features && properties.features.length === 0) {
     str += "<b>Features:</b> None specified";
     str += "<br>";
   }
+  // Edit features inside of the details.html page
   str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
 
   // Option 1:
@@ -380,12 +417,10 @@ function formatPopup(properties) {
   // Show full detai link.
   //  changes the hash to #/detail/username,
   //  use the username to pull the full document from MarkLogic
-  //str += "<a href=\"#/detail/" + properties.name + "\">Show Full Detail</a>";
+  str += "<a href=\"#/detail/" + properties.name + "\">Show Full Detail</a>";
 
   return str;
 }
-
-
 
 $(function filterDate() {
 
