@@ -1,9 +1,27 @@
 {
   "MarkLogicFeatures": [
-    "Entity Services",
-    "Data Integration",
-    "Data Movement",
-    "Template Driven Extraction",
-    "SQL"
+    "Data Integration": [
+      "Entity Services",
+      "Data Movement SDK",
+      "Template Driven Extraction", 
+      "SQL Enhancements",
+      "Optic API"
+    ],
+    "Security": [
+      "Encryption",
+      "Redaction",
+      "Element-level Security"
+    ],
+    "Manageability": [
+      "Ops Director",
+      "New Relic Plugin"
+    ],
+    "Additional Enhancements": [
+      "Geospatial",
+      "Search",
+      "Enhanced Tiered Storage",
+      "JavaScript",
+      "Query Console"
+    ]
   ]
 }
