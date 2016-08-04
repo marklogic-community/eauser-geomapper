@@ -14,7 +14,7 @@ var userID = keys.userID;
 var streamPosition = "";
 var remainingCount = 1;
 
-var oneDayAgo = util.oneDayAgo;
+var oneDayAgo = util.oneDayAgo(fn.currentDateTime());
 
 
 while (remainingCount > 0) {
@@ -38,7 +38,7 @@ while (remainingCount > 0) {
     + "<SOAP-ENV:Body>"
     + "<ns1:paramsGetMultipleLeads xmlns:ns1=\"http://www.marketo.com/mktows/\">"
     + "<lastUpdatedAt>"+ oneDayAgo + "</lastUpdatedAt>"
-    + "<batchSize>100</batchSize>"
+    + "<batchSize>200</batchSize>"
     + "<streamPosition>" + streamPosition + "</streamPosition>"
     + "</ns1:paramsGetMultipleLeads>"
     + "</SOAP-ENV:Body></SOAP-ENV:Envelope>"
@@ -60,6 +60,7 @@ while (remainingCount > 0) {
 
   xdmp.spawn("update.sjs", {"result": result.toArray()[1]}, null);
   
+
 }
 
 "done";
