@@ -40,13 +40,6 @@ function start() {
   map.addLayer(markers);
   map.addLayer(drawnShapes);
 
-  // Load all MarkLogic feature and industry options for dropdown menus
-  // and Draw all map markers
-  doPost('/search.sjs', drawPage, true);
-
-  // mouse-click event for 'clear map' button
-  $("#clearButton").click(removeAllFeatures);
-
   //Selections will hold info on the current state of selected options to query
   selections = {
     features: [],
@@ -54,10 +47,18 @@ function start() {
     date1: "",
     date2: ""
   };
+
+  // Load all MarkLogic feature and industry options for dropdown menus
+  doPost('/search.sjs', drawPage, true);
+
+  // After all industries and features are known, fetch the users from the database and display them
+  doPost('/search.sjs', displayGeoJSON, false);
+
   addMapEvents();
 }
 
 function addMapEvents() {
+  //drawControl is the map element that allows drawing and deleting of shapes/layers
   var drawControl = new L.Control.Draw({
     edit: { //allows editing/deleting of drawn shapes on map
       featureGroup: drawnShapes
@@ -70,6 +71,7 @@ function addMapEvents() {
   });
   map.addControl(drawControl);
 
+  // Events
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
     doPost("/search.sjs", displayGeoJSON, false);
@@ -101,14 +103,13 @@ function addMapEvents() {
 
 // Draw markers on map
 function drawPage(response) {
-  displayGeoJSON(response);
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
 function doPost(url, success, firstLoad) {
-  console.log("Doing Post!!!!!");
+
   var payload = {
     selections: selections,
     mapWindow: [ //Used for search if no drawn shapes
@@ -142,7 +143,8 @@ function displayFeatures(features) {
   for (var ndx in features) {
     var count = features[ndx]; // frequency of each feature
     $('#collapse2 ul').append('<li class="list-group-item"><input checked type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
-    selections.features.push(features[ndx].toString());
+    // Commented out because no feature data yet in database
+    //selections.features.push(features[ndx].toString());
   }
   var $features =  $("#featureUL .fChecker");
   for (var i = 0; i < $features.length; i++) {
@@ -151,8 +153,9 @@ function displayFeatures(features) {
         // e.target.value is 0 when click is on text in html and not on the check box
       }
       else {
-        updateSelections("Feature", e.target.nextSibling.data);
-        doPost("/search.sjs", displayGeoJSON, false);
+        // Commented out for now because no feature data in database.
+        //updateSelections("Feature", e.target.nextSibling.data);
+        //doPost("/search.sjs", displayGeoJSON, false);
       }
     }
   }
@@ -392,7 +395,6 @@ $(function filterDate() {
   });
 
   // $('span[name="calendar"]').on("click", function apply(ev, picker) {
-  //   console.log("wat");
   //     $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
   // });
 
