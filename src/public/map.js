@@ -174,7 +174,7 @@ function displayIndustries(industries) {
   var $industries =  $("#industryUL .iChecker");
 
   // Conveniently the length property here refers to the number of elements appended to the selector
-  // aka stuff not normally there, in other words, the length is the number of industries in the UL.
+  // AKA stuff not normally there, in other words, the length is the number of industries in the UL.
   // and they occur at properties 0 -> $industries.length (y) Thank you, God.
   for (var i = 0; i < $industries.length; i++) {
     $industries[i].onclick = function(e) {
@@ -193,10 +193,10 @@ function displayIndustries(industries) {
 function updateSelections(which, value) {
   var index;
   if (which === "Industry") {
-    // check if value is in the array
+    // Check if value is in the array
     index = selections.industries.indexOf(value);
     if (index > -1) { //unchecked the box
-      // Already in the array, aka checked already, so unchecking was done
+      // Already in the array, aka box was checked, so unchecking was just done
       selections.industries.splice(index, 1);
     }
     else { //checked the box
