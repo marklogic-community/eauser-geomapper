@@ -40,13 +40,9 @@ function start() {
   map.addLayer(markers);
   map.addLayer(drawnShapes);
 
-  // Load all MarkLogic feature and industry options for dropdown menus
-  // and Draw all map markers
-  doPost('/search.sjs', drawPage, true);
-
   // mouse-click event for 'clear map' button
   // $("#clearButton").click(removeAllFeatures);
-  $('span[name="trashFeature"]').click(removeAllFeatures);
+  // $('span[name="trashFeature"]').click(removeAllFeatures);
 
   //Selections will hold info on the current state of selected options to query
   selections = {
@@ -56,10 +52,18 @@ function start() {
     date1: "",
     date2: ""
   };
+
+  // Load all MarkLogic feature and industry options for dropdown menus
+  doPost('/search.sjs', drawPage, true);
+
+  // After all industries and features are known, fetch the users from the database and display them
+  doPost('/search.sjs', displayGeoJSON, false);
+
   addMapEvents();
 }
 
 function addMapEvents() {
+  //drawControl is the map element that allows drawing and deleting of shapes/layers
   var drawControl = new L.Control.Draw({
     edit: { //allows editing/deleting of drawn shapes on map
       featureGroup: drawnShapes
@@ -72,15 +76,14 @@ function addMapEvents() {
   });
   map.addControl(drawControl);
 
+  // Events
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
     doPost("/search.sjs", displayGeoJSON, false);
   });
-
   map.on('draw:edited', function (e) {
     doPost("/search.sjs", displayGeoJSON, false);
   });
-
   map.on('draw:deleted', function (e) {
     // Update db to save latest changes.
     drawnShapes.removeLayer(e.layer);
@@ -99,7 +102,6 @@ function addMapEvents() {
 
 // Draw markers on map
 function drawPage(response) {
-  displayGeoJSON(response);
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
   displayCompanies(response.facets.Company);
@@ -107,6 +109,7 @@ function drawPage(response) {
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
 function doPost(url, success, firstLoad) {
+
   var payload = {
     selections: selections,
     mapWindow: [ //Used for search if no drawn shapes
@@ -169,6 +172,7 @@ function displayIndustries(industries) {
   }
   // Problem lives with how the UL is selected adnd what it is receiving,
   var $industries =  $("#industryUL .iChecker");
+
   // Conveniently the length property here refers to the number of elements appended to the selector
   // AKA stuff not normally there, in other words, the length is the number of industries in the UL.
   // and they occur at properties 0 -> $industries.length (y) Thank you, God.
@@ -211,13 +215,11 @@ function displayCompanies(companies) {
 
 function updateSelections(which, value) {
   var index;
-
-  // console.log(value);
   if (which === "Industry") {
-    // check if value is in the array
+    // Check if value is in the array
     index = selections.industries.indexOf(value);
     if (index > -1) { //unchecked the box
-      // Already in the array, aka checked already, so unchecking was done
+      // Already in the array, aka box was checked, so unchecking was just done
       selections.industries.splice(index, 1);
     }
     else { //checked the box
@@ -253,7 +255,7 @@ function displayGeoJSON(geojsonFeatures) {
   removeAllFeatures();
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
-      var marker = new L.CircleMarker(latlng, {radius: 6, fillOpacity: 0.85});
+      var marker = new L.CircleMarker(latlng, {radius: 3, fillOpacity: 0.85});
       return marker;
     },
     onEachFeature: function (feature, layer) {
@@ -326,22 +328,6 @@ function initDialog() {
   });
 }
 
-function editFeatures() {
-  var dialog;
-
-  dialog = $("#dialogFeatureEdit");
-  if (dialog.dialog("instance") === undefined) {
-    initDialog();
-  }
-  dialog.dialog("open");
-  document.getElementById("dialogUserEmail").innerHTML = "<b> Email: </b>" + map.currUser.preview.email;
-  // Clear the text area before adding new items, this method is slow
-  document.getElementById("FeatureText").value = formatFeatures();
-  // Get the features of the selected user
-
-  $("#userFeatures").show();
-}
-
 function saveFeatureContents() {
   var featStr = $("#FeatureText").val();
   var featArr = featStr.split(",");
@@ -406,29 +392,22 @@ function formatPopup(properties) {
     str += "<br>";
   }
   // Edit features inside of the details.html page
-  str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
+  // str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
 
-  // Option 1:
-  // Show full detail button (could also look like a link)
-  //  manually compile and link a button controlled by ng-click.
-  str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
-
-  // Option 2:
-  // Show full detai link.
-  //  changes the hash to #/detail/username,
-  //  use the username to pull the full document from MarkLogic
-  str += "<a href=\"#/detail/" + properties.name + "\">Show Full Detail</a>";
-
+  // str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
+  var username = "" + properties.username;
+  str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"username\" value=\"" + username + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>"
   return str;
 }
 
+// Date Range Picker
 $(function filterDate() {
 
   $('input[name="datefilter"]').daterangepicker({
-      autoUpdateInput: false,
-      locale: {
-          cancelLabel: 'Clear'
-      }
+    autoUpdateInput: false,
+    locale: {
+      cancelLabel: 'Clear'
+    }
   });
 
   $('span[name="calendar"]').daterangepicker({

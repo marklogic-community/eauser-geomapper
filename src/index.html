@@ -14,16 +14,10 @@
   <script src="jquery-ui.min.js"></script>
   <link rel="stylesheet" href="jquery-ui.min.css">
 
-
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
-  <!-- Angular -->
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script> 
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
 
   <!-- For the Date Range Picker -->
   <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -88,24 +82,16 @@
 
 <body>
 
-<div ng-app="detailApp" ng-controller="detailController">
-
 <div class="title">
-  <h1>Early Access User Geomapper</h1>
+  <h1>EA Tracker</h1>
   <h3> This application is a MarkLogic-based visualization that provides an "executive" display for locations of all MarkLogic 9 Early Access users.</h3>
 </div>
 
-
-<!-- <button ng-click="showDetail=!showDetail" ng-init="showDetail=false">
-  Switch
-</button> -->
-
-
 <!-- MAP -->
-<div class="container" ng-hide="showDetail">
+<div class="container">
   <div class="row">
     <div class="col-md-3">
-      <h3 id="featureTitle">Features</h3><br>
+      <h3 id="featureTitle"></h3><br>
 
 <!-- Select Dates button -->
       <div class="col-sm-12" id="date">
@@ -182,41 +168,17 @@
 
 <!--     Map -->
     <div class="col-md-9">
-      <h3 id="mapTitle">Map Display</h3>
+      <h3 id="mapTitle"><!--Map Display--></h3>
       <br>
       <div id="mapid"></div>
 
     </div>
-  </div> <!-- end of ng-hide -->
+  </div> 
 
-  <!-- USER DETAILS -->
-  <div class="container-fluid" ng-show="showDetail">
-    <h3>User Details:</h3>
-    <br/>
-
-    <table class="table table-hover">
-      <tr>
-        <td>First Name</td>
-        <td>{{user.firstName}}</td>
-      </tr>
-      <tr>
-        <td>Last Name</td>
-        <td>{{user.lastName}}</td>
-      </tr>
-      <tr>
-        <td>Email Address</td>
-        <td>{{user.email}}</td>
-      </tr>
-    </table>
-  </div> <!-- end of ng-show -->
-
-</div> <!-- end of ng-app and ng-controller -->
-
-<!-- Displaying user details (Angular controller) -->
-<script src="details.js"></script>
 
 <!-- Displaying the map (in JS) -->
 <script type="text/javascript" src="public/map.js"></script>
+
 <div id = "dialogFeatureEdit" hidden title="Edit user features">
   <div id = "userFeatures">
     <div>
