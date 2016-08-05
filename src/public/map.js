@@ -330,7 +330,10 @@ function updateSelections(which, value) {
 
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
+  // Every doPost call redraws all markers on the map
+  // removeAllFeatures() removes all markers from the map
   removeAllFeatures();
+
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
       var marker = new L.CircleMarker(latlng, {radius: 3, fillOpacity: 0.85});
