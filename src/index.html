@@ -95,8 +95,8 @@
 
 <!-- Select Dates button -->
       <div class="col-sm-12" id="date">
-        <input type="text" size="26" name="datefilter" value="Select Date Range"</>
-          <span class="glyphicon glyphicon-calendar" name="calendar"></span>
+        <input type="text" size="26" name="datefilter" id="datefilter" value="Select Date Range"</>
+          <span class="glyphicon glyphicon-calendar" name="calendar" id="calendar"></span>
       </div>
 
 <!-- Clear map button -->
@@ -115,7 +115,9 @@
                 <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Select Industry</a></h4>
               </div>
               <div id="collapse1" class="panel-collapse collapse in">
-                <ul class="list-group" id="industryUL"></ul>
+                <ul class="list-group" id="industryUL">
+                  <li><input type="checkbox" id="select_all_i"/> Select All</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -134,7 +136,9 @@
                 <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
               </div>
               <div id="collapse2" class="panel-collapse collapse in">
-                <ul class="list-group" id="featureUL"></ul>
+                <ul class="list-group" id="featureUL">
+                  <li><input type="checkbox" id="select_all_f"/> Select All</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -153,7 +157,9 @@
                 <h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Select Company</a></h4>
               </div>
               <div id="collapse3" class="panel-collapse collapse in">
-                <ul class="list-group" id="companyUL"></ul>
+                <ul class="list-group" id="companyUL">
+                  <li><input type="checkbox" id="select_all_c"/> Select All</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -184,7 +190,7 @@
       <p id = "dialogUserEmail"></p>
     </div>
     <b> Features: </b>
-    <textarea rows="3" cols="30" id="FeatureText"> </textarea>
+    <textarea rows="3" cols="30" id="FeatureText"></textarea>
   </div>
 </div>
 
