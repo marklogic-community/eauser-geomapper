@@ -106,9 +106,15 @@ function removeMarkers(bounds) {
   var markersObj;
   for (var obj in markers._layers) {
     // markersObj is an object of all marker objects currently on the map
+    // while there is only one object in markers._layers that has all
+    // map markers, it an id that changes every run of the map
+    // so using a loop to grab the name; ex: 163
+    // ** Same object in memory **
     markersObj = markers._layers[obj]._layers;
   }
   // If markers on map, continue
+  // store markers here that shouldn't be deleted
+  var safeMarkers = [];
   if (markersObj) {
     for (var marker in markersObj) {
       // looping through all map markers
@@ -123,26 +129,38 @@ function removeMarkers(bounds) {
         // in other drawn regions. Don't delete marker if in
         // other drawn region.
         var layers = drawnShapes.getLayers();
-        if (layers.length === 0) {
-          // No other drawn region on map, so delete the point
-          // Because it can't be contained by thing
-          // Should the map reset in this event??
-          map.removeLayer(markersObj[marker]);
-        }
         for (var layer in layers) {
-          if (bounds.equals(layers[layer].getBounds()) ||
-              layers[layer].getBounds().contains(markerLatLng)) {
-            // If same layer as deleted layer, no point in checking
-            // OR a different layer contains the same points as the
-            // deleted layer did, so keep the point since a different layer
-            // also contains it
+          if (layers[layer].getBounds().contains(markerLatLng)) {
+            // Mark as safe (not to remove) because this region
+            // contains the marker
+            // This drawn region is still on the map
+            // so don't remove marker from map
+            safeMarkers.push(marker);
           }
           else {
-            // Marker is only contained by the deleted layer
-            // so delete it
-            map.removeLayer(markersObj[marker]);
+            // Marker is not contained by current drawn layer
+            // so don't mark as safe
           }
         }
+
+      }
+      else { // if marker not contained by deleted shape,
+        // then don't delete from map
+
+        // Because there was a drawn region on the map
+        // before the delete, the only markers on the map should
+        // be those contained in a drawn search region on the map
+        // so assume this marker is within a different drawn region on map
+        // and mark it as safe
+        safeMarkers.push(marker);
+      }
+    }
+    // Delete all markers that weren't found in other drawn regions
+    for (var marker in markersObj) {
+      if (safeMarkers.indexOf(marker) === -1) {
+        // Marker isn't safe, must have only been found in th deleted
+        // region, so delete from map.
+        map.removeLayer(markersObj[marker]);
       }
     }
   }
