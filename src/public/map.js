@@ -60,6 +60,23 @@ function start() {
   doPost('/search.sjs', displayGeoJSON, false);
 
   addMapEvents();
+
+  //add "last updated @"" message
+  $.ajax({
+    type: "GET",
+    url: "/scripts/lastUpdate.sjs",
+    dataType: "json",
+    success: function(response) {
+      console.log("success");
+      $("#lastUpdated").append(response.lastUpdated);
+    },
+    error: function(jqXHR, status, errorThrown) {
+      console.log("ERROR");
+      console.log(jqXHR);
+      console.log(status);
+      console.log(errorThrown);
+    }
+  });
 }
 
 function addMapEvents() {
