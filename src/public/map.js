@@ -103,6 +103,15 @@ function removeMarkers(bounds) {
   // and find if any are contained in bounds
   // delete markers if they are contained in bounds
   // and no other drawn shapes
+  var layers = drawnShapes.getLayers();
+  if (layers.length === 0) {
+    //if layers.length = 0 then no other drawn regions on map
+    // redraw markers that match search selections in this event
+    doPost("/search.sjs", displayGeoJSON, false);
+    return;
+  }
+
+
   var markersObj;
   for (var obj in markers._layers) {
     // markersObj is an object of all marker objects currently on the map
@@ -128,7 +137,6 @@ function removeMarkers(bounds) {
         // Before deleting, check if the marker is contained
         // in other drawn regions. Don't delete marker if in
         // other drawn region.
-        var layers = drawnShapes.getLayers();
         for (var layer in layers) {
           if (layers[layer].getBounds().contains(markerLatLng)) {
             // Mark as safe (not to remove) because this region
