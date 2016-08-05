@@ -66,10 +66,18 @@ if (input.selections && input.selections.features.length !== 0) {
   featureQuery = cts.jsonPropertyValueQuery("features", input.selections.features);
 }
 
+var companyQuery = cts.trueQuery();
+if (input.selections && input.selections.companies.length !== 0) {
+  // some companies specified, note if none specified the code works as if
+  // all industries are specified, ie. finds users from all companies.
+  companyQuery = cts.jsonPropertyValueQuery("company", input.selections.companies);
+}
+
 users =
   jsearch.facets([
       jsearch.facet('Industry', cts.jsonPropertyReference('industry')).orderBy('frequency', 'descending').slice(0,300),
       jsearch.facet('Feature', cts.jsonPropertyReference('features')).orderBy('frequency', 'descending').slice(0,50),
+      jsearch.facet('Company', cts.jsonPropertyReference('company')).orderBy().slice(0,300)
     ],
     jsearch.documents().slice(0,300).map({extract:{select:'all'}})
   )
@@ -77,6 +85,7 @@ users =
     cts.andQuery([
       industryQuery,
       featureQuery,
+      companyQuery,
       geoQueryJson
     ]),
     cts.directoryQuery("/config/")
