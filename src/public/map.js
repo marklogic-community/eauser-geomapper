@@ -102,6 +102,7 @@ function addMapEvents() {
 
 // Draw markers on map
 function drawPage(response) {
+  console.log(response);
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
   displayCompanies(response.facets.Company);
@@ -163,7 +164,6 @@ function displayFeatures(features) {
 
 // industries is an object {}
 function displayIndustries(industries) {
-
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
     $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>'+obj+'<i>('+count+')</i></li>');
