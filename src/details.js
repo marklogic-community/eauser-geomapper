@@ -82,6 +82,9 @@ var user_test =   {
 ////////////////////////////////////
 
 function display(user) {
+  if (user.fullDetails.username) {
+    user = user_test;
+  }
 
   // user details
   $("#firstname").append(user.fullDetails.firstname);

@@ -73,6 +73,15 @@ if (remainingCount > 0) {
 }
 
 else {
+  var systemInfo = {};
+  system["appStartDate"] = fn.currentDateTime();
+  system["lastUpdated"] = fn.currentDateTime();
+
+  // find out how to obtain the number of /users/{{username}} documents there are
+  // system["numDocuments"] = 
+
+  xdmp.documentInsert("/config/systemInfo.json", systemInfo);
+  
   xdmp.log("DONE");
 }
 
