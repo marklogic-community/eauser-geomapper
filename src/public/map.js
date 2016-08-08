@@ -70,12 +70,7 @@ function start() {
       console.log("success");
       $("#lastUpdated").append(response.lastUpdated);
     },
-    error: function(jqXHR, status, errorThrown) {
-      console.log("ERROR");
-      console.log(jqXHR);
-      console.log(status);
-      console.log(errorThrown);
-    }
+    error: fail;
   });
 }
 
@@ -229,6 +224,9 @@ function doPost(url, success, firstLoad) {
 }
 
 function fail(jqXHR, status, errorThrown) {
+  console.log("ERROR");
+  console.log(jqXHR);
+  console.log(status);
   console.log(errorThrown);
 }
 
