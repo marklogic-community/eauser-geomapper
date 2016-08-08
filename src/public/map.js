@@ -102,7 +102,6 @@ function addMapEvents() {
 
 // Draw markers on map
 function drawPage(response) {
-  console.log(response);
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
   displayCompanies(response.facets.Company);
@@ -155,8 +154,8 @@ function displayFeatures(features) {
       }
       else {
         // Commented out for now because no feature data in database.
-        //updateSelections("Feature", e.target.nextSibling.data);
-        //doPost("/search.sjs", displayGeoJSON, false);
+        // updateSelections("Feature", e.target.nextSibling.data);
+        // doPost("/search.sjs", displayGeoJSON, false);
       }
     }
   }
@@ -252,7 +251,8 @@ function updateSelections(which, value) {
 
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
-  removeAllFeatures();
+
+  // removeAllFeatures();
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
       var marker = new L.CircleMarker(latlng, {radius: 3, fillOpacity: 0.85});
