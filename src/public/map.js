@@ -192,7 +192,6 @@ function removeMarkers(bounds) {
 
 // Draw markers on map
 function drawPage(response) {
-  console.log(response);
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
   displayCompanies(response.facets.Company);
