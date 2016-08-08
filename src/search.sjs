@@ -99,7 +99,7 @@ for(var obj in users.documents) {
 }
 
 if (input.firstLoad === true) {
-  users.features = cts.search(cts.directoryQuery("/config/"));
+  users.features = cts.search(cts.directoryQuery("/config/features/"));
 }
 
 users;
