@@ -13,6 +13,7 @@ var searchRegions = [];
 var geoQueryJson;
 var searchResults;
 
+
 // Check if searchRegions is given, and if no drawn regions, then use map window
 if (input.searchRegions && input.searchRegions.features.length === 0) {
   searchRegions.push(cts.box.apply(null,input.mapWindow));
