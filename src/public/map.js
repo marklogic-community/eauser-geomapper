@@ -310,9 +310,16 @@ function displayCompanies(companies) {
 
 function updateSelections(which, value) {
   var index;
+
   if (which === "Industry") {
-    // Check if value is in the array
+    // Check if 'value' is in the array
+    // If index = -1 then value is not in array,
+    // user must have just checked the box so add to array
+    // If index > -1 then value is in array,
+    // so user must have just unchecked the box
+    // so remove from array
     index = selections.industries.indexOf(value);
+
     if (index > -1) { //unchecked the box
       // Already in the array, aka box was checked, so unchecking was just done
       selections.industries.splice(index, 1);
@@ -321,6 +328,7 @@ function updateSelections(which, value) {
       selections.industries.push(value);
     }
   }
+
   else if (which === "Feature") {
     index = selections.features.indexOf(value);
     if (index > -1) { //unchecked the box
@@ -334,7 +342,6 @@ function updateSelections(which, value) {
 
   else if (which === "Company") {
     index = selections.companies.indexOf(value);
-
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
       selections.companies.splice(index, 1);
