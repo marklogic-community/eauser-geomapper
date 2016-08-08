@@ -73,7 +73,7 @@ function start() {
       console.log("success");
       $("#lastUpdated").append(response.lastUpdated);
     },
-    error: fail;
+    error: fail
   });
 }
 
