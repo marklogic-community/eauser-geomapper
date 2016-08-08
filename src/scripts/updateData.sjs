@@ -4,6 +4,8 @@
 
 'use strict'
 
+declareUpdate();
+
 var keys = require("../private/keys.sjs");
 var util = require("util.sjs");
 
@@ -14,8 +16,10 @@ var userID = keys.userID;
 var streamPosition = "";
 var remainingCount = 1;
 
-var oneDayAgo = util.oneDayAgo;
+var oneDayAgo = util.oneDayAgo(fn.currentDateTime());
 
+// for finding out how many users there are in the database
+var sr = require("/MarkLogic/jsearch.sjs");
 
 while (remainingCount > 0) {
   // grab all users whose accounts were updated in the previous day.
@@ -38,7 +42,7 @@ while (remainingCount > 0) {
     + "<SOAP-ENV:Body>"
     + "<ns1:paramsGetMultipleLeads xmlns:ns1=\"http://www.marketo.com/mktows/\">"
     + "<lastUpdatedAt>"+ oneDayAgo + "</lastUpdatedAt>"
-    + "<batchSize>100</batchSize>"
+    + "<batchSize>200</batchSize>"
     + "<streamPosition>" + streamPosition + "</streamPosition>"
     + "</ns1:paramsGetMultipleLeads>"
     + "</SOAP-ENV:Body></SOAP-ENV:Envelope>"
@@ -59,7 +63,26 @@ while (remainingCount > 0) {
   // call xdmp.spawn to filter and ingest data from the batch
 
   xdmp.spawn("update.sjs", {"result": result.toArray()[1]}, null);
-  
+
 }
 
+// update the system info document
+
+var oldSystemInfo = cts.doc("/config/systemInfo.json");
+
+var oldSystemInfoDoc = oldSystemInfo.toObject();
+oldSystemInfoDoc.lastUpdated = fn.currentDateTime().add(xdmp.elapsedTime());
+
+var output =
+  sr.documents()
+  .result();
+
+// subtract two from output.estimate, because of the two /config/ files.
+var newNumDocuments = output.estimate - 2;
+
+oldSystemInfoDoc.numDocuments = newNumDocuments;
+
+xdmp.nodeReplace(oldSystemInfo, oldSystemInfoDoc);
+
 "done";
+
