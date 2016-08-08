@@ -6,6 +6,7 @@ var markers; //FeatureGroup
 var drawnShapes; //FeatureGroup
 var MLFeatures; // Array
 var selections; // Object
+var maxBounds; // lat long range of map
 
 // Start! Initialize the map and all things awesome.
 // For debugging, check MarkLogic's 8040_ErrorLog.txt
@@ -17,10 +18,17 @@ function start() {
   style = keys.mapboxStyle;
   token = keys.mapboxToken;
 
+  maxBounds = L.latLngBounds(
+    L.latLng(-90, -180),
+    L.latLng(90, 180)
+  );
+
   // Leaflet's map initialization method
   // 'mapid' is the div's name where the map will be found on the web page.
   map = L.map('mapid', {
-    "minZoom": 2
+    minZoom: 2,
+    maxBounds: maxBounds,
+    maxBoundsViscosity: 0.0
   }).setView([0, 0], 2);
   url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
@@ -204,10 +212,10 @@ function doPost(url, success, firstLoad) {
     selections: selections,
     mapWindow: [ //Used for search if no drawn shapes
       // TODO change to be entire map range, not just current view
-      map.getBounds().getSouth(),
-      map.getBounds().getWest(),
-      map.getBounds().getNorth(),
-      map.getBounds().getEast()
+      maxBounds.getSouth(),
+      maxBounds.getWest(),
+      maxBounds.getNorth(),
+      maxBounds.getEast()
     ],
     firstLoad: firstLoad,
     searchRegions: drawnShapes.toGeoJSON()
