@@ -1,4 +1,4 @@
-// gives us POST request body, which is {username: <username>}
+// POST request body -> {username: <username>}
 
 var sr = require('/MarkLogic/jsearch.sjs');
 
