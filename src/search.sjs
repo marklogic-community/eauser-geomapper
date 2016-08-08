@@ -104,5 +104,4 @@ if (input.firstLoad === true) {
   users.features = cts.search(cts.directoryQuery("/config/"));
 }
 
-// xdmp.log(users);
 users;
