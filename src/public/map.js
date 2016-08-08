@@ -24,15 +24,6 @@ function start() {
   }).setView([0, 0], 2);
   url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
-/*
-  // prevent user from panning too far off the map
-  map.fitBounds([
-      [-90, -179],
-      [90, 179]
-    ], {padding:[50,50]}
-  );
-*/
-
   L.tileLayer(url,
   {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +

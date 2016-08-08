@@ -31,7 +31,7 @@ try {
 
 }
 catch(err) {
-  xdmp.log("hi" + err);
+  xdmp.log(err);
   res = err;
 }
 
