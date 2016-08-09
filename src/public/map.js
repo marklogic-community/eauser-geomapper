@@ -28,7 +28,6 @@ function start() {
   map = L.map('mapid', {
     minZoom: 2,
     maxBounds: maxBounds,
-    maxBoundsViscosity: 0.0
   }).setView([0, 0], 2);
   url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
@@ -112,6 +111,7 @@ function addMapEvents() {
     /// (More than one could have been deleted)
     for (var i in e.layers._layers) {
       // Passing bounds of deleted drawn search regions
+      // Will remove all markers that exist only in the deleted regions
       removeMarkers(e.layers._layers[i].getBounds());
     }
 
@@ -127,6 +127,9 @@ function removeMarkers(bounds) {
   // and find if any are contained in bounds
   // delete markers if they are contained in bounds
   // and no other drawn shapes
+
+  // drawnShapes is an object of the currently drawn layers still on map;
+  // does not contain any of the deleted regions (because they were deleted)
   var layers = drawnShapes.getLayers();
   if (layers.length === 0) {
     //if layers.length = 0 then no other drawn regions on map

@@ -26,7 +26,7 @@ $(document).ready(function() {
     data: JSON.stringify(payload),
     contentType: "application/json",
     dataType: "json",
-    success: display, 
+    success: display,
     error: fail
   });
 });
@@ -147,10 +147,10 @@ function save() {
     contentType: "application/json",
     dataType: "json",
     success: function(res) {
-      $("#features").append("<div class=\"alert alert-success\" role=\"alert\">" 
+      $("#features").append("<div class=\"alert alert-success\" role=\"alert\">"
                             + "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" title=\"close\">×</a>"
-                            + "Successfully updated " 
-                            + global_user.fullDetails.username 
+                            + "Successfully updated "
+                            + global_user.fullDetails.username
                             + "'s features</div>");
     },
     error: function(a,b,c) {
@@ -170,7 +170,7 @@ function encodeXml(s) {
   );
 }
 
-function fail(jqXHR, status, errorThrown) 
+function fail(jqXHR, status, errorThrown)
 {
   console.log("Failed to receive data: ");
   console.log(jqXHR);
