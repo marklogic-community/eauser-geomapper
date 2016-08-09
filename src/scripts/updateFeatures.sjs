@@ -16,7 +16,7 @@ try {
   var oldDoc = cts.doc(uri);
   var newDoc = oldDoc.toObject();
 
-  newDoc.features = input.features;
+  newDoc.fullDetails.features = input.features;
   newDoc.fullDetails.lastUpdated = fn.currentDateTime();
 
   xdmp.nodeReplace(oldDoc, newDoc);
