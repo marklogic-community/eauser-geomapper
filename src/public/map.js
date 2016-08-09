@@ -170,7 +170,7 @@ function displayFeatures(features) {
     html += '<li>' + category;
     html += '<ul>';
     for (var subfield in features[category]) {
-      html += '<li class="list-group-item"><input unchecked type="checkbox"class="fChecker"value='+features[category][subfield]+'>'+features[category][subfield]+'</li>';
+      html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value='+features[category][subfield]+'>'+features[category][subfield]+'</li>';
       selections.features.push(features[category][subfield].toString());
     }
     html += '</ul>';
@@ -197,10 +197,11 @@ function displayIndustries(industries) {
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
     $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>'+obj+'<i>('+count+')</i></li>');
-    //Add value to the selections so code works with what is being displayed
+
+    //Add value to the selections so code works with what is being displayed in menu
     selections.industries.push(obj.toString());
   }
-  // Problem lives with how the UL is selected adnd what it is receiving,
+
   var $industries =  $("#industryUL .iChecker");
 
   // Conveniently the length property here refers to the number of elements appended to the selector
