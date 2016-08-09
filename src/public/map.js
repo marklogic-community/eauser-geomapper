@@ -252,6 +252,8 @@ function displayFeatures(features) {
       }
     }
   }
+
+  //TODO: select all checkboxes
 }
 
 // industries is an object {}
@@ -280,6 +282,8 @@ function displayIndustries(industries) {
     }
   }
 
+  //TODO: select all checkboxes
+
 }
 
 // companies is an object {}
@@ -303,26 +307,50 @@ function displayCompanies(companies) {
       }
     }
   }
+
+  // company's select all checkbox
+  $("#select_all_c").change(function() {
+
+    var status = this.checked; // status can be either true/false
+    var c = $('#companyUL, .cChecker');
+
+    $('select_all_c').prop("checked", status); // select all box is whatever status is
+
+    for (var i = 0; i < c.length; i++) {
+      c[i].checked = status;
+      var cVal = c[i].nextSibling.data;
+      updateSelections("Company", cVal);
+
+    }
+    doPost("/search.sjs", displayGeoJSON, false);
+    });
 }
 
 function updateSelections(which, value) {
   var index;
+
   if (which === "Industry") {
     // Check if value is in the array
+    // -1 means that it is not in the array
     index = selections.industries.indexOf(value);
     if (index > -1) { //unchecked the box
       // Already in the array, aka box was checked, so unchecking was just done
+
       selections.industries.splice(index, 1);
+      $('#select_all_i').prop("checked", false); // unchecks the select all
     }
+
     else { //checked the box
       selections.industries.push(value);
     }
+
   }
   else if (which === "Feature") {
     index = selections.features.indexOf(value);
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
       selections.features.splice(index, 1);
+      $('#select_all_f').prop("checked", false); // unchecks the select all
     }
     else { //checked the box
       selections.features.push(value);
@@ -335,6 +363,7 @@ function updateSelections(which, value) {
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
       selections.companies.splice(index, 1);
+      $('#select_all_c').prop("checked", false); // unchecks the select all
     }
     else { // checked the box
       selections.companies.push(value);
