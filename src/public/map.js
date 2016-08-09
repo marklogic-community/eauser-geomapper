@@ -160,9 +160,9 @@ function fail(jqXHR, status, errorThrown) {
   console.log(errorThrown);
 }
 
-//features is an array []
+// Populates the feature side menu
 function displayFeatures(features) {
-  console.log(features);
+
   var html;
   for (var category in features) {
     html = "";
@@ -170,33 +170,25 @@ function displayFeatures(features) {
     html += '<li>' + category;
     html += '<ul>';
     for (var subfield in features[category]) {
-      html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value='+features[category][subfield]+'>'+features[category][subfield]+'</li>';
-
-/***************************************************************/
- // Uncomment line below to use feature data with markers on map.
- // Commented now because we have no feature data, so if this line is commented then
- // you need to manually need to uncheck every box for all markers to show up
- // Also uncomment the $features[i].onclick function below so feature tick box
- // events to be active
-      //selections.features.push(features[category][subfield].toString());
+      html += '<li class="list-group-item"><input unchecked type="checkbox"class="fChecker"value='+features[category][subfield]+'>'+features[category][subfield]+'</li>';
+      selections.features.push(features[category][subfield].toString());
     }
     html += '</ul>';
     html += '</li>';
     $('#featureUL').append(html);
   }
   var $features =  $("#featureUL .fChecker");
-  /*for (var i = 0; i < $features.length; i++) {
+  for (var i = 0; i < $features.length; i++) {
     $features[i].onclick = function(e) {
       if (e.target.value === 0) {
         // e.target.value is 0 when click is on text in html and not on the check box
       }
       else {
-        // Commented out for now because no feature data in database.
         updateSelections("Feature", e.target.nextSibling.data);
         doPost("/search.sjs", displayGeoJSON, false);
       }
     }
-  }*/
+  }
 }
 
 // industries is an object
@@ -333,7 +325,7 @@ function getColor(user) {
   var color = "#000000";
 
   if (user.fullDetails.features && user.fullDetails.features.length) {
-    numFeatures = user.preview.features.length;
+    numFeatures = user.fullDetails.features.length;
   }
   if (numFeatures === 1) {
     color = "#FF0000"; //red
