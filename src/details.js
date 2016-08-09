@@ -93,7 +93,7 @@ function displayCheckboxes(MLFeatures) {
         var checked = "checked";
 
         try {
-          if ($.inArray(feature, global_user.features) === -1) {
+          if ($.inArray(feature, global_user.fullDetails.features) === -1) {
             checked = "";
           }
         }
