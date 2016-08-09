@@ -66,6 +66,8 @@ while (remainingCount > 0) {
 
 }
 
+/////////////// TODO: MOVE TO update.sjs //////////////////
+
 // update the system info document
 
 var oldSystemInfo = cts.doc("/config/systemInfo.json");
