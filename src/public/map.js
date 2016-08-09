@@ -6,6 +6,8 @@ var markers; //FeatureGroup
 var drawnShapes; //FeatureGroup
 var MLFeatures; // Array
 var selections; // Object
+var oms; // Overlapping Marker Spiderfier
+var popupOpen; // Is there a popup already open?
 
 // Start! Initialize the map and all things awesome.
 // For debugging, check MarkLogic's 8040_ErrorLog.txt
@@ -16,6 +18,8 @@ start();
 function start() {
   style = keys.mapboxStyle;
   token = keys.mapboxToken;
+
+  popupOpen = false;
 
   // Leaflet's map initialization method
   // 'mapid' is the div's name where the map will be found on the web page.
@@ -33,6 +37,11 @@ function start() {
     accessToken: token
   }).addTo(map);
 
+
+  // Initialize Overlapping Marker Spiderfier 
+  //   (the thing that spreads out markers that overlap)
+  oms = new OverlappingMarkerSpiderfier(map);
+
   // Initialize the FeatureGroup to store editable layers (shapes drawn by user)
   // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
   markers = new L.FeatureGroup();
@@ -41,6 +50,8 @@ function start() {
   // Add the layers to the map so they are displayed
   map.addLayer(markers);
   map.addLayer(drawnShapes);
+
+//  oms.addMarker(markers);
 
   // mouse-click event for 'clear map' button
   // $("#clearButton").click(removeAllFeatures);
@@ -351,6 +362,15 @@ function updateSelections(which, value) {
   }
 }
 
+// Icons 
+// (add more colors if needed)
+
+var red_dot = L.icon({
+  "iconUrl": "images/red-dot.png",
+  "iconSize": [8, 8]
+})
+
+
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
   // Every doPost call redraws all markers on the map
@@ -359,7 +379,13 @@ function displayGeoJSON(geojsonFeatures) {
 
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
-      var marker = new L.CircleMarker(latlng, {radius: 3, fillOpacity: 0.85});
+      var marker = new L.marker(latlng, {
+        "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
+        // if you want to use red dots...
+        //"icon": red_dot
+      });
+
+      oms.addMarker(marker);
       return marker;
     },
     onEachFeature: function (feature, layer) {
