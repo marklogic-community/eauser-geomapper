@@ -116,6 +116,7 @@ function addMapEvents() {
 }
 
 // Draw industries, features, and companies on map
+// Success function of first doPost call
 function drawPage(response) {
   displayIndustries(response.facets.Industry);
   displayFeatures(response.features.MarkLogicFeatures);
@@ -203,10 +204,11 @@ function displayIndustries(industries) {
   }
 
   var $industries =  $("#industryUL .iChecker");
-
-  // Conveniently the length property here refers to the number of elements appended to the selector
-  // AKA stuff not normally there, in other words, the length is the number of industries in the UL.
-  // and they occur at properties 0 -> $industries.length (y) Thank you, God.
+  // Conveniently the length property here refers to the number of elements 
+  // appended to the selector
+  // AKA stuff not normally there, in other words, the length is the number
+  // of industries in the UL.
+  // and they occur at properties 0 -> $industries.length
   for (var i = 0; i < $industries.length; i++) {
     $industries[i].onclick = function(e) {
       if (e.target.value === 0) {
@@ -301,9 +303,6 @@ function displayGeoJSON(geojsonFeatures) {
     },
     onEachFeature: function (feature, layer) {
       layer.bindPopup(formatPopup(feature.fullDetails));
-    },
-    style: function(feature) {
-      return {color: getColor(feature)};
     }
   });
 
@@ -313,31 +312,6 @@ function displayGeoJSON(geojsonFeatures) {
 function removeAllFeatures() {
   //drawnShapes.clearLayers();
   markers.clearLayers();
-}
-
-// Color of map marker corresponds to number of features the user uses
-// black: 0 features
-// red: 1 feature
-// Green: 2 features
-// Yellow: 3+ features
-function getColor(user) {
-
-  var numFeatures = 0; // 0 features
-  var color = "#000000";
-
-  if (user.fullDetails.features && user.fullDetails.features.length) {
-    numFeatures = user.fullDetails.features.length;
-  }
-  if (numFeatures === 1) {
-    color = "#FF0000"; //red
-  }
-  else if (numFeatures === 2) {
-    color = "#00FF00"; // green
-  }
-  else if (numFeatures >= 3) { //blue
-    color = "#0000FF";
-  }
-  return color;
 }
 
 // firstName, lastname, email, city, state, industry, company
