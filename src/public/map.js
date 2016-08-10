@@ -8,11 +8,6 @@ var MLFeatures; // Array
 var selections; // Object
 var maxBounds; // lat long range of map
 
-// Start! Initialize the map and all things awesome.
-// For debugging, check MarkLogic's 8040_ErrorLog.txt
-// and your browser's inspection tool
-start();
-
 // Run this function before any other
 function start() {
   style = keys.mapboxStyle;
@@ -79,6 +74,12 @@ function start() {
   });
 }
 
+// Start! Initialize the map and all things awesome.
+// For debugging, check MarkLogic's 8040_ErrorLog.txt
+// and your browser's inspection tool
+start();
+
+
 function addMapEvents() {
   //drawControl is the map element that allows drawing and deleting of shapes/layers
   var drawControl = new L.Control.Draw({
@@ -118,8 +119,9 @@ function addMapEvents() {
 // Draw industries, features, and companies on map
 // Success function of first doPost call
 function drawPage(response) {
+  console.log(response);
   displayIndustries(response.facets.Industry);
-  displayFeatures(response.features.MarkLogicFeatures);
+  displayFeatures(response);
   displayCompanies(response.facets.Company);
 
     // After all industries and features are known, fetch the
@@ -162,16 +164,24 @@ function fail(jqXHR, status, errorThrown) {
 }
 
 // Populates the feature side menu
-function displayFeatures(features) {
+function displayFeatures(response) {
+  var features = response.features.MarkLogicFeatures;
+  var counts = response.facets.Feature;
 
   var html;
+  var count;
   for (var category in features) {
-    html = "";
+    html = '';
 
     html += '<li>' + category;
     html += '<ul>';
     for (var subfield in features[category]) {
-      html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value='+features[category][subfield]+'>'+features[category][subfield]+'</li>';
+      count = 0;
+      if (counts[features[category][subfield]] !== undefined) {
+        count = counts[features[category][subfield]];
+      }
+      html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value=';
+      html += features[category][subfield]+'>'+features[category][subfield]+'<i>('+count+')</i></li>';
       selections.features.push(features[category][subfield].toString());
     }
     html += '</ul>';
