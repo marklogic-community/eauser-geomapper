@@ -9,6 +9,9 @@
   <script src="leaflet/leaflet-src.js"></script>
   <script src="leaflet/leaflet.draw.js"></script>
 
+  <!-- Overlapping Marker Spiderfier : https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet -->
+  <script src="oms.min.js"></script>
+
   <!-- jQuery, required by Bootstrap -->
   <script src="jquery-1.12.1.min.js"></script>
   <script src="jquery-ui.min.js"></script>
@@ -167,6 +170,7 @@
 <!--     Map -->
     <div class="col-md-9">
       <p id="lastUpdated" align="right">Last updated - </p>
+      <p align="right">Displaying <span id="count"></span> users</p>
       <h3 id="mapTitle"><!--Map Display--></h3>
       <br>
       <div id="mapid"></div>

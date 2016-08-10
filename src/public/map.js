@@ -6,6 +6,9 @@ var markers; //FeatureGroup
 var drawnShapes; //FeatureGroup
 var MLFeatures; // Array
 var selections; // Object
+var oms; // Overlapping Marker Spiderfier
+var totalCount;
+var currentCount;
 
 // Start! Initialize the map and all things awesome.
 // For debugging, check MarkLogic's 8040_ErrorLog.txt
@@ -32,6 +35,11 @@ function start() {
     id: 'Basic',
     accessToken: token
   }).addTo(map);
+
+
+  // Initialize Overlapping Marker Spiderfier 
+  //   (the thing that spreads out markers that overlap)
+  oms = new OverlappingMarkerSpiderfier(map);
 
   // Initialize the FeatureGroup to store editable layers (shapes drawn by user)
   // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
@@ -73,6 +81,18 @@ function start() {
     },
     error: fail
   });
+
+  $.ajax({
+    type: "GET",
+    url: "/scripts/getTotalCount.sjs",
+    dataType:"json",
+    success: function(response) {
+      totalCount = response.totalCount;
+      currentCount = totalCount;
+    },
+    error: fail
+  });
+
 }
 
 function addMapEvents() {
@@ -188,6 +208,7 @@ function removeMarkers(bounds) {
       }
     }
   }
+  updateCount(safeMarkers);
 }
 
 // Draw markers on map
@@ -351,6 +372,15 @@ function updateSelections(which, value) {
   }
 }
 
+// Icons 
+// (add more colors if needed)
+
+var red_dot = L.icon({
+  "iconUrl": "images/red-dot.png",
+  "iconSize": [8, 8]
+})
+
+
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
   // Every doPost call redraws all markers on the map
@@ -359,7 +389,13 @@ function displayGeoJSON(geojsonFeatures) {
 
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
-      var marker = new L.CircleMarker(latlng, {radius: 3, fillOpacity: 0.85});
+      var marker = new L.marker(latlng, {
+        "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
+        // if you want to use red dots...
+        // ,"icon": red_dot
+      });
+
+      oms.addMarker(marker);
       return marker;
     },
     onEachFeature: function (feature, layer) {
@@ -376,6 +412,19 @@ function displayGeoJSON(geojsonFeatures) {
     map.currUser = e.layer.feature;
   });
   markers.addLayer(geojsonLayer);
+
+  updateCount(geojsonFeatures.documents);
+}
+
+// update the number of users being displayed
+function updateCount(points) {
+  if (points) {
+    currentCount = points.length;
+  }
+  else{
+    currentCount = 0;
+  }
+  $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
 }
 
 function removeAllFeatures() {
