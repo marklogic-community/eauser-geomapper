@@ -450,41 +450,26 @@ function removeMarkers(bounds) {
   if (markersObj) {
     for (var marker in markersObj) {
       // looping through all map markers
-      // Check if the deleted drawn region (bounds) contains any markers
-      // on the map;
 
       // LatLng object of marker to check if contained in the bounds of
-      // a deleted search region
+      // a region still on the map
+      // If marker was only found in the deleted region then it won't be
+      // added to safeMarkers[].
       var markerLatLng = markersObj[marker].getLatLng();
-      if (bounds.contains(markerLatLng)) {
-        // Before deleting, check if the marker is contained
-        // in other drawn regions. Don't delete marker if in
-        // other drawn region.
-        for (var layer in layers) {
-          if (layers[layer].getBounds().contains(markerLatLng)) {
-            // Mark as safe (not to remove) because this region
-            // contains the marker
-            // This drawn region is still on the map
-            // so don't remove marker from map
-            safeMarkers.push(marker);
-          }
-          else {
-            // Marker is not contained by current drawn layer
-            // so don't mark as safe
-          }
+      for (var layer in layers) {
+        if (layers[layer].getBounds().contains(markerLatLng)) {
+          // Mark as safe (not to remove) because this region
+          // contains the marker
+          // This drawn region is still on the map
+          // so don't remove marker from map
+          safeMarkers.push(marker);
         }
-
+        else {
+          // Marker is not contained by a current drawn layer
+          // so don't mark as safe
+        }
       }
-      else { // if marker not contained by deleted shape,
-        // then don't delete from map
 
-        // Because there was a drawn region on the map
-        // before the delete, the only markers on the map should
-        // be those contained in a drawn search region on the map
-        // so assume this marker is within a different drawn region on map
-        // and mark it as safe
-        safeMarkers.push(marker);
-      }
     }
     // Delete all markers that weren't found in other drawn regions
     for (var marker in markersObj) {
