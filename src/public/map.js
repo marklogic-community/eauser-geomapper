@@ -6,7 +6,10 @@ var markers; //FeatureGroup
 var drawnShapes; //FeatureGroup
 var MLFeatures; // Array
 var selections; // Object
-var maxBounds; // lat long range of map
+var maxBounds; // lat long range of entire map
+var oms; // Overlapping Marker Spiderfier
+var totalCount;
+var currentCount;
 
 // Run this function before any other
 function start() {
@@ -34,6 +37,11 @@ function start() {
     id: 'Basic',
     accessToken: token
   }).addTo(map);
+
+
+  // Initialize Overlapping Marker Spiderfier 
+  //   (the thing that spreads out markers that overlap)
+  oms = new OverlappingMarkerSpiderfier(map);
 
   // Initialize the FeatureGroup to store editable layers (shapes drawn by user)
   // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
@@ -72,6 +80,18 @@ function start() {
     },
     error: fail
   });
+
+  $.ajax({
+    type: "GET",
+    url: "/scripts/getTotalCount.sjs",
+    dataType:"json",
+    success: function(response) {
+      totalCount = response.totalCount;
+      currentCount = totalCount;
+    },
+    error: fail
+  });
+
 }
 
 // Start! Initialize the map and all things awesome.
@@ -116,10 +136,88 @@ function addMapEvents() {
   });
 }
 
-// Draw industries, features, and companies on map
-// Success function of first doPost call
+// Check if markers are contained in bounds.
+// Remove all markers from map that are contained in bounds and not contained
+// in any drawn shapes on the map (if any);
+function removeMarkers(bounds) {
+  // loop through all markers on map
+  // and find if any are contained in bounds
+  // delete markers if they are contained in bounds
+  // and no other drawn shapes
+  var layers = drawnShapes.getLayers();
+  if (layers.length === 0) {
+    //if layers.length = 0 then no other drawn regions on map
+    // redraw markers that match search selections in this event
+    doPost("/search.sjs", displayGeoJSON, false);
+    return;
+  }
+
+
+  var markersObj;
+  for (var obj in markers._layers) {
+    // markersObj is an object of all marker objects currently on the map
+    // while there is only one object in markers._layers that has all
+    // map markers, it an id that changes every run of the map
+    // so using a loop to grab the name; ex: 163
+    // ** Same object in memory **
+    markersObj = markers._layers[obj]._layers;
+  }
+  // If markers on map, continue
+  // store markers here that shouldn't be deleted
+  var safeMarkers = [];
+  if (markersObj) {
+    for (var marker in markersObj) {
+      // looping through all map markers
+      // Check if the deleted drawn region (bounds) contains any markers
+      // on the map;
+
+      // LatLng object of marker to check if contained in the bounds of
+      // a deleted search region
+      var markerLatLng = markersObj[marker].getLatLng();
+      if (bounds.contains(markerLatLng)) {
+        // Before deleting, check if the marker is contained
+        // in other drawn regions. Don't delete marker if in
+        // other drawn region.
+        for (var layer in layers) {
+          if (layers[layer].getBounds().contains(markerLatLng)) {
+            // Mark as safe (not to remove) because this region
+            // contains the marker
+            // This drawn region is still on the map
+            // so don't remove marker from map
+            safeMarkers.push(marker);
+          }
+          else {
+            // Marker is not contained by current drawn layer
+            // so don't mark as safe
+          }
+        }
+
+      }
+      else { // if marker not contained by deleted shape,
+        // then don't delete from map
+
+        // Because there was a drawn region on the map
+        // before the delete, the only markers on the map should
+        // be those contained in a drawn search region on the map
+        // so assume this marker is within a different drawn region on map
+        // and mark it as safe
+        safeMarkers.push(marker);
+      }
+    }
+    // Delete all markers that weren't found in other drawn regions
+    for (var marker in markersObj) {
+      if (safeMarkers.indexOf(marker) === -1) {
+        // Marker isn't safe, must have only been found in th deleted
+        // region, so delete from map.
+        map.removeLayer(markersObj[marker]);
+      }
+    }
+  }
+  updateCount(safeMarkers);
+}
+
+// Draw markers on map
 function drawPage(response) {
-  console.log(response);
   displayIndustries(response.facets.Industry);
   displayFeatures(response);
   displayCompanies(response.facets.Company);
@@ -300,6 +398,15 @@ function updateSelections(which, value) {
   }
 }
 
+// Icons 
+// (add more colors if needed)
+
+var red_dot = L.icon({
+  "iconUrl": "images/red-dot.png",
+  "iconSize": [8, 8]
+})
+
+
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
   // Every doPost call redraws all markers on the map
@@ -308,7 +415,13 @@ function displayGeoJSON(geojsonFeatures) {
 
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
-      var marker = new L.CircleMarker(latlng, {radius: 3, fillOpacity: 0.85});
+      var marker = new L.marker(latlng, {
+        "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
+        // if you want to use red dots...
+        // ,"icon": red_dot
+      });
+
+      oms.addMarker(marker);
       return marker;
     },
     onEachFeature: function (feature, layer) {
@@ -317,6 +430,19 @@ function displayGeoJSON(geojsonFeatures) {
   });
 
   markers.addLayer(geojsonLayer);
+
+  updateCount(geojsonFeatures.documents);
+}
+
+// update the number of users being displayed
+function updateCount(points) {
+  if (points) {
+    currentCount = points.length;
+  }
+  else{
+    currentCount = 0;
+  }
+  $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
 }
 
 function removeAllFeatures() {  

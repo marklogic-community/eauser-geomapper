@@ -127,6 +127,8 @@ function displayCheckboxes(MLFeatures) {
 
 // saves any changes made to the features list.
 function save() {
+  $("body").css("cursor", "progress");
+
   var n = $("input:checked").length;
 
   var features = [];
@@ -152,10 +154,12 @@ function save() {
                             + "Successfully updated "
                             + global_user.fullDetails.username
                             + "'s features</div>");
+      $("body").css("cursor", "default");
     },
     error: function(a,b,c) {
       $("#features").append("<div class=\"alert alert-danger\" role=\"alert\">Something went wrong... :(</div>");
       fail(a,b,c);
+      $("body").css("cursor", "default");
     }
   });
 
