@@ -309,10 +309,10 @@ function displayGeoJSON(geojsonFeatures) {
   markers.addLayer(geojsonLayer);
 }
 
-function removeAllFeatures() {
+function removeAllFeatures() {  
   //drawnShapes.clearLayers();
   markers.clearLayers();
-}
+}  
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
@@ -418,8 +418,8 @@ function removeMarkers(bounds) {
   // does not contain any of the deleted regions (because they were deleted)
   var layers = drawnShapes.getLayers();
   if (layers.length === 0) {
-    //if layers.length = 0 then no other drawn regions on map
-    // redraw markers that match search selections in this event
+    // If layers.length is 0 then no other drawn regions on map.
+    // Redraw markers that match search selections in this event
     doPost("/search.sjs", displayGeoJSON, false);
     return;
   }
@@ -485,4 +485,4 @@ function removeMarkers(bounds) {
       }
     }
   }
-}
+}    
