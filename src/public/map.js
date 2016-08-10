@@ -7,7 +7,8 @@ var drawnShapes; //FeatureGroup
 var MLFeatures; // Array
 var selections; // Object
 var oms; // Overlapping Marker Spiderfier
-var popupOpen; // Is there a popup already open?
+var totalCount;
+var currentCount;
 
 // Start! Initialize the map and all things awesome.
 // For debugging, check MarkLogic's 8040_ErrorLog.txt
@@ -18,8 +19,6 @@ start();
 function start() {
   style = keys.mapboxStyle;
   token = keys.mapboxToken;
-
-  popupOpen = false;
 
   // Leaflet's map initialization method
   // 'mapid' is the div's name where the map will be found on the web page.
@@ -50,8 +49,6 @@ function start() {
   // Add the layers to the map so they are displayed
   map.addLayer(markers);
   map.addLayer(drawnShapes);
-
-//  oms.addMarker(markers);
 
   // mouse-click event for 'clear map' button
   // $("#clearButton").click(removeAllFeatures);
@@ -84,6 +81,18 @@ function start() {
     },
     error: fail
   });
+
+  $.ajax({
+    type: "GET",
+    url: "/scripts/getTotalCount.sjs",
+    dataType:"json",
+    success: function(response) {
+      totalCount = response.totalCount;
+      currentCount = totalCount;
+    },
+    error: fail
+  });
+
 }
 
 function addMapEvents() {
@@ -199,6 +208,7 @@ function removeMarkers(bounds) {
       }
     }
   }
+  updateCount(safeMarkers);
 }
 
 // Draw markers on map
@@ -382,7 +392,7 @@ function displayGeoJSON(geojsonFeatures) {
       var marker = new L.marker(latlng, {
         "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
         // if you want to use red dots...
-        //"icon": red_dot
+        // ,"icon": red_dot
       });
 
       oms.addMarker(marker);
@@ -402,6 +412,19 @@ function displayGeoJSON(geojsonFeatures) {
     map.currUser = e.layer.feature;
   });
   markers.addLayer(geojsonLayer);
+
+  updateCount(geojsonFeatures.documents);
+}
+
+// update the number of users being displayed
+function updateCount(points) {
+  if (points) {
+    currentCount = points.length;
+  }
+  else{
+    currentCount = 0;
+  }
+  $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
 }
 
 function removeAllFeatures() {
