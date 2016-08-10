@@ -6,24 +6,26 @@ var markers; //FeatureGroup
 var drawnShapes; //FeatureGroup
 var MLFeatures; // Array
 var selections; // Object
+var maxBounds; // lat long range of entire map
 var oms; // Overlapping Marker Spiderfier
 var totalCount;
 var currentCount;
-
-// Start! Initialize the map and all things awesome.
-// For debugging, check MarkLogic's 8040_ErrorLog.txt
-// and your browser's inspection tool
-start();
 
 // Run this function before any other
 function start() {
   style = keys.mapboxStyle;
   token = keys.mapboxToken;
 
+  maxBounds = L.latLngBounds(
+    L.latLng(-90, -180),
+    L.latLng(90, 180)
+  );
+
   // Leaflet's map initialization method
   // 'mapid' is the div's name where the map will be found on the web page.
   map = L.map('mapid', {
-    "minZoom": 2
+    minZoom: 2,
+    maxBounds: maxBounds,
   }).setView([0, 0], 2);
   url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
@@ -66,9 +68,6 @@ function start() {
   // Load all MarkLogic feature and industry options for dropdown menus
   doPost('/search.sjs', drawPage, true);
 
-  // After all industries and features are known, fetch the users from the database and display them
-  doPost('/search.sjs', displayGeoJSON, false);
-
   addMapEvents();
 
   //add "last updated @"" message
@@ -95,6 +94,12 @@ function start() {
 
 }
 
+// Start! Initialize the map and all things awesome.
+// For debugging, check MarkLogic's 8040_ErrorLog.txt
+// and your browser's inspection tool
+start();
+
+
 function addMapEvents() {
   //drawControl is the map element that allows drawing and deleting of shapes/layers
   var drawControl = new L.Control.Draw({
@@ -118,104 +123,20 @@ function addMapEvents() {
     doPost("/search.sjs", displayGeoJSON, false);
   });
   map.on('draw:deleted', function (e) {
-    // Update db to save latest changes.
-
-    // Loop through each deleted layer
-    /// (More than one could have been deleted)
-    for (var i in e.layers._layers) {
-      // Passing bounds of deleted drawn search regions
-      removeMarkers(e.layers._layers[i].getBounds());
-    }
-
-  });
-
-}
-
-// Check if markers are contained in bounds.
-// Remove all markers from map that are contained in bounds and not contained
-// in any drawn shapes on the map (if any);
-function removeMarkers(bounds) {
-  // loop through all markers on map
-  // and find if any are contained in bounds
-  // delete markers if they are contained in bounds
-  // and no other drawn shapes
-  var layers = drawnShapes.getLayers();
-  if (layers.length === 0) {
-    //if layers.length = 0 then no other drawn regions on map
-    // redraw markers that match search selections in this event
+    // Update db to save latest changes
     doPost("/search.sjs", displayGeoJSON, false);
-    return;
-  }
-
-
-  var markersObj;
-  for (var obj in markers._layers) {
-    // markersObj is an object of all marker objects currently on the map
-    // while there is only one object in markers._layers that has all
-    // map markers, it an id that changes every run of the map
-    // so using a loop to grab the name; ex: 163
-    // ** Same object in memory **
-    markersObj = markers._layers[obj]._layers;
-  }
-  // If markers on map, continue
-  // store markers here that shouldn't be deleted
-  var safeMarkers = [];
-  if (markersObj) {
-    for (var marker in markersObj) {
-      // looping through all map markers
-      // Check if the deleted drawn region (bounds) contains any markers
-      // on the map;
-
-      // LatLng object of marker to check if contained in the bounds of
-      // a deleted search region
-      var markerLatLng = markersObj[marker].getLatLng();
-      if (bounds.contains(markerLatLng)) {
-        // Before deleting, check if the marker is contained
-        // in other drawn regions. Don't delete marker if in
-        // other drawn region.
-        for (var layer in layers) {
-          if (layers[layer].getBounds().contains(markerLatLng)) {
-            // Mark as safe (not to remove) because this region
-            // contains the marker
-            // This drawn region is still on the map
-            // so don't remove marker from map
-            safeMarkers.push(marker);
-          }
-          else {
-            // Marker is not contained by current drawn layer
-            // so don't mark as safe
-          }
-        }
-
-      }
-      else { // if marker not contained by deleted shape,
-        // then don't delete from map
-
-        // Because there was a drawn region on the map
-        // before the delete, the only markers on the map should
-        // be those contained in a drawn search region on the map
-        // so assume this marker is within a different drawn region on map
-        // and mark it as safe
-        safeMarkers.push(marker);
-      }
-    }
-    // Delete all markers that weren't found in other drawn regions
-    for (var marker in markersObj) {
-      if (safeMarkers.indexOf(marker) === -1) {
-        // Marker isn't safe, must have only been found in th deleted
-        // region, so delete from map.
-        map.removeLayer(markersObj[marker]);
-      }
-    }
-  }
-  updateCount(safeMarkers);
+  });
 }
 
 // Draw markers on map
 function drawPage(response) {
   displayIndustries(response.facets.Industry);
-  displayFeatures(response.features.MarkLogicFeatures);
+  displayFeatures(response);
   displayCompanies(response.facets.Company);
+
+    // After all industries and features are known, fetch the
+    // users from the database and display markers
+  doPost('/search.sjs', displayGeoJSON, false);
 }
 
 /**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
@@ -225,10 +146,10 @@ function doPost(url, success, firstLoad) {
     selections: selections,
     mapWindow: [ //Used for search if no drawn shapes
       // TODO change to be entire map range, not just current view
-      map.getBounds().getSouth(),
-      map.getBounds().getWest(),
-      map.getBounds().getNorth(),
-      map.getBounds().getEast()
+      maxBounds.getSouth(),
+      maxBounds.getWest(),
+      maxBounds.getNorth(),
+      maxBounds.getEast()
     ],
     firstLoad: firstLoad,
     searchRegions: drawnShapes.toGeoJSON()
@@ -252,14 +173,30 @@ function fail(jqXHR, status, errorThrown) {
   console.log(errorThrown);
 }
 
-//features is an array []
-function displayFeatures(features) {
+// Populates the feature side menu
+function displayFeatures(response) {
+  var features = response.features.MarkLogicFeatures;
+  var counts = response.facets.Feature;
 
-  for (var ndx in features) {
-    var count = features[ndx]; // frequency of each feature
-    $('#collapse2 ul').append('<li class="list-group-item"><input checked type="checkbox"class="fChecker"value='+features[ndx]+'>'+features[ndx]+'</li>');
-    // Commented out because no feature data yet in database
-    //selections.features.push(features[ndx].toString());
+  var html;
+  var count;
+  for (var category in features) {
+    html = '';
+
+    html += '<li>' + category;
+    html += '<ul>';
+    for (var subfield in features[category]) {
+      count = 0;
+      if (counts[features[category][subfield]] !== undefined) {
+        count = counts[features[category][subfield]];
+      }
+      html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value=';
+      html += features[category][subfield]+'>'+features[category][subfield]+'<i>('+count+')</i></li>';
+      selections.features.push(features[category][subfield].toString());
+    }
+    html += '</ul>';
+    html += '</li>';
+    $('#featureUL').append(html);
   }
   var $features =  $("#featureUL .fChecker");
   for (var i = 0; i < $features.length; i++) {
@@ -268,29 +205,30 @@ function displayFeatures(features) {
         // e.target.value is 0 when click is on text in html and not on the check box
       }
       else {
-        // Commented out for now because no feature data in database.
-        //updateSelections("Feature", e.target.nextSibling.data);
-        //doPost("/search.sjs", displayGeoJSON, false);
+        updateSelections("Feature", e.target.nextSibling.data);
+        doPost("/search.sjs", displayGeoJSON, false);
       }
     }
   }
 }
 
-// industries is an object {}
+// industries is an object
 function displayIndustries(industries) {
 
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
     $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>'+obj+'<i>('+count+')</i></li>');
-    //Add value to the selections so code works with what is being displayed
+
+    //Add value to the selections so code works with what is being displayed in menu
     selections.industries.push(obj.toString());
   }
-  // Problem lives with how the UL is selected adnd what it is receiving,
-  var $industries =  $("#industryUL .iChecker");
 
-  // Conveniently the length property here refers to the number of elements appended to the selector
-  // AKA stuff not normally there, in other words, the length is the number of industries in the UL.
-  // and they occur at properties 0 -> $industries.length (y) Thank you, God.
+  var $industries =  $("#industryUL .iChecker");
+  // Conveniently the length property here refers to the number of elements 
+  // appended to the selector
+  // AKA stuff not normally there, in other words, the length is the number
+  // of industries in the UL.
+  // and they occur at properties 0 -> $industries.length
   for (var i = 0; i < $industries.length; i++) {
     $industries[i].onclick = function(e) {
       if (e.target.value === 0) {
@@ -400,17 +338,9 @@ function displayGeoJSON(geojsonFeatures) {
     },
     onEachFeature: function (feature, layer) {
       layer.bindPopup(formatPopup(feature.fullDetails));
-    },
-    style: function(feature) {
-      return {color: getColor(feature)};
     }
   });
-  geojsonLayer.on('click', function(e) {
-    // Set map's currUser field so we can know who was clicked
-    // Need to know who was clicked for the dialog box to load
-    // their features and save back to DB if needed.
-    map.currUser = e.layer.feature;
-  });
+
   markers.addLayer(geojsonLayer);
 
   updateCount(geojsonFeatures.documents);
@@ -427,75 +357,10 @@ function updateCount(points) {
   $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
 }
 
-function removeAllFeatures() {
+function removeAllFeatures() {  
   //drawnShapes.clearLayers();
   markers.clearLayers();
-}
-
-// Color of map marker corresponds to number of features the user uses
-// black: 0 features
-// red: 1 feature
-// Green: 2 features
-// Yellow: 3+ features
-function getColor(user) {
-  return "#FF0000";
-
-  // Commented out because have no data on number of features for EA Users as of now (8/3/2016)
-  // Will tinker with colors when feature data is available
-
-  /*var numFeatures = 0; // 0 features
-  var color = "#000000";
-  if (user.preview.features && user.preview.features.length) {
-    numFeatures = user.preview.features.length;
-  }
-  if (numFeatures === 1) {
-    color = "#FF0000"; //red
-  }
-  else if (numFeatures === 2) {
-    color = "#00FF00"; // green
-  }
-  else if (numFeatures >= 3) { //blue
-    color = "#0000FF";
-  }
-  return color */
-}
-
-// Initialize the dialog window .
-// Add modifications to its appearance and functionality as needed.
-function initDialog() {
-  $('#dialogFeatureEdit').dialog({
-    autoOpen: true,
-    modal: true,
-    width: 400,
-    height: 200,
-    buttons: {
-      Save: function() {
-        // TODO save the contents of the FeatureText textarea and save to MarkLogic
-        saveFeatureContents();
-        $(this).dialog('close');
-      },
-      Cancel: function() {
-        $(this).dialog('close');
-      }
-    }
-  });
-}
-
-function saveFeatureContents() {
-  var featStr = $("#FeatureText").val();
-  var featArr = featStr.split(",");
-
-  // Identify the user clicked by their email
-  // unique emails so cannot reuse emails for signing up for EA
-  var userEmail = map.currUser.preview.email;
-  trimmedArr = featArr.map(function(s) {
-    return String.prototype.trim.apply(s);
-  });
-
-//   // ***** TODO ****
-//   // AJAX call to MarkLogic and send the features in the
-//   // textarea as params to save into ML, use email to find user in database
-}
+}  
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
@@ -587,3 +452,70 @@ $(function filterDate() {
   });
 
 });
+
+// Check if markers are contained in bounds.
+// Remove all markers from map that are contained in bounds and not contained
+// in any drawn shapes on the map (if any);
+function removeMarkers(bounds) {
+  // loop through all markers on map
+  // and find if any are contained in bounds
+  // delete markers if they are contained in bounds
+  // and no other drawn shapes
+
+  // drawnShapes is an object of the currently drawn layers still on map;
+  // does not contain any of the deleted regions (because they were deleted)
+  var layers = drawnShapes.getLayers();
+  if (layers.length === 0) {
+    // If layers.length is 0 then no other drawn regions on map.
+    // Redraw markers that match search selections in this event
+    doPost("/search.sjs", displayGeoJSON, false);
+    return;
+  }
+
+
+  var markersObj;
+  for (var obj in markers._layers) {
+    // markersObj is an object of all marker objects currently on the map
+    // while there is only one object in markers._layers that has all
+    // map markers, it an id that changes every run of the map
+    // so using a loop to grab the name; ex: 163
+    // ** Same object in memory **
+    markersObj = markers._layers[obj]._layers;
+  }
+  // If markers on map, continue
+  // store markers here that shouldn't be deleted
+  var safeMarkers = [];
+  if (markersObj) {
+    for (var marker in markersObj) {
+      // looping through all map markers
+
+      // LatLng object of marker to check if contained in the bounds of
+      // a region still on the map
+      // If marker was only found in the deleted region then it won't be
+      // added to safeMarkers[].
+      var markerLatLng = markersObj[marker].getLatLng();
+      for (var layer in layers) {
+        if (layers[layer].getBounds().contains(markerLatLng)) {
+          // Mark as safe (not to remove) because this region
+          // contains the marker
+          // This drawn region is still on the map
+          // so don't remove marker from map
+          safeMarkers.push(marker);
+        }
+        else {
+          // Marker is not contained by a current drawn layer
+          // so don't mark as safe
+        }
+      }
+
+    }
+    // Delete all markers that weren't found in other drawn regions
+    for (var marker in markersObj) {
+      if (safeMarkers.indexOf(marker) === -1) {
+        // Marker isn't safe, must have only been found in th deleted
+        // region, so delete from map.
+        map.removeLayer(markersObj[marker]);
+      }
+    }
+  }
+}    
