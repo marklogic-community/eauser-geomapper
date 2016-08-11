@@ -100,6 +100,7 @@ for(var obj in users.documents) {
   users.documents[obj] = users.documents[obj].extracted[0];
 }
 
+// Loads all ML9 features from /config/features/MLFeatures.json
 if (input.firstLoad === true) {
   users.features = cts.search(cts.directoryQuery("/config/features/"));
 }

@@ -26,7 +26,7 @@ $(document).ready(function() {
     data: JSON.stringify(payload),
     contentType: "application/json",
     dataType: "json",
-    success: display, 
+    success: display,
     error: fail
   });
 });
@@ -127,6 +127,8 @@ function displayCheckboxes(MLFeatures) {
 
 // saves any changes made to the features list.
 function save() {
+  $("body").css("cursor", "progress");
+
   var n = $("input:checked").length;
 
   var features = [];
@@ -147,15 +149,17 @@ function save() {
     contentType: "application/json",
     dataType: "json",
     success: function(res) {
-      $("#features").append("<div class=\"alert alert-success\" role=\"alert\">" 
+      $("#features").append("<div class=\"alert alert-success\" role=\"alert\">"
                             + "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" title=\"close\">×</a>"
-                            + "Successfully updated " 
-                            + global_user.fullDetails.username 
+                            + "Successfully updated "
+                            + global_user.fullDetails.username
                             + "'s features</div>");
+      $("body").css("cursor", "default");
     },
     error: function(a,b,c) {
       $("#features").append("<div class=\"alert alert-danger\" role=\"alert\">Something went wrong... :(</div>");
       fail(a,b,c);
+      $("body").css("cursor", "default");
     }
   });
 
@@ -170,7 +174,7 @@ function encodeXml(s) {
   );
 }
 
-function fail(jqXHR, status, errorThrown) 
+function fail(jqXHR, status, errorThrown)
 {
   console.log("Failed to receive data: ");
   console.log(jqXHR);
