@@ -445,41 +445,6 @@ function formatPopup(properties) {
   return str;
 }
 
-// Date Range Picker
-$(function filterDate() {
-
-  $('input[name="datefilter"]').daterangepicker({
-    autoUpdateInput: false,
-    locale: {
-      cancelLabel: 'Clear'
-    }
-  });
-
-  $('span[name="calendar"]').daterangepicker({
-      autoUpdateInput: false,
-      locale: {
-        cancelLabel: 'Clear'
-      }
-  });
-
-  $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
-    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-  });
-
-  $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
-    $(this).val('');
-  });
-
-  $('span[name="calendar"]').on('apply.daterangepicker', function (ev, picker) {
-    $('input[name="datefilter"]').val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-  });
-
-  $('span[name="calendar"]').on('cancel.daterangepicker', function (ev, picker) {
-    $('input[name="datefilter"]').val('');
-  });
-
-});
-
 // Check if markers are contained in bounds.
 // Remove all markers from map that are contained in bounds and not contained
 // in any drawn shapes on the map (if any);
