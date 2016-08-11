@@ -198,7 +198,7 @@ function displayFeatures(response) {
     $('#featureUL').append(html);
   }
   var $features =  $("#featureUL .fChecker");
-  console.log($features);
+
   for (var i = 0; i < $features.length; i++) {
     $features[i].onclick = function(e) {
       if (e.target.value === 0) {
@@ -325,8 +325,7 @@ function displayGeoJSON(geojsonFeatures) {
   // Every doPost call redraws all markers on the map
   // removeAllFeatures() removes all markers from the map
   removeAllFeatures();
-  console.log(selections);
-  //console.log(geojsonFeatures);
+
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
       var marker = new L.marker(latlng, {
