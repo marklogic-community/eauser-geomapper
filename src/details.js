@@ -75,6 +75,7 @@ function display(user) {
   $("#registeredForNoSQLforDummies").append(user.fullDetails.registeredForNoSQLforDummies);
   $("#registrationDate").append(user.fullDetails.registrationDate);
   $("#leadSource").append(user.fullDetails.leadSource);
+  $("#lastUpdated").append(user.fullDetails.lastUpdated);
 
 };
 
