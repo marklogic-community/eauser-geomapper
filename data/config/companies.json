@@ -1,0 +1,28 @@
+{
+  "MarkLogic" : [
+    "ml",
+    "Marklogic",
+    "marklogic",
+    "MarkLogic Corporation",
+    "Marklogic K.K.",
+    "MarkLogic on behalf of Kevin DeFord at Mitre"
+  ]
+/*  ,
+  "Avalon Consulting, LLC" : [
+    "Avalon Consulting, LLC",
+    "Avalon Consulting, LLC."
+  ],
+  "Cognizant" : [
+    "Cognizant",
+    "Cognizant Technology Solutions"
+  ],
+  "DragonSpears, Inc." : [
+    "Dragonspears",
+    "DragonSpears, Inc."
+  ],
+  "Hinttech.nl": [
+    "Hinttech Beheer BV / Tahzoo",
+    "Hinttech.nl"
+  ]
+*/
+}
