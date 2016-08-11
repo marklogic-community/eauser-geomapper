@@ -183,7 +183,6 @@ function displayFeatures(response) {
   for (var category in features) {
     html = '';
 
-    //html += '<li>' + category;
     html += '<ul><lh>'+ category + "</lh>";
     for (var subfield in features[category]) {
       count = 0;
@@ -195,7 +194,6 @@ function displayFeatures(response) {
       selections.features.push(features[category][subfield].toString());
     }
     html += '</ul>';
-    //html += '</li>';
     $('#featureUL').append(html);
   }
   var $features =  $("#featureUL .fChecker");
