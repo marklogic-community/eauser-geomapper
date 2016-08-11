@@ -131,6 +131,7 @@ function addMapEvents() {
 
 // Draw markers on map
 function drawPage(response) {
+  console.log('draw markers on map');
   displayIndustries(response.facets.Industry);
   displayFeatures(response);
   displayCompanies(response.facets.Company);
@@ -211,7 +212,20 @@ function displayFeatures(response) {
     }
   }
 
-  //TODO: select all checkboxes
+    // Feature's select/deselect all checkbox
+  $("#select_all_f").change(function() {
+    var status = this.checked; // status can be either true/false
+    var fBoxes = $('#featureUL, .fChecker');
+
+    $('select_all_f').prop("checked", status); // select all box is whatever status is
+
+    for (var i = 0; i < fBoxes.length; i++) {
+      fBoxes[i].checked = status;
+      var fVal = fBoxes[i].nextSibling.data;
+      updateSelections("Feature", fVal);
+    }
+    doPost("/search.sjs", displayGeoJSON, false);
+  });
 }
 
 // industries is an object
@@ -242,7 +256,20 @@ function displayIndustries(industries) {
     }
   }
 
-  //TODO: select all checkboxes
+  // Industry's select/deselect all checkbox
+  $("#select_all_i").change(function() {
+    var status = this.checked; // status can be either true/false
+    var iBoxes = $('#industryUL, .iChecker');
+
+    $('select_all_i').prop("checked", status); // select all box is whatever status is
+
+    for (var i = 0; i < iBoxes.length; i++) {
+      iBoxes[i].checked = status;
+      var iVal = iBoxes[i].nextSibling.data;
+      updateSelections("Industry", iVal);
+    }
+    doPost("/search.sjs", displayGeoJSON, false);
+  });
 
 }
 
@@ -268,22 +295,20 @@ function displayCompanies(companies) {
     }
   }
 
-  // company's select all checkbox
+  // Company's select/deselect all checkbox
   $("#select_all_c").change(function() {
-
     var status = this.checked; // status can be either true/false
-    var c = $('#companyUL, .cChecker');
+    var cBoxes = $('#companyUL, .cChecker');
 
     $('select_all_c').prop("checked", status); // select all box is whatever status is
 
-    for (var i = 0; i < c.length; i++) {
-      c[i].checked = status;
-      var cVal = c[i].nextSibling.data;
+    for (var i = 0; i < cBoxes.length; i++) {
+      cBoxes[i].checked = status;
+      var cVal = cBoxes[i].nextSibling.data;
       updateSelections("Company", cVal);
-
     }
     doPost("/search.sjs", displayGeoJSON, false);
-    });
+  });
 }
 
 function updateSelections(which, value) {
@@ -303,7 +328,6 @@ function updateSelections(which, value) {
       // Already in the array, aka box was checked, so unchecking was just done
 
       selections.industries.splice(index, 1);
-      $('#select_all_i').prop("checked", false); // unchecks the select all
     }
 
     else { //checked the box
@@ -318,7 +342,6 @@ function updateSelections(which, value) {
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
       selections.features.splice(index, 1);
-      $('#select_all_f').prop("checked", false); // unchecks the select all
     }
     else { //checked the box
       selections.features.push(value);
@@ -330,7 +353,6 @@ function updateSelections(which, value) {
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
       selections.companies.splice(index, 1);
-      $('#select_all_c').prop("checked", false); // unchecks the select all
     }
     else { // checked the box
       selections.companies.push(value);
