@@ -330,8 +330,9 @@ function displayGeoJSON(geojsonFeatures) {
     pointToLayer: function (feature, latlng) {
       var marker = new L.marker(latlng, {
         "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
-      }); // if you want to use red dots...
+        // if you want to use red dots...
         // ,"icon": red_dot
+      }); 
 
       oms.addMarker(marker);
       return marker;
