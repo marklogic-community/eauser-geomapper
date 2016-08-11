@@ -184,14 +184,14 @@ function displayFeatures(response) {
   for (var category in features) {
     html = '';
 
-    html += '<ul><lh>'+ category + "</lh>";
+    html += '<ul id="displayFeaturesList"><lh>'+ category + "</lh>";
     for (var subfield in features[category]) {
       count = 0;
       if (counts[features[category][subfield]] !== undefined) {
         count = counts[features[category][subfield]];
       }
       html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value=';
-      html += features[category][subfield]+'>'+features[category][subfield]+'<i> ('+count+')</i></li>';
+      html += features[category][subfield]+'>&nbsp;'+features[category][subfield]+'<i> ('+count+')</i></li>';
       selections.features.push(features[category][subfield].toString());
     }
     html += '</ul>';
@@ -216,7 +216,7 @@ function displayIndustries(industries) {
 
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
-    $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>'+obj+'<i> ('+count+')</i></li>');
+    $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>&nbsp;'+obj+'<i> ('+count+')</i></li>');
 
     //Add value to the selections so code works with what is being displayed in menu
     selections.industries.push(obj.toString());
@@ -247,7 +247,7 @@ function displayCompanies(companies) {
   for (var obj in companies) {
     // does not include the count -- assuming that there is only one user for most companies
 
-    $('#collapse3 ul').append('<li class="list-group-item"><input checked type="checkbox" class="cChecker" value='+ obj+ '>' + obj + '</li>');
+    $('#collapse3 ul').append('<li class="list-group-item"><input checked type="checkbox" class="cChecker" value='+ obj+ '>&nbsp;' + obj + '</li>');
     selections.companies.push(obj.toString());
   }
   var $companies = $("#companyUL .cChecker");
