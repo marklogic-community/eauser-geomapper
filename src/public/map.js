@@ -1,4 +1,5 @@
-var style; //MapBox API
+'use strict'
+var style; //MapBox API 
 var token; //MapBox API
 var map; // Leaflet map
 var url; // String
@@ -197,6 +198,7 @@ function displayFeatures(response) {
     $('#featureUL').append(html);
   }
   var $features =  $("#featureUL .fChecker");
+
   for (var i = 0; i < $features.length; i++) {
     $features[i].onclick = function(e) {
       if (e.target.value === 0) {
@@ -267,6 +269,7 @@ function displayCompanies(companies) {
 function updateSelections(which, value) {
   var index;
 
+  value = value.trim();
   if (which === "Industry") {
     // Check if 'value' is in the array
     // If index = -1 then value is not in array,
@@ -284,6 +287,7 @@ function updateSelections(which, value) {
       selections.industries.push(value);
     }
   }
+
 
   else if (which === "Feature") {
     index = selections.features.indexOf(value);
@@ -310,7 +314,6 @@ function updateSelections(which, value) {
 
 // Icons 
 // (add more colors if needed)
-
 var red_dot = L.icon({
   "iconUrl": "images/red-dot.png",
   "iconSize": [8, 8]
@@ -329,7 +332,7 @@ function displayGeoJSON(geojsonFeatures) {
         "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
         // if you want to use red dots...
         // ,"icon": red_dot
-      });
+      }); 
 
       oms.addMarker(marker);
       return marker;
