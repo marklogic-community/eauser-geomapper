@@ -183,19 +183,19 @@ function displayFeatures(response) {
   for (var category in features) {
     html = '';
 
-    html += '<li>' + category;
-    html += '<ul>';
+    //html += '<li>' + category;
+    html += '<ul><lh>'+ category + "</lh>";
     for (var subfield in features[category]) {
       count = 0;
       if (counts[features[category][subfield]] !== undefined) {
         count = counts[features[category][subfield]];
       }
       html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value=';
-      html += features[category][subfield]+'>'+features[category][subfield]+'<i>('+count+')</i></li>';
+      html += features[category][subfield]+'>'+features[category][subfield]+'<i> ('+count+')</i></li>';
       selections.features.push(features[category][subfield].toString());
     }
     html += '</ul>';
-    html += '</li>';
+    //html += '</li>';
     $('#featureUL').append(html);
   }
   var $features =  $("#featureUL .fChecker");
@@ -217,7 +217,7 @@ function displayIndustries(industries) {
 
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
-    $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>'+obj+'<i>('+count+')</i></li>');
+    $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>'+obj+'<i> ('+count+')</i></li>');
 
     //Add value to the selections so code works with what is being displayed in menu
     selections.industries.push(obj.toString());
