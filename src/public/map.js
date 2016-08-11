@@ -198,6 +198,7 @@ function displayFeatures(response) {
     $('#featureUL').append(html);
   }
   var $features =  $("#featureUL .fChecker");
+  console.log($features);
   for (var i = 0; i < $features.length; i++) {
     $features[i].onclick = function(e) {
       if (e.target.value === 0) {
@@ -268,6 +269,7 @@ function displayCompanies(companies) {
 function updateSelections(which, value) {
   var index;
 
+  value = value.trim();
   if (which === "Industry") {
     // Check if 'value' is in the array
     // If index = -1 then value is not in array,
@@ -285,6 +287,7 @@ function updateSelections(which, value) {
       selections.industries.push(value);
     }
   }
+
 
   else if (which === "Feature") {
     index = selections.features.indexOf(value);
@@ -311,7 +314,6 @@ function updateSelections(which, value) {
 
 // Icons 
 // (add more colors if needed)
-
 var red_dot = L.icon({
   "iconUrl": "images/red-dot.png",
   "iconSize": [8, 8]
@@ -323,14 +325,14 @@ function displayGeoJSON(geojsonFeatures) {
   // Every doPost call redraws all markers on the map
   // removeAllFeatures() removes all markers from the map
   removeAllFeatures();
-
+  console.log(selections);
+  //console.log(geojsonFeatures);
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
       var marker = new L.marker(latlng, {
         "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
-        // if you want to use red dots...
+      }); // if you want to use red dots...
         // ,"icon": red_dot
-      });
 
       oms.addMarker(marker);
       return marker;
