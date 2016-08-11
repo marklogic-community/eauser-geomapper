@@ -1,4 +1,4 @@
-// uses the "old" initData.sjs strategy 
+// uses the "old" initData.sjs strategy
 // (uses a while loop instead of a million xdmp.spawns)
 // works fine for daily updates (which shouldn't take more than an hour)
 
@@ -32,11 +32,11 @@ while (remainingCount > 0) {
   var options = xdmp.quote(
     "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns1=\"http://www.marketo.com/mktows/\">"
     + "<SOAP-ENV:Header><ns1:AuthenticationHeader><mktowsUserId>"
-    + userID 
+    + userID
     + "</mktowsUserId><requestSignature>"
-    + signature 
+    + signature
     + "</requestSignature><requestTimestamp>"
-    + timestamp 
+    + timestamp
     + "</requestTimestamp></ns1:AuthenticationHeader></SOAP-ENV:Header>"
     //body
     + "<SOAP-ENV:Body>"
@@ -47,15 +47,15 @@ while (remainingCount > 0) {
     + "</ns1:paramsGetMultipleLeads>"
     + "</SOAP-ENV:Body></SOAP-ENV:Envelope>"
   );
-  
+
   xdmp.log("requesting StreamPosition " + streamPosition);
 
-  var result = xdmp.httpPost(endpoint, 
+  var result = xdmp.httpPost(endpoint,
   {
     "data" : options,
     "timeout" : 1000000
   });
-  
+
   // get remainingCount and newStreamPosition
   remainingCount = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/remainingCount/fn:number()");
   streamPosition = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/newStreamPosition/fn:string()");
@@ -79,8 +79,8 @@ var output =
   sr.documents()
   .result();
 
-// subtract two from output.estimate, because of the two /config/ files.
-var newNumDocuments = output.estimate - 2;
+// subtract three from output.estimate, because of the three /config/ files.
+var newNumDocuments = output.estimate - 3;
 
 oldSystemInfoDoc.numDocuments = newNumDocuments;
 
