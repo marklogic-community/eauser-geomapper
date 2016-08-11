@@ -1,4 +1,5 @@
-var style; //MapBox API
+'use strict'
+var style; //MapBox API 
 var token; //MapBox API
 var map; // Leaflet map
 var url; // String
