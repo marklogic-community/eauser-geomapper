@@ -73,18 +73,44 @@ while (remainingCount > 0) {
 var oldSystemInfo = cts.doc("/config/systemInfo.json");
 
 var oldSystemInfoDoc = oldSystemInfo.toObject();
+
+var emailLastUpdated = oldSystemInfoDoc.lastUpdated;
+var emailOldNumDocs = oldSystemInfoDoc.numDocuments;
+
 oldSystemInfoDoc.lastUpdated = fn.currentDateTime().add(xdmp.elapsedTime());
 
 var output =
   sr.documents()
   .result();
 
-// subtract three from output.estimate, because of the three /config/ files.
-var newNumDocuments = output.estimate - 3;
+// subtract two from output.estimate, because of the two /config/ files.
+var newNumDocuments = output.estimate - 2;
 
 oldSystemInfoDoc.numDocuments = newNumDocuments;
 
 xdmp.nodeReplace(oldSystemInfo, oldSystemInfoDoc);
+
+
+
+// email alert when update finishes
+try {
+
+  var time = fn.formatDateTime(fn.currentDateTime(), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
+  var content = "Completed update at " + time + "\n\n";
+  content += "Last updated: " + emailLastUpdated + "\n";
+  content += "\tPrevious number of users: " + emailOldNumDocs + "\n\n";
+  content += "Current number of users:" + newNumDocuments;
+
+  var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+               "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
+               "subject":"EA tracker update",
+               "content": content};
+  xdmp.email(message);
+} 
+catch(error) {
+  xdmp.log("email attempt failed");
+}
+
 
 "done";
 

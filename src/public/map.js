@@ -1,5 +1,5 @@
 'use strict'
-var style; //MapBox API 
+var style; //MapBox API
 var token; //MapBox API
 var map; // Leaflet map
 var url; // String
@@ -11,6 +11,7 @@ var maxBounds; // lat long range of entire map
 var oms; // Overlapping Marker Spiderfier
 var totalCount;
 var currentCount;
+var companies_pretty; // data from /config/companies.json
 
 // Run this function before any other
 function start() {
@@ -40,7 +41,7 @@ function start() {
   }).addTo(map);
 
 
-  // Initialize Overlapping Marker Spiderfier 
+  // Initialize Overlapping Marker Spiderfier
   //   (the thing that spreads out markers that overlap)
   oms = new OverlappingMarkerSpiderfier(map);
 
@@ -224,7 +225,7 @@ function displayIndustries(industries) {
   }
 
   var $industries =  $("#industryUL .iChecker");
-  // Conveniently the length property here refers to the number of elements 
+  // Conveniently the length property here refers to the number of elements
   // appended to the selector
   // AKA stuff not normally there, in other words, the length is the number
   // of industries in the UL.
@@ -245,6 +246,7 @@ function displayIndustries(industries) {
 
 // companies is an object {}
 function displayCompanies(companies) {
+
   for (var obj in companies) {
     // does not include the count -- assuming that there is only one user for most companies
 
@@ -301,6 +303,10 @@ function updateSelections(which, value) {
   }
 
   else if (which === "Company") {
+///////////////////////////////////////////////////
+    // maps "marklogic," "Marklogic," "MarkLogic Corporation," etc... to "MarkLogic"
+    var officialValue
+
     index = selections.companies.indexOf(value);
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
@@ -312,7 +318,7 @@ function updateSelections(which, value) {
   }
 }
 
-// Icons 
+// Icons
 // (add more colors if needed)
 var red_dot = L.icon({
   "iconUrl": "images/red-dot.png",
@@ -332,7 +338,7 @@ function displayGeoJSON(geojsonFeatures) {
         "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
         // if you want to use red dots...
         // ,"icon": red_dot
-      }); 
+      });
 
       oms.addMarker(marker);
       return marker;
@@ -358,10 +364,10 @@ function updateCount(points) {
   $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
 }
 
-function removeAllFeatures() {  
+function removeAllFeatures() {
   //drawnShapes.clearLayers();
   markers.clearLayers();
-}  
+}
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
@@ -519,4 +525,4 @@ function removeMarkers(bounds) {
       }
     }
   }
-}    
+}
