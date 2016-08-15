@@ -19,6 +19,9 @@ var secretkey = keys.secretkey;
 var endpoint = keys.endpoint;
 var userID = keys.userID;
 
+// for finding out how many users there are in the database
+var sr = require("/MarkLogic/jsearch.sjs");
+
 // grab all users whose accounts were updated after 2/2/2016 
 //  (Note: EA1 was released 2/3/2016)
 //  (Note 2: the time is completely random)
@@ -77,11 +80,32 @@ else {
   system["appStartDate"] = fn.currentDateTime();
   system["lastUpdated"] = fn.currentDateTime();
 
-  // find out how to obtain the number of /users/{{username}} documents there are
-  // system["numDocuments"] = 
+  var output =
+    sr.documents()
+    .result();
+
+  // at this moment, there are no /config files, so the number of documents is exactly the number of users.
+  system["numDocuments"] = output.estimate;
 
   xdmp.documentInsert("/config/systemInfo.json", systemInfo);
   
+  // email update
+  try {
+    var timestamp = fn.formatDateTime(fn.currentDateTime(), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
+    var content = "Completed data ingestion at " + timestamp + "\n\n";
+    content += "Number of users: " + system.numDocuments;
+
+    var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+                 "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
+                 "subject":"EA tracker - initial data ingestion",
+                 "content": content};
+    xdmp.email(message);
+    
+  } 
+  catch(error) {
+    xdmp.log("email attempt failed");
+  }
+
   xdmp.log("DONE");
 }
 
