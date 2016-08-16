@@ -65,7 +65,9 @@ function display(user) {
   $("#website").append(user.fullDetails.website);
 
   // Marketo xml source
-  $("#source").append(encodeXml(user.source));
+  if (user.source) {
+    $("#source").append(encodeXml(user.source));
+  }
 
   // Marklogic account info
   $("#accountType").append(user.fullDetails.accountType);

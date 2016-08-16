@@ -77,15 +77,15 @@ if (remainingCount > 0) {
 
 else {
   var systemInfo = {};
-  system["appStartDate"] = fn.currentDateTime();
-  system["lastUpdated"] = fn.currentDateTime();
+  systemInfo["appStartDate"] = fn.currentDateTime();
+  systemInfo["lastUpdated"] = fn.currentDateTime();
 
-  var output =
+  var output = 
     sr.documents()
     .result();
 
   // at this moment, there are no /config files, so the number of documents is exactly the number of users.
-  system["numDocuments"] = output.estimate;
+  systemInfo["numDocuments"] = output.estimate;
 
   xdmp.documentInsert("/config/systemInfo.json", systemInfo);
   

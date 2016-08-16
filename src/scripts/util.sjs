@@ -66,8 +66,6 @@ var convertToJson = function(record) {
   properties["industry"] = record.xpath("./leadAttributeList/attribute[attrName = 'Main_Industry__c']/attrValue/fn:string()");
   properties["company"] = record.xpath("./leadAttributeList/attribute[attrName = 'Company']/attrValue/fn:string()");
 
-
-
   //properties["leadScore"] = record.xpath("./leadAttributeList/attribute[attrName = 'LeadScore']/attrValue/fn:string()");
   //properties["markLogicContactEmail"] = record.xpath("./leadAttributeList/attribute[attrName = 'markLogicContactEmail']/attrValue/fn:string()");
   properties["phone"] = record.xpath("./leadAttributeList/attribute[attrName = 'Phone']/attrValue/fn:string()");
@@ -77,10 +75,10 @@ var convertToJson = function(record) {
   properties["numEmployees"] = record.xpath("./leadAttributeList/attribute[attrName = 'DC_NoOfEmp__c']/attrValue/fn:number()");
   properties["username"] = record.xpath("./leadAttributeList/attribute[attrName = 'EA_ML9username']/attrValue/fn:string()")
   properties["region"] = record.xpath("./leadAttributeList/attribute[attrName = 'GEO_Region_Sub_Region__c']/attrValue/fn:string()");
-  properties["hasAccessToEAML9"] = fn.boolean(record.xpath("./leadAttributeList/attribute[attrName = 'HasAccessToEAML9']/attrValue")); //// test this
+  properties["hasAccessToEAML9"] = fn.boolean(record.xpath("./leadAttributeList/attribute[attrName = 'HasAccessToEAML9']/attrValue"));
   properties["postalCode"] = record.xpath("./leadAttributeList/attribute[attrName = 'PostalCode']/attrValue/fn:string()");
-  properties["registeredForEAML8"] = fn.boolean(record.xpath("./leadAttributeList/attribute[attrName = 'registeredforEAML8']/attrValue")); /////
-  properties["registeredForNoSQLforDummies"] = fn.boolean(record.xpath("./leadAttributeList/attribute[attrName = 'registeredforNoSQLforDummies']/attrValue")); /////
+  properties["registeredForEAML8"] = fn.boolean(record.xpath("./leadAttributeList/attribute[attrName = 'registeredforEAML8']/attrValue"));
+  properties["registeredForNoSQLforDummies"] = fn.boolean(record.xpath("./leadAttributeList/attribute[attrName = 'registeredforNoSQLforDummies']/attrValue"));
   properties["registrationDate"] = record.xpath("./leadAttributeList/attribute[attrName = 'Registration_Date__c']/attrValue/fn:string()");
   properties["revenueRange"] = record.xpath("./leadAttributeList/attribute[attrName = 'Revenue_Range__c']/attrValue/fn:string()");
   properties["leadSource"] = record.xpath("./leadAttributeList/attribute[attrName = 'Specific_Lead_Source__c']/attrValue/fn:string()");
@@ -107,6 +105,63 @@ var convertToJson = function(record) {
 
   return doc;
 };
+
+// convertToJson function for records returned by Marketo's REST api
+//  user is a json doc
+var convertToJson_REST = function(user, ea_version) {
+
+  // full details properties
+  var properties = {};
+
+  // decided to merge preview and fullDetails
+  properties["firstname"] = user.firstName;
+  properties["lastname"] = user.lastName;
+  properties["email"] = user.email;
+  properties["city"] = user.city;
+  properties["state"] = user.state;
+  properties["industry"] = user.Main_Industry__c;
+  properties["company"] = user.company;
+  properties["id"] = user.id;
+
+  properties["phone"] = user.phone;
+  properties["accountType"] = user.Account_Type__c;
+  properties["address"] = user.address;
+  properties["country"] = user.country;
+  properties["numEmployees"] = user.DC_Employees__c;
+  properties["username"] = user.EA_ML9username;
+  properties["region"] = user.GEO_Region_Sub_Region__c;
+  properties["hasAccessToEAML9"] = user.HasAccessToEAML9; 
+  properties["postalCode"] = user.postalCode;
+  properties["registeredForEAML8"] = user.registeredforEAML8;
+  properties["registeredForNoSQLforDummies"] = user.registeredforNoSQLforDummies;
+  properties["registrationDate"] = user.createdAt; // or Registration_Date__c , but this is nearly always null...
+  properties["revenueRange"] = user.Revenue_Range__c;
+  properties["leadSource"] = user.Specific_Lead_Source__c;
+  properties["website"] = user.website; // taken from email address
+  properties["marketoLastUpdated"] = user.updatedAt; // when the document was last updated in Marketo
+
+  properties["appLastUpdated"] = fn.currentDateTime(); // when we last queried Marketo for any updates
+
+  properties["dateAdded"] = fn.currentDateTime();
+
+  properties["ea_version"] = ea_version;
+
+  var doc = {};
+
+  doc["type"] = "Feature";
+  doc["fullDetails"] = properties;
+  
+  var coord = getCoord(properties.postalCode, properties.country);
+  
+  doc["geometry"] = {
+    "type": "Point",
+    "coordinates": coord
+  };
+
+  return doc;
+};
+
+
 
 // returns the date/time of a day ago.
 var oneDayAgo = function(currentDateTime) {
@@ -176,6 +231,8 @@ var exists = function(username) {
 
 module.exports = {
   "convertToJson": convertToJson,
+
+  "convertToJson_REST": convertToJson_REST,
 
   //getCoord might not be necessary..
   "getCoord": getCoord,
