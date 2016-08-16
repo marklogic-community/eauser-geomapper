@@ -1,5 +1,5 @@
 // POST request body -> {username: <username>, features: [<features>]}
-
+var util = require("/scripts/util.sjs");
 declareUpdate();
 
 var sr = require('/MarkLogic/jsearch.sjs');
@@ -8,7 +8,9 @@ var rawInput = xdmp.getRequestBody();
 
 var input = rawInput.toObject();
 
-var uri = "/users/" + input.username + ".json";
+var username = util.removeSpaces(input.username, "+");
+
+var uri = "/users/" + username + ".json";
 
 var res = null;
 

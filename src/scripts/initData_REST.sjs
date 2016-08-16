@@ -61,7 +61,7 @@ try {
       if ( (username + "") === "null") {
         continue;
       }
-      
+
       numUsers++;
 
       // picked "+" over "-" because some users have already used "-" in their username.
@@ -85,7 +85,38 @@ try {
   systemInfo["numDocuments"] = numUsers;
 
   xdmp.documentInsert("/config/systemInfo.json", systemInfo);
+  xdmp.log("  inserted systemInfo.json");
 
+  var features = {
+    "MarkLogicFeatures": {
+      "Data Integration": [
+        "Entity Services",
+        "Data Movement SDK",
+        "Template Driven Extraction",
+        "SQL Enhancements",
+        "Optic API"
+      ],
+      "Security": [
+        "Encryption",
+        "Redaction",
+        "Element-level Security"
+      ],
+      "Manageability": [
+        "Ops Director",
+        "New Relic Plugin"
+      ],
+      "Additional Enhancements": [
+        "Geospatial",
+        "Search",
+        "Enhanced Tiered Storage",
+        "JavaScript",
+        "Query Console"
+      ]
+    }
+  }
+
+  xdmp.documentInsert("/config/features/MLFeatures.json", features);
+  xdmp.log("  inserted MLFeatures.json");
 } 
 catch(err) {
   xdmp.log("failed to ingest data");
