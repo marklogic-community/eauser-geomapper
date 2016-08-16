@@ -20,7 +20,8 @@
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+  integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
   <!-- For the Date Range Picker -->
   <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -36,11 +37,14 @@
   <!-- Start of CSS -->
   <style>
     body {
-      padding: 50px;
+      padding: 0px;
     }
     .title {
-      padding: 40px 15px;
+      padding: 10px 10px;
       text-align: center;
+    }
+    .container {
+      width: 90%;
     }
     li.list-group-item {
       border: none;
@@ -54,11 +58,13 @@
       text-align: center;
     }
     /* centers text on selection menu */
-    #selectIndustry h3, #selectFeature h3, #selectCompany h3 {
+    #selectIndustry h4, #selectFeature h4,
+    #selectCompany h4, #selectRegion h4 {
       text-align: center;
     }
     /* centers the date, industry, feature, and company selection menu divs */
-    #date, #selectIndustry, #selectFeature, #selectCompany {
+    #date, #selectIndustry, #selectFeature,
+    #selectCompany, #selectRegion {
       margin-left: auto;
       margin-right: auto;
     }
@@ -72,7 +78,8 @@
       left: 10px;
     }
     /* scrolling feature of the menu bars */
-    .panel-collapse, #collapse1 #collapse2 #collapse3 {
+    .panel-collapse, #collapse1 #collapse2
+     #collapse3 #collapse4 {
       max-height: 200px;
       overflow: hidden;
       overflow-y: auto;
@@ -108,23 +115,23 @@
 <!-- Select Dates button -->
       <div class="col-sm-12" id="date">
         <input type="text" size="26" name="datefilter" value="Select Date Range"</>
-          <span class="glyphicon glyphicon-calendar" name="calendar"></span>
+        <span class="glyphicon glyphicon-calendar" name="calendar"></span>
       </div>
 
-<!-- Clear map button -->
-<!--        <div class="col-xs-6">
+      <!-- Clear map button -->
+<!--  <div class="col-xs-6">
         <button type="button" id="clearButton" class="btn btn-default btn-block">Clear Map</button>
       </div> -->
 
       <br><br><br>
 
-  <!-- Select Industry -->
+      <!-- Select Industry -->
       <div class="row" id="selectIndustry">
         <div class="col-sm-10">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Select Industry</a></h4>
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Industries</a></h4>
               </div>
               <div id="collapse1" class="panel-collapse collapse in">
                 <ul class="list-group" id="industryUL"></ul>
@@ -132,18 +139,18 @@
             </div>
           </div>
         </div>
-          <span class="glyphicon glyphicon-trash" name="trashIndustry" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-trash" name="trashIndustry" aria-hidden="true"></span>
       </div>
 
       <br>
 
-  <!-- Select Features -->
+      <!-- Select Features -->
       <div class="row" id="selectFeature">
         <div class="col-sm-10">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">MarkLogic 9 Features</a></h4>
               </div>
               <div id="collapse2" class="panel-collapse collapse in">
                 <ul class="list-group" id="featureUL"></ul>
@@ -151,18 +158,18 @@
             </div>
           </div>
         </div>
-          <span class="glyphicon glyphicon-trash" name="trashFeature" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-trash" name="trashFeature" aria-hidden="true"></span>
       </div>
 
       <br>
 
-  <!-- Select Company -->
+      <!-- Select Company -->
       <div class="row" id="selectCompany">
         <div class="col-sm-10">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Select Company</a></h4>
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Companies</a></h4>
               </div>
               <div id="collapse3" class="panel-collapse collapse in">
                 <ul class="list-group" id="companyUL"></ul>
@@ -170,37 +177,46 @@
             </div>
           </div>
         </div>
-          <span class="glyphicon glyphicon-trash" name="trashFeature" aria-hidden="true"></span>
+        <span class="glyphicon glyphicon-trash" name="trashFeature" aria-hidden="true"></span>
       </div>
 
+      <br>
+
+      <!-- Select Region -->
+      <div class="row" id="selectRegion">
+        <div class="col-sm-10">
+          <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse4">Regions</a></h4>
+              </div>
+              <div id="collapse4" class="panel-collapse collapse in">
+                <ul class="list-group" id="regionUL"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="glyphicon glyphicon-trash" name="trashFeature" aria-hidden="true"></span>
+      </div>
+
+    <!-- Close container -->
     </div>
 
-    <br>
 
-<!--     Map -->
+  <!-- Map -->
     <div class="col-md-9">
       <p id="lastUpdated" align="right">Last updated - </p>
       <p align="right">Displaying <span id="count"></span> users</p>
       <h3 id="mapTitle"><!--Map Display--></h3>
       <br>
       <div id="mapid"></div>
-
     </div>
+
   </div>
 
 
 <!-- Displaying the map (in JS) -->
 <script type="text/javascript" src="public/map.js"></script>
-
-<div id = "dialogFeatureEdit" hidden title="Edit user features">
-  <div id = "userFeatures">
-    <div>
-      <p id = "dialogUserEmail"></p>
-    </div>
-    <b> Features: </b>
-    <textarea rows="3" cols="30" id="FeatureText"> </textarea>
-  </div>
-</div>
 
 </body>
 </html>

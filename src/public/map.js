@@ -11,6 +11,8 @@ var maxBounds; // lat long range of entire map
 var oms; // Overlapping Marker Spiderfier
 var totalCount;
 var currentCount;
+var shapes;
+var regionKeys;
 
 // Run this function before any other
 function start() {
@@ -39,9 +41,6 @@ function start() {
     accessToken: token
   }).addTo(map);
 
-    L.polygon(shapes_USA).addTo(map);
-
-
   // Initialize Overlapping Marker Spiderfier
   //   (the thing that spreads out markers that overlap)
   oms = new OverlappingMarkerSpiderfier(map);
@@ -64,6 +63,7 @@ function start() {
     features: [],
     industries: [],
     companies: [],
+    regions: {},
     date1: "",
     date2: ""
   };
@@ -117,20 +117,20 @@ function addMapEvents() {
   });
   map.addControl(drawControl);
 
-  // Events
+  // Events for drawControl
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
-    //console.log(drawnShapes);
-
     doPost("/search.sjs", displayGeoJSON, false);
   });
+
   map.on('draw:edited', function (e) {
     doPost("/search.sjs", displayGeoJSON, false);
   });
+
   map.on('draw:deleted', function (e) {
-    // Update db to save latest changes
     doPost("/search.sjs", displayGeoJSON, false);
   });
+
 }
 
 // Draw markers on map
@@ -138,13 +138,33 @@ function drawPage(response) {
   displayIndustries(response.facets.Industry);
   displayFeatures(response);
   displayCompanies(response.facets.Company);
-
-    // After all industries and features are known, fetch the
-    // users from the database and display markers
+  displayRegions();
+  // After all industries and features are known, fetch the
+  // users from the database and display markers
   doPost('/search.sjs', displayGeoJSON, false);
 }
 
-/**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
+function getAllGeoJson() {
+  var geoObjs = [];
+
+  for (var ndx in map._layers) {
+    // check if has a togeoJSON function and has original points to be sure
+    // the thing is some type of drawn shape on the map, not just a marker
+    // or something else
+    if (map._layers[ndx].toGeoJSON && map._layers[ndx]._originalPoints) {
+      geoObjs.push(map._layers[ndx].toGeoJSON());
+    }
+  }
+
+  var obj = {
+    type: "FeatureCollection",
+    features: geoObjs
+  }
+
+  return obj;
+}
+
+/** Copied from Jennifer Tsau and Jake Fowler's geoapp and modified **/
 function doPost(url, success, firstLoad) {
 
   var payload = {
@@ -157,7 +177,7 @@ function doPost(url, success, firstLoad) {
       maxBounds.getEast()
     ],
     firstLoad: firstLoad,
-    searchRegions: drawnShapes.toGeoJSON()
+    searchRegions: getAllGeoJson()
   };
 
   $.ajax({
@@ -182,14 +202,13 @@ function fail(jqXHR, status, errorThrown) {
 function displayFeatures(response) {
   var features = response.features.MarkLogicFeatures;
   var counts = response.facets.Feature;
-
-
   var html;
   var count;
+
   for (var category in features) {
     html = '';
 
-    html += '<ul id="displayFeaturesList"><lh>'+ category + "</lh>";
+    html += '<ul id=\'displayFeaturesList\'><lh><b>'+ category + '</b></lh>';
     for (var subfield in features[category]) {
       count = 0;
 
@@ -198,7 +217,7 @@ function displayFeatures(response) {
       }
       html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value=';
       html += features[category][subfield]+'>&nbsp;'+features[category][subfield]+'<i> ('+count+')</i></li>';
-      selections.features.push(features[category][subfield].toString());
+      updateSelections("Feature", features[category][subfield].toString());
     }
     html += '</ul>';
     $('#featureUL').append(html);
@@ -226,13 +245,13 @@ function displayIndustries(industries) {
     $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>&nbsp;'+obj+'<i> ('+count+')</i></li>');
 
     //Add value to the selections so code works with what is being displayed in menu
-    selections.industries.push(obj.toString());
+    updateSelections("Industry", obj.toString());
   }
 
   var $industries =  $("#industryUL .iChecker");
-  // Conveniently the length property here refers to the number of elements
+  // The 'length' property refers to the number of elements
   // appended to the selector
-  // AKA stuff not normally there, in other words, the length is the number
+  // This stuff not normally there, in other words, the length is the number
   // of industries in the UL.
   // and they occur at properties 0 -> $industries.length
   for (var i = 0; i < $industries.length; i++) {
@@ -246,7 +265,6 @@ function displayIndustries(industries) {
       }
     }
   }
-
 }
 
 // companies is an object {}
@@ -255,7 +273,7 @@ function displayCompanies(companies) {
     // does not include the count -- assuming that there is only one user for most companies
 
     $('#collapse3 ul').append('<li class="list-group-item"><input checked type="checkbox" class="cChecker" value='+ obj+ '>&nbsp;' + obj + '</li>');
-    selections.companies.push(obj.toString());
+    updateSelections("Company", obj.toString());
   }
   var $companies = $("#companyUL .cChecker");
 
@@ -270,6 +288,30 @@ function displayCompanies(companies) {
       }
     }
   }
+}
+
+function displayRegions() {
+  regionKeys = {};
+  shapes = getShapes();
+
+  for (var region in shapes) {
+    $('#collapse4 ul').append('<li class="list-group-item"><input type="checkbox" class="rChecker" value='+ region+ '>&nbsp;' + region + '</li>');
+  }
+
+  var $regions =  $("#regionUL .rChecker");
+
+  for (var i = 0; i < $regions.length; i++) {
+    $regions[i].onclick = function(e) {
+      if (e.target.value === 0) {
+        // e.target.value is 0 when click is on text in html and not on the check box
+      }
+      else {
+        updateSelections("Region", e.target.nextSibling.data);
+        doPost("/search.sjs", displayGeoJSON, false);
+      }
+    }
+  }
+
 }
 
 function updateSelections(which, value) {
@@ -297,6 +339,7 @@ function updateSelections(which, value) {
 
   else if (which === "Feature") {
     index = selections.features.indexOf(value);
+
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
       selections.features.splice(index, 1);
@@ -314,6 +357,26 @@ function updateSelections(which, value) {
     }
     else { // checked the box
       selections.companies.push(value);
+    }
+  }
+
+  else if (which === "Region") {
+
+    if (selections.regions[value] != undefined) { //unchecked the box
+      // Already in the array, aka checked already, so unchecking was done
+
+      map.removeLayer(regionKeys[value]);
+      delete selections.regions[value];
+    }
+    else { // checked the box
+      // Need to store id of the layer for future deletion
+      // when check box is reclicked
+      selections.regions[value] = 'defined';
+      // Was getting cyclic value error from JSON.parse when using selections.regions[value]
+      // to store the result from L.polygon(...);
+      regionKeys[value] = L.polygon(shapes[value]);
+
+      map.addLayer(regionKeys[value]);
     }
   }
 }
