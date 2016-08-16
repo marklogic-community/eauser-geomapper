@@ -39,6 +39,8 @@ function start() {
     accessToken: token
   }).addTo(map);
 
+    L.polygon(shapes_USA).addTo(map);
+
 
   // Initialize Overlapping Marker Spiderfier
   //   (the thing that spreads out markers that overlap)
@@ -118,7 +120,8 @@ function addMapEvents() {
   // Events
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
-    console.log(drawnShapes);
+    //console.log(drawnShapes);
+
     doPost("/search.sjs", displayGeoJSON, false);
   });
   map.on('draw:edited', function (e) {
@@ -180,6 +183,7 @@ function displayFeatures(response) {
   var features = response.features.MarkLogicFeatures;
   var counts = response.facets.Feature;
 
+
   var html;
   var count;
   for (var category in features) {
@@ -188,6 +192,7 @@ function displayFeatures(response) {
     html += '<ul id="displayFeaturesList"><lh>'+ category + "</lh>";
     for (var subfield in features[category]) {
       count = 0;
+
       if (counts[features[category][subfield]] !== undefined) {
         count = counts[features[category][subfield]];
       }
