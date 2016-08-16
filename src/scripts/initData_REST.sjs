@@ -14,8 +14,8 @@ var EA3programID = keys.EA3programID;
 
 //switch out the values depending on what you want :)
 var EA = {
-  "programID": EA2programID,
-  "version": "EA2"
+  "programID": EA1programID,
+  "version": "EA1"
 };
 
 // get access token (valid for 1 hour)
@@ -28,10 +28,12 @@ var listOfFields = "firstName,lastName,email,city,state,country,postalCode,compa
 
 var completed = true;
 
+var numUsers;
+
 try {
   var nextPageToken = "";
 
-  var numUsers = 0;
+  numUsers = 0;
 
   do {
 
@@ -80,8 +82,8 @@ try {
     // numUsers, dateCreated, dateUpdated
 
   var systemInfo = {};
-  systemInfo["appStartDate"] = fn.currentDateTime();
-  systemInfo["lastUpdated"] = fn.currentDateTime();
+  systemInfo["appStartDate"] = fn.currentDateTime().add(xdmp.elapsedTime());;
+  systemInfo["lastUpdated"] = fn.currentDateTime().add(xdmp.elapsedTime());;
   systemInfo["numDocuments"] = numUsers;
 
   xdmp.documentInsert("/config/systemInfo.json", systemInfo);
@@ -128,9 +130,9 @@ catch(err) {
 
 try {
   if (completed) {
-    var timestamp = fn.formatDateTime(fn.currentDateTime(), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
+    var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime());, "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Completed data ingestion at " + timestamp + "\n\n";
-    content += "Number of users: " + system.numDocuments;
+    content += "Number of users: " + numUsers;
 
     var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
                  "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
@@ -139,7 +141,7 @@ try {
     xdmp.email(message);
   }
   else {
-    var timestamp = fn.formatDateTime(fn.currentDateTime(), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
+    var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime());, "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Failed data ingestion at " + timestamp + "\n\n";
 
     var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
