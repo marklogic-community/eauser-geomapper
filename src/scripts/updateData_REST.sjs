@@ -12,14 +12,22 @@ var EA1programID = keys.EA1programID;
 var EA2programID = keys.EA2programID;
 var EA3programID = keys.EA3programID;
 
-//switch out the values depending on what you want :)
+// set to EA2 right now.
+// when you want EA3, replace this with the one below
 var EA = {
   "programID": EA2programID,
   "version": "EA2"
 };
 
-// get access token (valid for 1 hour)
+/*
+var EA = {
+  "programID": EA3programID,
+  "version": "EA3"
+}
+*/
 
+
+// get access token (valid for 1 hour)
 var auth = xdmp.httpGet(endpoint + "/identity/oauth/token?grant_type=client_credentials&client_id=" + clientID + "&client_secret=" + clientSecret);
 var token = auth.toArray()[1].root.access_token;
 
@@ -53,26 +61,29 @@ try {
     for (var i in users) {
       var json = util.convertToJson_REST(users[i], EA.version);
 
-      var username = json.fullDetails.username;
+      var email = json.fullDetails.email;
 
-      // picked "+" over "-" because some users have already used "-" in their username.
-      username = util.removeSpaces("" + username, "+");
+           // xdmp.log(username + " " + json.geometry.coordinates);
+
+      // just in case... ('cause why not? :) )
+      email = util.removeSpaces("" + email, "+");
 
       // if we have reached the end of the list of users 
       // and have started to go through things like length, xpath, toString...
-      if (username === undefined) {
+      if (email === undefined) {
         break;
       }
 
-      // some users might not be EA users... (so they wouldn't have usernames, of course)
+/*      // some users might not be EA users... (so they wouldn't have usernames, of course)
       if ( (username + "") === "null" || (username + "") === "undefined") {
         continue;
       }
+*/
 
       // uri template for EA users
-      var uri = "/users/" + username + ".json";
+      var uri = "/users/" + email + ".json";
 
-      if (util.exists(username)) {
+      if (util.exists(email)) {
         // find the old dateAdded field
         var oldDoc = cts.doc(uri);
         var dateAdded = oldDoc.root.fullDetails.dateAdded;
@@ -84,7 +95,7 @@ try {
         }
 
         xdmp.nodeReplace(oldDoc, json);
-        xdmp.log("  updated " + username);
+        xdmp.log("  updated " + email);
         continue;
       }
 

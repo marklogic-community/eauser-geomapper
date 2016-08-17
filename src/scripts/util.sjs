@@ -16,6 +16,8 @@ var getCoord = function(postalCode, country) {
   var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + postalCode + "%20" + country + "&key=" + geocoderKey;
   
   var noSpaceUrl = removeSpaces(url, "%20");
+
+  xdmp.log(noSpaceUrl);
   
   var res = xdmp.httpGet(noSpaceUrl);
 
@@ -26,6 +28,7 @@ var getCoord = function(postalCode, country) {
     return [long, lat];
   }
   catch (err) {
+    xdmp.log("" + err);
     return null;
   }
 };
@@ -150,7 +153,7 @@ var convertToJson_REST = function(user, ea_version) {
 
   doc["type"] = "Feature";
   doc["fullDetails"] = properties;
-  
+
   var coord = getCoord(properties.postalCode, properties.country);
   
   doc["geometry"] = {

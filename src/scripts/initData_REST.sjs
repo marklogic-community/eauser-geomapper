@@ -130,7 +130,7 @@ catch(err) {
 
 try {
   if (completed) {
-    var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime());, "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
+    var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Completed data ingestion at " + timestamp + "\n\n";
     content += "Number of users: " + numUsers;
 
@@ -141,7 +141,7 @@ try {
     xdmp.email(message);
   }
   else {
-    var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime());, "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
+    var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Failed data ingestion at " + timestamp + "\n\n";
 
     var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
