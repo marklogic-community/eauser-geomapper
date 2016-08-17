@@ -51,34 +51,29 @@ try {
     for (var i in users) {
       var json = util.convertToJson_REST(users[i], EA.version);
 
-      var username = json.fullDetails.username;
+      var email = json.fullDetails.email;
 
       // if we have reached the end of the list of users 
       // and have started to go through things like length, xpath, toString...
-      if (username === undefined) {
+      if (email === undefined) {
         break;
-      }
-
-      // some users might not be EA users... (so they wouldn't have usernames, of course)
-      if ( (username + "") === "null") {
-        continue;
       }
 
       numUsers++;
 
-      // picked "+" over "-" because some users have already used "-" in their username.
-      username = util.removeSpaces("" + username, "+");
+      // just in case... highly unlikely this will change anything though..
+      email = util.removeSpaces("" + email, "+");
 
       // uri template for EA users
-      var uri = "/users/" + username + ".json";
+      var uri = "/users/" + email + ".json";
 
-      xdmp.log("  inserted " + username);
+      xdmp.log("  inserted " + email);
       xdmp.documentInsert(uri, json);
     }
 
   } while (nextPageToken && nextPageToken !== "")
 
-// create /config/systemInfo.json 
+  // create /config/systemInfo.json 
     // numUsers, dateCreated, dateUpdated
 
   var systemInfo = {};
@@ -115,7 +110,7 @@ try {
         "Query Console"
       ]
     }
-  }
+  };
 
   xdmp.documentInsert("/config/features/MLFeatures.json", features);
   xdmp.log("  inserted MLFeatures.json");

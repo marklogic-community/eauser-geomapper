@@ -26,7 +26,6 @@ var EA = {
 }
 */
 
-
 // get access token (valid for 1 hour)
 var auth = xdmp.httpGet(endpoint + "/identity/oauth/token?grant_type=client_credentials&client_id=" + clientID + "&client_secret=" + clientSecret);
 var token = auth.toArray()[1].root.access_token;
@@ -59,6 +58,7 @@ try {
     xdmp.log("about to insert " + users.length + " documents");
 
     for (var i in users) {
+
       var json = util.convertToJson_REST(users[i], EA.version);
 
       var email = json.fullDetails.email;
@@ -70,28 +70,30 @@ try {
 
       // if we have reached the end of the list of users 
       // and have started to go through things like length, xpath, toString...
-      if (email === undefined) {
+      if (email === undefined || email + "" === "undefined" || email + "" === "null") {
         break;
       }
-
-/*      // some users might not be EA users... (so they wouldn't have usernames, of course)
-      if ( (username + "") === "null" || (username + "") === "undefined") {
-        continue;
-      }
-*/
 
       // uri template for EA users
       var uri = "/users/" + email + ".json";
 
+            xdmp.log(email);
+
       if (util.exists(email)) {
         // find the old dateAdded field
         var oldDoc = cts.doc(uri);
+
         var dateAdded = oldDoc.root.fullDetails.dateAdded;
 
         // the new document will preserve the dateAdded field.
         json.fullDetails.dateAdded = dateAdded;
         if (oldDoc.root.fullDetails.features) {
           json.fullDetails.features = oldDoc.root.fullDetails.features;
+        }
+
+        // check if this is a new EA version for this user
+        if (!(EA.version in json.fullDetails.ea_version)) {
+          json.fullDetails.ea_version.push(EA.version);
         }
 
         xdmp.nodeReplace(oldDoc, json);
@@ -103,16 +105,13 @@ try {
 
       emailNewUsers++;
 
-      xdmp.log("  inserted " + username);
+      xdmp.log("  inserted " + email);
       xdmp.documentInsert(uri, json);
     }
 
   } while (nextPageToken && nextPageToken !== "")
 
-  // create /config/systemInfo.json 
-    // numUsers, dateCreated, dateUpdated
-
-  // update the system info document
+  // update systemInfo.json
 
   var oldSystemInfo = cts.doc("/config/systemInfo.json");
 

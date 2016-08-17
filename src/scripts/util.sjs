@@ -147,7 +147,7 @@ var convertToJson_REST = function(user, ea_version) {
 
   properties["dateAdded"] = fn.currentDateTime();
 
-  properties["ea_version"] = ea_version;
+  properties["ea_version"] = [ea_version];
 
   var doc = {};
 
@@ -227,8 +227,8 @@ var marketoGetLead = function(email) {
 //
 
 // if emails are easier, we can easily pass the user's email instead of the username.
-var exists = function(username) {
-  return cts.exists(cts.elementWordQuery("username", username));
+var exists = function(email) {
+  return cts.exists(cts.elementWordQuery("email", email));
 };
 
 
