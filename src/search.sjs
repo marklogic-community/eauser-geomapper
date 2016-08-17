@@ -93,6 +93,8 @@ users =
   )
   .result();
 
+  xdmp.log(users);
+
 // Need to transform results to only be the document contents for drawGeoJson() in map.js
 for(var obj in users.documents) {
   users.documents[obj] = users.documents[obj].extracted[0];

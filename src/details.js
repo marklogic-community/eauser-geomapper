@@ -1,4 +1,4 @@
-// url will be the form http://host.whatever/details22.html?username={{username}}
+// url will be the form http://host.whatever/details22.html?email={{email}}
 
 // from http://stackoverflow.com/questions/19491336/get-url-parameter-jquery-or-how-to-get-query-string-values-in-js
 var getUrlParameter = function getUrlParameter(sParam) {
@@ -16,10 +16,10 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
 };
 
-var username = getUrlParameter("username");
+var email = getUrlParameter("email");
 
 $(document).ready(function() {
-  payload = {"username": username};
+  payload = {"email": email};
   $.ajax({
     type: "POST",
     url: "/scripts/findUser.sjs",
@@ -141,7 +141,7 @@ function save() {
   }
 
   var payload = {
-    "username": global_user.fullDetails.username,
+    "email": global_user.fullDetails.email,
     "features": features
   }
 
@@ -155,12 +155,12 @@ function save() {
       $("#features").append("<div class=\"alert alert-success\" role=\"alert\">"
                             + "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" title=\"close\">×</a>"
                             + "Successfully updated "
-                            + global_user.fullDetails.username
+                            + global_user.fullDetails.email
                             + "'s features</div>");
       $("body").css("cursor", "default");
     },
     error: function(a,b,c) {
-      $("#features").append("<div class=\"alert alert-danger\" role=\"alert\">Something went wrong... :(</div>");
+      $("#features").append("<div class=\"alert alert-danger\" role=\"alert\"><a href=\"#\" class=\"close\" data-dismiss=\"alert\" title=\"close\">×</a>Something went wrong... :(</div>");
       fail(a,b,c);
       $("body").css("cursor", "default");
     }
