@@ -5,6 +5,4 @@ src/private/*.sjs
 *2.html
 *test.*
 main.html
-*.java
-*.class
-*_old
+data/
