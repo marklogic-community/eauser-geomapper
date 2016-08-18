@@ -54,9 +54,11 @@ function start() {
   map.addLayer(markers);
   map.addLayer(drawnShapes);
 
-  // mouse-click event for 'clear map' button
-  // $("#clearButton").click(removeAllFeatures);
-  // $('span[name="trashFeature"]').click(removeAllFeatures);
+  // Reset Button - Removes all current facets (if any) and reloads the map.
+  $("#reset").click(function () {
+    removeAllFeatures();
+    doPost("/search.sjs", displayGeoJSON, false);
+  });
 
   //Selections will hold info on the current state of selected options to query
   selections = {
@@ -94,6 +96,7 @@ function start() {
     },
     error: fail
   });
+
 
 }
 
@@ -318,6 +321,7 @@ function updateSelections(which, value) {
   var index;
 
   value = value.trim();
+
   if (which === "Industry") {
     // Check if 'value' is in the array
     // If index = -1 then value is not in array,
@@ -363,19 +367,20 @@ function updateSelections(which, value) {
   else if (which === "Region") {
 
     if (selections.regions[value] != undefined) { //unchecked the box
-      // Already in the array, aka checked already, so unchecking was done
-
+      // If value is in array then unchecking was done
       map.removeLayer(regionKeys[value]);
-      delete selections.regions[value];
+
+      selections.regions[value] = undefined;
+      delete regionKeys[value];
     }
     else { // checked the box
-      // Need to store id of the layer for future deletion
-      // when check box is reclicked
+      // Indicates the value is present on map
       selections.regions[value] = 'defined';
       // Was getting cyclic value error from JSON.parse when using selections.regions[value]
       // to store the result from L.polygon(...);
+      // Need to store result of L.polygon so the value can
+      // be used to delete off map
       regionKeys[value] = L.polygon(shapes[value]);
-
       map.addLayer(regionKeys[value]);
     }
   }
@@ -393,7 +398,7 @@ var red_dot = L.icon({
 function displayGeoJSON(geojsonFeatures) {
   // Every doPost call redraws all markers on the map
   // removeAllFeatures() removes all markers from the map
-  removeAllFeatures();
+  markers.clearLayers();
 
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
@@ -427,9 +432,22 @@ function updateCount(points) {
   $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
 }
 
+//event when reset map button is clicked
+// How should all check boxes in each menu be handled?
+// Should they all be reset to as they were on page load?
 function removeAllFeatures() {
-  //drawnShapes.clearLayers();
   markers.clearLayers();
+  drawnShapes.clearLayers();
+
+  // Remove the shapes from the regions menu
+  for (var region in regionKeys) {
+    // updateSelections will uncheck the region and remove it from map
+    updateSelections("Region", region.toString());
+  }
+  var $regions =  $("#regionUL .rChecker");
+  for (var i = 0; i < $regions.length; i++) {
+    $regions[i].checked = false; // Unchecks box
+  }
 }
 
 // firstName, lastname, email, city, state, industry, company

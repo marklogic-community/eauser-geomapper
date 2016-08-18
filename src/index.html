@@ -95,6 +95,12 @@
     lh {
       padding-left: 10px;
     }
+    /* centers the reset button */
+    #reset {
+      text-align: center;
+      position: center;
+    }
+
   </style>
 
 </head>
@@ -112,16 +118,10 @@
     <div class="col-md-3">
       <h3 id="featureTitle"></h3><br>
 
-<!-- Select Dates button -->
-      <div class="col-sm-12" id="date">
-        <input type="text" size="26" name="datefilter" value="Select Date Range"</>
-        <span class="glyphicon glyphicon-calendar" name="calendar"></span>
+      <!-- Reset button -->
+      <div class="col-sm-10">
+        <button type="button" id="reset" class="btn btn-default btn-block">Reset Map</button>
       </div>
-
-      <!-- Clear map button -->
-<!--  <div class="col-xs-6">
-        <button type="button" id="clearButton" class="btn btn-default btn-block">Clear Map</button>
-      </div> -->
 
       <br><br><br>
 
@@ -142,8 +142,6 @@
         <span class="glyphicon glyphicon-trash" name="trashIndustry" aria-hidden="true"></span>
       </div>
 
-      <br>
-
       <!-- Select Features -->
       <div class="row" id="selectFeature">
         <div class="col-sm-10">
@@ -161,8 +159,6 @@
         <span class="glyphicon glyphicon-trash" name="trashFeature" aria-hidden="true"></span>
       </div>
 
-      <br>
-
       <!-- Select Company -->
       <div class="row" id="selectCompany">
         <div class="col-sm-10">
@@ -179,8 +175,6 @@
         </div>
         <span class="glyphicon glyphicon-trash" name="trashFeature" aria-hidden="true"></span>
       </div>
-
-      <br>
 
       <!-- Select Region -->
       <div class="row" id="selectRegion">
