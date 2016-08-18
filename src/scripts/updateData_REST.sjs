@@ -63,8 +63,6 @@ try {
 
       var email = json.fullDetails.email;
 
-           // xdmp.log(username + " " + json.geometry.coordinates);
-
       // just in case... ('cause why not? :) )
       email = util.removeSpaces("" + email, "+");
 
@@ -90,8 +88,8 @@ try {
         }
 
         // check if this is a new EA version for this user
-        if (!(EA.version in json.fullDetails.ea_version)) {
-          json.fullDetails.ea_version.push(EA.version);
+        if (!(EA.version in oldDoc.root.fullDetails.ea_version)) {
+          json.fullDetails.ea_version.push(oldDoc.root.fullDetails.ea_version[0]);
         }
 
         xdmp.nodeReplace(oldDoc, json);

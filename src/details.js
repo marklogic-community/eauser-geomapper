@@ -61,6 +61,8 @@ function display(user) {
   // company details
   $("#company").append(user.fullDetails.company);
   $("#revenueRange").append(user.fullDetails.revenueRange);
+
+  // num employees is almost always null. Should we ignore it?
   $("#numEmployees").append(user.fullDetails.numEmployees);
   $("#website").append(user.fullDetails.website);
 
@@ -71,17 +73,23 @@ function display(user) {
   }
 */
 
-
-
   // Marklogic account info
-  $("#accountType").append(user.fullDetails.accountType);
+//  $("#accountType").append(user.fullDetails.accountType);
   $("#username").append(user.fullDetails.username);
   $("#registeredForEAML8").append(user.fullDetails.registeredForEAML8);
   $("#hasAccessToEAML9").append(user.fullDetails.hasAccessToEAML9);
   $("#registeredForNoSQLforDummies").append(user.fullDetails.registeredForNoSQLforDummies);
-  $("#registrationDate").append(user.fullDetails.registrationDate);
   $("#leadSource").append(user.fullDetails.leadSource);
-  $("#lastUpdated").append(user.fullDetails.lastUpdated);
+  $("#registrationDate").append(user.fullDetails.registrationDate);
+  $("#marketoLastUpdated").append(user.fullDetails.marketoLastUpdated);
+  for (var i in user.fullDetails.ea_version) {
+    if (i == 0) {
+      $("#ea-version").append(user.fullDetails.ea_version[i]);
+    }
+    else {
+      $("#ea-version").append(", " + user.fullDetails.ea_version[i]);
+    }
+  }
 
 };
 
