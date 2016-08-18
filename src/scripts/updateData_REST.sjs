@@ -77,8 +77,6 @@ try {
       // uri template for EA users
       var uri = "/users/" + email + ".json";
 
-            xdmp.log(email);
-
       if (util.exists(email)) {
         // find the old dateAdded field
         var oldDoc = cts.doc(uri);

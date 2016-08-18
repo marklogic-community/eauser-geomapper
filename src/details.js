@@ -64,10 +64,14 @@ function display(user) {
   $("#numEmployees").append(user.fullDetails.numEmployees);
   $("#website").append(user.fullDetails.website);
 
+/* No longer necessary with the Marketo REST api
   // Marketo xml source
   if (user.source) {
     $("#source").append(encodeXml(user.source));
   }
+*/
+
+
 
   // Marklogic account info
   $("#accountType").append(user.fullDetails.accountType);
@@ -168,6 +172,7 @@ function save() {
 
 }
 
+// no longer necessary with the Marketo REST api
 // from http://stackoverflow.com/questions/2959642/how-to-make-a-valid-string-for-xml-in-javascript
 function encodeXml(s) {
   return (s

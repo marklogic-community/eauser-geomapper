@@ -17,8 +17,6 @@ var getCoord = function(postalCode, country) {
 
   var noSpaceUrl = removeSpaces(url, "%20");
 
-  xdmp.log(noSpaceUrl);
-
   var res = xdmp.httpGet(noSpaceUrl);
 
   try {
