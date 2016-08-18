@@ -111,7 +111,22 @@ function createDropdown(MarketoFields) {
 }
 
 $("#other-select").change(function () {
-  console.log($('#other-select option:selected').val());
+  var payload = {
+    "field": $('#other-select option:selected').val(),
+    "id": global_user.fullDetails.id
+  };
+
+  $.ajax({
+    type: "POST",
+    url: "/scripts/queryMarketoFieldForID.sjs",
+    data: JSON.stringify(payload),
+    contentType: "application/json",
+    dataType: "json",
+    success: function(res) {
+      $("#other-result").replaceWith("<td id=\"other-result\">" + res.val + "</td>");
+    },
+    error: fail
+  }); 
 });
 
 
