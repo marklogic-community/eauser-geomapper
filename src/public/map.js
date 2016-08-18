@@ -11,7 +11,6 @@ var maxBounds; // lat long range of entire map
 var oms; // Overlapping Marker Spiderfier
 var totalCount;
 var currentCount;
-var companies_pretty; // data from /config/companies.json
 
 // Run this function before any other
 function start() {

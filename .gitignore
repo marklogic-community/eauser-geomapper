@@ -8,3 +8,5 @@ main.html
 *.java
 *.class
 *_old
+data/*
+*.json
