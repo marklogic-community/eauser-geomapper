@@ -1,10 +1,10 @@
 
 var keys = require("../private/keys.sjs");
 
-// Google Maps Geocoder 
+// Google Maps Geocoder
 var geocoderKey = keys.geocoderKey;
 
-// Marketo 
+// Marketo
 var endpoint = keys.endpoint;
 var userID = keys.userID;
 var secretkey = keys.secretkey;
@@ -14,11 +14,11 @@ var secretkey = keys.secretkey;
 var getCoord = function(postalCode, country) {
 
   var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + postalCode + "%20" + country + "&key=" + geocoderKey;
-  
+
   var noSpaceUrl = removeSpaces(url, "%20");
 
   xdmp.log(noSpaceUrl);
-  
+
   var res = xdmp.httpGet(noSpaceUrl);
 
   try {
@@ -40,7 +40,7 @@ var removeSpaces = function(stuff, filler) {
   var noSpacesArray = stuff.split(" ");
 
   var noSpaceString = "";
-  
+
   for (var i = 0; i < noSpacesArray.length; i++) {
     if (i == 0) {
       noSpaceString = noSpacesArray[0];
@@ -98,9 +98,9 @@ var convertToJson = function(record) {
 
   //full copy of the leadRecord XML doc
   doc["source"] = record.xpath(".")
-  
+
   var coord = getCoord(properties.postalCode, properties.country);
-  
+
   doc["geometry"] = {
     "type": "Point",
     "coordinates": coord
@@ -133,7 +133,7 @@ var convertToJson_REST = function(user, ea_version) {
   properties["numEmployees"] = user.DC_Employees__c;
   properties["username"] = user.EA_ML9username;
   properties["region"] = user.GEO_Region_Sub_Region__c;
-  properties["hasAccessToEAML9"] = user.HasAccessToEAML9; 
+  properties["hasAccessToEAML9"] = user.HasAccessToEAML9;
   properties["postalCode"] = user.postalCode;
   properties["registeredForEAML8"] = user.registeredforEAML8;
   properties["registeredForNoSQLforDummies"] = user.registeredforNoSQLforDummies;
@@ -155,7 +155,7 @@ var convertToJson_REST = function(user, ea_version) {
   doc["fullDetails"] = properties;
 
   var coord = getCoord(properties.postalCode, properties.country);
-  
+
   doc["geometry"] = {
     "type": "Point",
     "coordinates": coord
@@ -191,19 +191,19 @@ var marketoGetLead = function(email) {
 
   var options = xdmp.quote(
     "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns1=\"http://www.marketo.com/mktows/\"><SOAP-ENV:Header><ns1:AuthenticationHeader><mktowsUserId>"
-    + userID 
+    + userID
     + "</mktowsUserId><requestSignature>"
-    + signature 
+    + signature
     + "</requestSignature><requestTimestamp>"
-    + timestamp 
+    + timestamp
     + "</requestTimestamp></ns1:AuthenticationHeader></SOAP-ENV:Header><SOAP-ENV:Body><ns1:paramsGetLead><leadKey><keyType>"
-    + "EMAIL" 
+    + "EMAIL"
     + "</keyType><keyValue>"
     + email
     + "</keyValue></leadKey></ns1:paramsGetLead></SOAP-ENV:Body></SOAP-ENV:Envelope>"
   );
 
-  var result = xdmp.httpPost(endpoint, 
+  var result = xdmp.httpPost(endpoint,
     {
      "data" : options
     }

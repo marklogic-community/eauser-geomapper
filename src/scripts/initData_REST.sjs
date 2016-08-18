@@ -53,7 +53,7 @@ try {
 
       var email = json.fullDetails.email;
 
-      // if we have reached the end of the list of users 
+      // if we have reached the end of the list of users
       // and have started to go through things like length, xpath, toString...
       if (email === undefined) {
         break;
@@ -73,7 +73,7 @@ try {
 
   } while (nextPageToken && nextPageToken !== "")
 
-  // create /config/systemInfo.json 
+  // create /config/systemInfo.json
     // numUsers, dateCreated, dateUpdated
 
   var systemInfo = {};
@@ -114,7 +114,7 @@ try {
 
   xdmp.documentInsert("/config/features/MLFeatures.json", features);
   xdmp.log("  inserted MLFeatures.json");
-} 
+}
 catch(err) {
   xdmp.log("failed to ingest data");
   xdmp.log(err);

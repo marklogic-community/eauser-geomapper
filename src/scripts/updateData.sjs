@@ -106,7 +106,7 @@ try {
                "subject":"EA tracker update",
                "content": content};
   xdmp.email(message);
-} 
+}
 catch(error) {
   xdmp.log("email attempt failed");
 }

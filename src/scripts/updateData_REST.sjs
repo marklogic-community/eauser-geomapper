@@ -68,7 +68,7 @@ try {
       // just in case... ('cause why not? :) )
       email = util.removeSpaces("" + email, "+");
 
-      // if we have reached the end of the list of users 
+      // if we have reached the end of the list of users
       // and have started to go through things like length, xpath, toString...
       if (email === undefined || email + "" === "undefined" || email + "" === "null") {
         break;

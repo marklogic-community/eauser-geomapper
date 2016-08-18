@@ -18,7 +18,7 @@ for (var r of records) {
     // filter out EA users (They will have the EA_ML9username attribute).
     if (fn.boolean(rec.xpath("leadAttributeList/attribute[attrName='EA_ML9username']"))){
       var json = util.convertToJson(rec);
-        
+
       var username = json.fullDetails.username;
 
       // picked "+" over "-" because some users have already used "-" in their username.
@@ -35,7 +35,7 @@ for (var r of records) {
   }
   catch (error) {
     // Heh. What error? (insert devilish grin)
-    //  but in all seriousness, we should probably record this person 
+    //  but in all seriousness, we should probably record this person
     //  in order to manually check what's going on..
     try {
       // this will error if rec is undefined... which is why there's a try-catch in a try-catch :p

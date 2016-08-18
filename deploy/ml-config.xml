@@ -24,7 +24,7 @@
         <profile-allow>true</profile-allow>
         <scheduled-tasks>
           <scheduled-task>
-            <task-path>/scripts/updateData.sjs</task-path>
+            <task-path>/scripts/updateData_REST.sjs</task-path>
             <task-root>${modules-root}</task-root>
             <task-type>daily</task-type>
             <task-period>2</task-period> <!-- what is a task period? -->
