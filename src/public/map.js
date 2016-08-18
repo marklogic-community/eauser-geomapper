@@ -448,6 +448,8 @@ function removeAllFeatures() {
   for (var i = 0; i < $regions.length; i++) {
     $regions[i].checked = false; // Unchecks box
   }
+
+  map.setView([0, 0], 2);
 }
 
 // firstName, lastname, email, city, state, industry, company
