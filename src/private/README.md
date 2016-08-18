@@ -27,6 +27,11 @@ var EA1programID = keys.EA1programID;
 var EA2programID = keys.EA2programID;
 
 var EA3programID = keys.EA3programID;
+
+var emailRecipient = keys.emailRecipient;
+  var name = emailRecipient.name;
+  var address = emailRecipient.address;
+
 ```
 
 
