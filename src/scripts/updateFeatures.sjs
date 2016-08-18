@@ -18,9 +18,15 @@ var uri = "/users/" + email + ".json";
 
 var res = null;
 
+var completed = true;
+
+var oldFeatures = null;
+
 try {
   var oldDoc = cts.doc(uri);
   var newDoc = oldDoc.toObject();
+
+  oldFeatures = newDoc.fullDetails.features;
 
   newDoc.fullDetails.features = input.features;
   newDoc.fullDetails.lastUpdated = fn.currentDateTime();
@@ -39,36 +45,49 @@ try {
 catch(err) {
   xdmp.log(err);
   res = err;
+  completed = false;
 }
 
-// email feature changes
+// email feature changes (only if there's actually a change, of course - no one likes spam :D)
 try {
+  var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
+
   if (completed) {
-    var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
-    var content = "Completed data ingestion at " + timestamp + "\n\n";
-    content += "Number of users: " + numUsers;
+    var content = "Completed feature update at " + timestamp + "\n\n";
+    content += "Old features:\n";
+    for (var feature in oldFeatures) {
+      content += "\t- " + oldFeatures[feature] + "\n";
+    }
+    content += "\nNew features:\n";
+    for (var feature in input.features) {
+      content += "\t- " + input.features[feature] + "\n";
+    }
+
+    // because of how we insert feature arrays into MarkLogic,
+    // the order features appear in the array is preserved
+    if ("" + oldFeatures === "" + input.features) exit; // is this the right command to break out of this try/catch?
+                                                        // I just tried this randomly, and it looks like it's doing something...
 
     var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-                 "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
-                 "subject":"EA tracker - success - initial data ingestion",
+                 "to":{"name":emailRecipient.name, "address":emailRecipient.address},
+                 "subject":"EA tracker - success - feature update for " + input.email,
                  "content": content};
     xdmp.email(message);
   }
   else {
-    var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
-    var content = "Failed data ingestion at " + timestamp + "\n\n";
+    var content = "Failed feature update at " + timestamp + "\n\n";
 
     var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-                 "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
-                 "subject":"EA tracker - fail - initial data ingestion",
+                 "to":{"name":emailRecipient.name, "address":emailRecipient.address},
+                 "subject":"EA tracker - fail - feature update for " + input.email,
                  "content": content};
     xdmp.email(message);
   }
 }
 catch (err) {
+  xdmp.log(err);
   xdmp.log("email status report failed to send");
 }
-
 
 res;
 
