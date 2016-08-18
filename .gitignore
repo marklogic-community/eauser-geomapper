@@ -7,3 +7,4 @@ src/private/*.sjs
 main.html
 *.java
 *.class
+*_old
