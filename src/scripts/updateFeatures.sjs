@@ -1,5 +1,5 @@
-// POST request body -> {username: <username>, features: [<features>]}
-
+// POST request body -> {email: <email>, features: [<features>]}
+var util = require("/scripts/util.sjs");
 declareUpdate();
 
 var sr = require('/MarkLogic/jsearch.sjs');
@@ -8,7 +8,9 @@ var rawInput = xdmp.getRequestBody();
 
 var input = rawInput.toObject();
 
-var uri = "/users/" + input.username + ".json";
+var email = util.removeSpaces(input.email, "+");
+
+var uri = "/users/" + email + ".json";
 
 var res = null;
 
@@ -22,12 +24,12 @@ try {
   xdmp.nodeReplace(oldDoc, newDoc);
 
   var output = sr.documents()
-    .where(cts.elementWordQuery("username", input.username))
+    .where(cts.elementWordQuery("email", input.email))
     .result();
 
   res = output.results[0].document;
 
-  xdmp.log('updated features for ' + input.username);
+  xdmp.log('updated features for ' + input.email);
 
 }
 catch(err) {

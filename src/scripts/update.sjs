@@ -18,7 +18,7 @@ for (var r of records) {
     // filter out EA users (They will have the EA_ML9username attribute).
     if (fn.boolean(rec.xpath("leadAttributeList/attribute[attrName='EA_ML9username']"))){
       var json = util.convertToJson(rec);
-        
+
       var username = json.fullDetails.username;
 
       // picked "+" over "-" because some users have already used "-" in their username.
@@ -39,6 +39,9 @@ for (var r of records) {
 
         // the new document will preserve the dateAdded field.
         json.fullDetails.dateAdded = dateAdded;
+        if (oldDoc.root.fullDetails.features) {
+          json.fullDetails.features = oldDoc.root.fullDetails.features;
+        }
 
         xdmp.nodeReplace(oldDoc, json);
         xdmp.log(" updated " + username);

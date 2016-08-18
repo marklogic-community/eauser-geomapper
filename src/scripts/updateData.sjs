@@ -1,4 +1,4 @@
-// uses the "old" initData.sjs strategy 
+// uses the "old" initData.sjs strategy
 // (uses a while loop instead of a million xdmp.spawns)
 // works fine for daily updates (which shouldn't take more than an hour)
 
@@ -32,11 +32,11 @@ while (remainingCount > 0) {
   var options = xdmp.quote(
     "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns1=\"http://www.marketo.com/mktows/\">"
     + "<SOAP-ENV:Header><ns1:AuthenticationHeader><mktowsUserId>"
-    + userID 
+    + userID
     + "</mktowsUserId><requestSignature>"
-    + signature 
+    + signature
     + "</requestSignature><requestTimestamp>"
-    + timestamp 
+    + timestamp
     + "</requestTimestamp></ns1:AuthenticationHeader></SOAP-ENV:Header>"
     //body
     + "<SOAP-ENV:Body>"
@@ -47,15 +47,15 @@ while (remainingCount > 0) {
     + "</ns1:paramsGetMultipleLeads>"
     + "</SOAP-ENV:Body></SOAP-ENV:Envelope>"
   );
-  
+
   xdmp.log("requesting StreamPosition " + streamPosition);
 
-  var result = xdmp.httpPost(endpoint, 
+  var result = xdmp.httpPost(endpoint,
   {
     "data" : options,
     "timeout" : 1000000
   });
-  
+
   // get remainingCount and newStreamPosition
   remainingCount = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/remainingCount/fn:number()");
   streamPosition = result.toArray()[1].xpath("/*:Envelope/*:Body/*:successGetMultipleLeads/result/newStreamPosition/fn:string()");
@@ -73,6 +73,10 @@ while (remainingCount > 0) {
 var oldSystemInfo = cts.doc("/config/systemInfo.json");
 
 var oldSystemInfoDoc = oldSystemInfo.toObject();
+
+var emailLastUpdated = oldSystemInfoDoc.lastUpdated;
+var emailOldNumDocs = oldSystemInfoDoc.numDocuments;
+
 oldSystemInfoDoc.lastUpdated = fn.currentDateTime().add(xdmp.elapsedTime());
 
 var output =
@@ -85,6 +89,28 @@ var newNumDocuments = output.estimate - 2;
 oldSystemInfoDoc.numDocuments = newNumDocuments;
 
 xdmp.nodeReplace(oldSystemInfo, oldSystemInfoDoc);
+
+
+
+// email alert when update finishes
+try {
+
+  var time = fn.formatDateTime(fn.currentDateTime(), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
+  var content = "Completed update at " + time + "\n\n";
+  content += "Last updated: " + emailLastUpdated + "\n";
+  content += "\tPrevious number of users: " + emailOldNumDocs + "\n\n";
+  content += "Current number of users:" + newNumDocuments;
+
+  var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+               "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
+               "subject":"EA tracker update",
+               "content": content};
+  xdmp.email(message);
+}
+catch(error) {
+  xdmp.log("email attempt failed");
+}
+
 
 "done";
 

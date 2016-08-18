@@ -1,4 +1,4 @@
-var res; 
+var res;
 
 try {
   var doc = cts.doc("/config/features/MLFeatures.json");
