@@ -27,7 +27,8 @@ var getCoord = function(postalCode, country) {
   }
   catch (err) {
     xdmp.log("" + err);
-    return null;
+    xdmp.log("  placing this user in the Island Republic of MarkLogic");
+    return [0,0];
   }
 };
 
