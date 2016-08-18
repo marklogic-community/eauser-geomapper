@@ -15,6 +15,18 @@ var geocoderKey = keys.geocoderKey;
 var endpoint = keys.endpoint;
 var userID = keys.userID;
 var secretkey = keys.secretkey;
+
+// Marketo REST api
+var endpoint_REST = keys.endpoint_REST;
+var clientID_REST = keys.clientID_REST;
+
+var clientSecret_REST = keys.clientSecret_REST;
+
+var EA1programID = keys.EA1programID;
+
+var EA2programID = keys.EA2programID;
+
+var EA3programID = keys.EA3programID;
 ```
 
 

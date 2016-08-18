@@ -13,6 +13,7 @@ var totalCount;
 var currentCount;
 var shapes;
 var regionKeys;
+var companies_pretty; // data from /config/companies.json
 
 // Run this function before any other
 function start() {
@@ -272,6 +273,7 @@ function displayIndustries(industries) {
 
 // companies is an object {}
 function displayCompanies(companies) {
+
   for (var obj in companies) {
     // does not include the count -- assuming that there is only one user for most companies
 
@@ -354,6 +356,7 @@ function updateSelections(which, value) {
   }
 
   else if (which === "Company") {
+
     index = selections.companies.indexOf(value);
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
@@ -500,8 +503,9 @@ function formatPopup(properties) {
     str += "<br>";
   }
 
-  var username = "" + properties.username;
-  str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"username\" value=\"" + username + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>"
+  // str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
+  var email = "" + properties.email;
+  str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"email\" value=\"" + email + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>";
   return str;
 }
 

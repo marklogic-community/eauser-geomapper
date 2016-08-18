@@ -1,0 +1,44 @@
+{
+  "type":"Feature", 
+  "fullDetails":{
+    "firstname":"Tom", 
+    "lastname":"Riddel", 
+    "email":"voldemort@deatheaters.org", 
+    "city":null, 
+    "state":null, 
+    "industry":"Black Magic", 
+    "company":"Death Eaters", 
+    "id":666, 
+    "phone":"666-666-6666", 
+    "accountType":null, 
+    "address":null, 
+    "country":"United Kingdom", 
+    "numEmployees":null, 
+    "username":"voldemort", 
+    "region":"Horcrux", 
+    "hasAccessToEAML9":true, 
+    "postalCode":"66666", 
+    "registeredForEAML8":true, 
+    "registeredForNoSQLforDummies":false, 
+    "registrationDate":"2016-04-02T05:43:19Z", 
+    "revenueRange":null, 
+    "leadSource":"MarkLogic Download", 
+    "website":"deatheaters.org", 
+    "marketoLastUpdated":"2016-08-17T18:28:42Z", 
+    "appLastUpdated":"2016-08-18T01:04:17.607339-07:00", 
+    "dateAdded":"2016-08-18T01:04:17.607339-07:00", 
+    "ea_version":[
+      "EA1",
+      "EA2"
+    ], 
+    "features":[
+      "Geospatial", 
+      "JavaScript", 
+      "Query Console"
+    ], 
+    "lastUpdated":"2016-08-18T01:06:03.935719-07:00"
+  }, "geometry":{
+    "type":"Point", 
+    "coordinates":[-57.327625, -63.419414]
+  }
+}
