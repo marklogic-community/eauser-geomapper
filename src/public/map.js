@@ -11,6 +11,8 @@ var maxBounds; // lat long range of entire map
 var oms; // Overlapping Marker Spiderfier
 var totalCount;
 var currentCount;
+var shapes;
+var regionKeys;
 var companies_pretty; // data from /config/companies.json
 
 // Run this function before any other
@@ -40,7 +42,6 @@ function start() {
     accessToken: token
   }).addTo(map);
 
-
   // Initialize Overlapping Marker Spiderfier
   //   (the thing that spreads out markers that overlap)
   oms = new OverlappingMarkerSpiderfier(map);
@@ -54,15 +55,18 @@ function start() {
   map.addLayer(markers);
   map.addLayer(drawnShapes);
 
-  // mouse-click event for 'clear map' button
-  // $("#clearButton").click(removeAllFeatures);
-  // $('span[name="trashFeature"]').click(removeAllFeatures);
+  // Reset Button - Removes all current facets (if any) and reloads the map.
+  $("#reset").click(function () {
+    removeAllFeatures();
+    doPost("/search.sjs", displayGeoJSON, false);
+  });
 
   //Selections will hold info on the current state of selected options to query
   selections = {
     features: [],
     industries: [],
     companies: [],
+    regions: {},
     date1: "",
     date2: ""
   };
@@ -94,6 +98,7 @@ function start() {
     error: fail
   });
 
+
 }
 
 // Start! Initialize the map and all things awesome.
@@ -116,18 +121,20 @@ function addMapEvents() {
   });
   map.addControl(drawControl);
 
-  // Events
+  // Events for drawControl
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
     doPost("/search.sjs", displayGeoJSON, false);
   });
+
   map.on('draw:edited', function (e) {
     doPost("/search.sjs", displayGeoJSON, false);
   });
+
   map.on('draw:deleted', function (e) {
-    // Update db to save latest changes
     doPost("/search.sjs", displayGeoJSON, false);
   });
+
 }
 
 // Draw markers on map
@@ -135,13 +142,33 @@ function drawPage(response) {
   displayIndustries(response.facets.Industry);
   displayFeatures(response);
   displayCompanies(response.facets.Company);
-
-    // After all industries and features are known, fetch the
-    // users from the database and display markers
+  displayRegions();
+  // After all industries and features are known, fetch the
+  // users from the database and display markers
   doPost('/search.sjs', displayGeoJSON, false);
 }
 
-/**Copied from Jennifer Tsau and Jake Fowler's geoapp and modified**/
+function getAllGeoJson() {
+  var geoObjs = [];
+
+  for (var ndx in map._layers) {
+    // check if has a togeoJSON function and has original points to be sure
+    // the thing is some type of drawn shape on the map, not just a marker
+    // or something else
+    if (map._layers[ndx].toGeoJSON && map._layers[ndx]._originalPoints) {
+      geoObjs.push(map._layers[ndx].toGeoJSON());
+    }
+  }
+
+  var obj = {
+    type: "FeatureCollection",
+    features: geoObjs
+  }
+
+  return obj;
+}
+
+/** Copied from Jennifer Tsau and Jake Fowler's geoapp and modified **/
 function doPost(url, success, firstLoad) {
 
   var payload = {
@@ -154,7 +181,7 @@ function doPost(url, success, firstLoad) {
       maxBounds.getEast()
     ],
     firstLoad: firstLoad,
-    searchRegions: drawnShapes.toGeoJSON()
+    searchRegions: getAllGeoJson()
   };
 
   $.ajax({
@@ -179,21 +206,22 @@ function fail(jqXHR, status, errorThrown) {
 function displayFeatures(response) {
   var features = response.features.MarkLogicFeatures;
   var counts = response.facets.Feature;
-
   var html;
   var count;
+
   for (var category in features) {
     html = '';
 
-    html += '<ul id="displayFeaturesList"><lh>'+ category + "</lh>";
+    html += '<ul id=\'displayFeaturesList\'><lh><b>'+ category + '</b></lh>';
     for (var subfield in features[category]) {
       count = 0;
+
       if (counts[features[category][subfield]] !== undefined) {
         count = counts[features[category][subfield]];
       }
       html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value=';
       html += features[category][subfield]+'>&nbsp;'+features[category][subfield]+'<i> ('+count+')</i></li>';
-      selections.features.push(features[category][subfield].toString());
+      updateSelections("Feature", features[category][subfield].toString());
     }
     html += '</ul>';
     $('#featureUL').append(html);
@@ -221,13 +249,13 @@ function displayIndustries(industries) {
     $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>&nbsp;'+obj+'<i> ('+count+')</i></li>');
 
     //Add value to the selections so code works with what is being displayed in menu
-    selections.industries.push(obj.toString());
+    updateSelections("Industry", obj.toString());
   }
 
   var $industries =  $("#industryUL .iChecker");
-  // Conveniently the length property here refers to the number of elements
+  // The 'length' property refers to the number of elements
   // appended to the selector
-  // AKA stuff not normally there, in other words, the length is the number
+  // This stuff not normally there, in other words, the length is the number
   // of industries in the UL.
   // and they occur at properties 0 -> $industries.length
   for (var i = 0; i < $industries.length; i++) {
@@ -241,7 +269,6 @@ function displayIndustries(industries) {
       }
     }
   }
-
 }
 
 // companies is an object {}
@@ -251,7 +278,7 @@ function displayCompanies(companies) {
     // does not include the count -- assuming that there is only one user for most companies
 
     $('#collapse3 ul').append('<li class="list-group-item"><input checked type="checkbox" class="cChecker" value='+ obj+ '>&nbsp;' + obj + '</li>');
-    selections.companies.push(obj.toString());
+    updateSelections("Company", obj.toString());
   }
   var $companies = $("#companyUL .cChecker");
 
@@ -268,10 +295,35 @@ function displayCompanies(companies) {
   }
 }
 
+function displayRegions() {
+  regionKeys = {};
+  shapes = getShapes();
+
+  for (var region in shapes) {
+    $('#collapse4 ul').append('<li class="list-group-item"><input type="checkbox" class="rChecker" value='+ region+ '>&nbsp;' + region + '</li>');
+  }
+
+  var $regions =  $("#regionUL .rChecker");
+
+  for (var i = 0; i < $regions.length; i++) {
+    $regions[i].onclick = function(e) {
+      if (e.target.value === 0) {
+        // e.target.value is 0 when click is on text in html and not on the check box
+      }
+      else {
+        updateSelections("Region", e.target.nextSibling.data);
+        doPost("/search.sjs", displayGeoJSON, false);
+      }
+    }
+  }
+
+}
+
 function updateSelections(which, value) {
   var index;
 
   value = value.trim();
+
   if (which === "Industry") {
     // Check if 'value' is in the array
     // If index = -1 then value is not in array,
@@ -293,6 +345,7 @@ function updateSelections(which, value) {
 
   else if (which === "Feature") {
     index = selections.features.indexOf(value);
+
     if (index > -1) { //unchecked the box
       // Already in the array, aka checked already, so unchecking was done
       selections.features.splice(index, 1);
@@ -303,9 +356,6 @@ function updateSelections(which, value) {
   }
 
   else if (which === "Company") {
-///////////////////////////////////////////////////
-    // maps "marklogic," "Marklogic," "MarkLogic Corporation," etc... to "MarkLogic"
-    var officialValue
 
     index = selections.companies.indexOf(value);
     if (index > -1) { //unchecked the box
@@ -314,6 +364,27 @@ function updateSelections(which, value) {
     }
     else { // checked the box
       selections.companies.push(value);
+    }
+  }
+
+  else if (which === "Region") {
+
+    if (selections.regions[value] != undefined) { //unchecked the box
+      // If value is in array then unchecking was done
+      map.removeLayer(regionKeys[value]);
+
+      selections.regions[value] = undefined;
+      delete regionKeys[value];
+    }
+    else { // checked the box
+      // Indicates the value is present on map
+      selections.regions[value] = 'defined';
+      // Was getting cyclic value error from JSON.parse when using selections.regions[value]
+      // to store the result from L.polygon(...);
+      // Need to store result of L.polygon so the value can
+      // be used to delete off map
+      regionKeys[value] = L.polygon(shapes[value]);
+      map.addLayer(regionKeys[value]);
     }
   }
 }
@@ -330,7 +401,7 @@ var red_dot = L.icon({
 function displayGeoJSON(geojsonFeatures) {
   // Every doPost call redraws all markers on the map
   // removeAllFeatures() removes all markers from the map
-  removeAllFeatures();
+  markers.clearLayers();
 
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
@@ -364,9 +435,24 @@ function updateCount(points) {
   $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
 }
 
+//event when reset map button is clicked
+// How should all check boxes in each menu be handled?
+// Should they all be reset to as they were on page load?
 function removeAllFeatures() {
-  //drawnShapes.clearLayers();
   markers.clearLayers();
+  drawnShapes.clearLayers();
+
+  // Remove the shapes from the regions menu
+  for (var region in regionKeys) {
+    // updateSelections will uncheck the region and remove it from map
+    updateSelections("Region", region.toString());
+  }
+  var $regions =  $("#regionUL .rChecker");
+  for (var i = 0; i < $regions.length; i++) {
+    $regions[i].checked = false; // Unchecks box
+  }
+
+  map.setView([0, 0], 2);
 }
 
 // firstName, lastname, email, city, state, industry, company
@@ -416,12 +502,10 @@ function formatPopup(properties) {
     str += "<b>Features:</b> None specified";
     str += "<br>";
   }
-  // Edit features inside of the details.html page
-  // str += "<button id=\"editbutton\"type=\"button\" onclick=\"editFeatures()\">Edit Features</button>";
 
   // str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
   var email = "" + properties.email;
-  str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"email\" value=\"" + email + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>"
+  str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"email\" value=\"" + email + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>";
   return str;
 }
 
@@ -459,70 +543,3 @@ $(function filterDate() {
   });
 
 });
-
-// Check if markers are contained in bounds.
-// Remove all markers from map that are contained in bounds and not contained
-// in any drawn shapes on the map (if any);
-function removeMarkers(bounds) {
-  // loop through all markers on map
-  // and find if any are contained in bounds
-  // delete markers if they are contained in bounds
-  // and no other drawn shapes
-
-  // drawnShapes is an object of the currently drawn layers still on map;
-  // does not contain any of the deleted regions (because they were deleted)
-  var layers = drawnShapes.getLayers();
-  if (layers.length === 0) {
-    // If layers.length is 0 then no other drawn regions on map.
-    // Redraw markers that match search selections in this event
-    doPost("/search.sjs", displayGeoJSON, false);
-    return;
-  }
-
-
-  var markersObj;
-  for (var obj in markers._layers) {
-    // markersObj is an object of all marker objects currently on the map
-    // while there is only one object in markers._layers that has all
-    // map markers, it an id that changes every run of the map
-    // so using a loop to grab the name; ex: 163
-    // ** Same object in memory **
-    markersObj = markers._layers[obj]._layers;
-  }
-  // If markers on map, continue
-  // store markers here that shouldn't be deleted
-  var safeMarkers = [];
-  if (markersObj) {
-    for (var marker in markersObj) {
-      // looping through all map markers
-
-      // LatLng object of marker to check if contained in the bounds of
-      // a region still on the map
-      // If marker was only found in the deleted region then it won't be
-      // added to safeMarkers[].
-      var markerLatLng = markersObj[marker].getLatLng();
-      for (var layer in layers) {
-        if (layers[layer].getBounds().contains(markerLatLng)) {
-          // Mark as safe (not to remove) because this region
-          // contains the marker
-          // This drawn region is still on the map
-          // so don't remove marker from map
-          safeMarkers.push(marker);
-        }
-        else {
-          // Marker is not contained by a current drawn layer
-          // so don't mark as safe
-        }
-      }
-
-    }
-    // Delete all markers that weren't found in other drawn regions
-    for (var marker in markersObj) {
-      if (safeMarkers.indexOf(marker) === -1) {
-        // Marker isn't safe, must have only been found in th deleted
-        // region, so delete from map.
-        map.removeLayer(markersObj[marker]);
-      }
-    }
-  }
-}
