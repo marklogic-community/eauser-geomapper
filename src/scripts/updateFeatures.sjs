@@ -65,8 +65,9 @@ try {
 
     // because of how we insert feature arrays into MarkLogic,
     // the order features appear in the array is preserved
-    if ("" + oldFeatures === "" + input.features) exit; // is this the right command to break out of this try/catch?
-                                                        // I just tried this randomly, and it looks like it's doing something...
+    if ("" + oldFeatures === "" + input.features) {
+      exit;
+    }
 
     var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
                  "to":{"name":emailRecipient.name, "address":emailRecipient.address},
