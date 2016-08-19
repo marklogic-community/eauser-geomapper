@@ -19,15 +19,12 @@ var secretkey = keys.secretkey;
 // Marketo REST api
 var endpoint_REST = keys.endpoint_REST;
 var clientID_REST = keys.clientID_REST;
-
 var clientSecret_REST = keys.clientSecret_REST;
-
 var EA1programID = keys.EA1programID;
-
 var EA2programID = keys.EA2programID;
-
 var EA3programID = keys.EA3programID;
 
+// Email list that will receive status updates and user feedback
 var emailRecipient = keys.emailRecipient;
   var name = emailRecipient.name;
   var address = emailRecipient.address;
