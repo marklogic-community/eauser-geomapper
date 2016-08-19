@@ -429,7 +429,7 @@ function updateCount(points) {
   if (points) {
     currentCount = points.length;
   }
-  else{
+  else {
     currentCount = 0;
   }
   $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
@@ -440,7 +440,7 @@ function updateCount(points) {
 // Should they all be reset to as they were on page load?
 function removeAllFeatures() {
   markers.clearLayers();
-  drawnShapes.clearLayers();
+  //drawnShapes.clearLayers();
 
   // Remove the shapes from the regions menu
   for (var region in regionKeys) {
@@ -457,7 +457,7 @@ function removeAllFeatures() {
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
-
+5;
   var str = "";
   if (!properties) return str;
 
