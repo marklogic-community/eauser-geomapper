@@ -77,6 +77,7 @@
     #mapid {
       height: 700px;
       background: none;
+      z-index: 1;
     }
     #displayFeaturesList {
       padding-left: 0px;
@@ -90,7 +91,10 @@
       text-align: center;
       position: center;
     }
-
+    textarea {
+      resize: none;
+      z-index: 500000000000000;
+    }
   </style>
 
 </head>
@@ -196,7 +200,9 @@
     </div>
 
     <div id="feedback-window" title="Feedback?">
-      <p>Hello world</p>
+      <p>So... what are your thoughts on EA Tracker?</p>
+      <br/>
+      <textarea rows="6" cols="60" placeholder="no trolling please :)"></textarea>
     </div>
 
   </div>
