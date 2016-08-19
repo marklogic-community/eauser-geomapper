@@ -196,17 +196,27 @@
       <div id="mapid"></div>
       <br/>
       <br/>
-      <div align="center">Have opinions? <a id="feedback-link" href="#">Give us some feedback!</a></div>
+      <div align="center">Have opinions? <a id="feedback-link" href="javascript:{}">Give us some feedback!</a></div>
     </div>
 
+  <!-- Feedback popup windows -->
     <div id="feedback-window" title="Feedback?">
       <p>So... what are your thoughts on EA Tracker?</p>
+      <textarea id="feedback-subject" rows="1" cols = "76" placeholder="Subject line"></textarea>
+      <textarea id="feedback-text" rows="8" cols="76" placeholder="no trolling please :)"></textarea>
       <br/>
-      <textarea rows="6" cols="60" placeholder="no trolling please :)"></textarea>
+      <button onclick="send()">Send</button>
+    </div>
+
+    <div id="feedback-success" title="Successfully Sent!">
+      <p>Thank you for your feedback!</p>
+    </div>
+
+    <div id="feedback-fail" title="Failed to send :(">
+      <p>For some reason, your message failed to send... Try again?</p>
     </div>
 
   </div>
-
 
 <!-- Displaying the map (in JS) -->
 <script type="text/javascript" src="public/map.js"></script>
