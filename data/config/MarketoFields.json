@@ -1,4 +1,4 @@
-{ // field names for rest api
+{
   "fields": [
     "company", 
     "site", 
@@ -184,19 +184,19 @@
     "Primary_Sales_Contact_Phone__c", 
     "Referral__c", 
     "Registration_Approved__c", 
-    "Registration_Date__c", ///////////////////////////////////??
+    "Registration_Date__c", 
     "Registration_Expiration__c", 
     "Registration_Status__c", 
     "Registration__c", 
     "Rejection_Reason_Explanation__c", 
     "Rejection_Reason__c", 
     "Resend_All_Contracts__c", 
-    "Revenue__c", /////////////////////////////////////////////////
+    "Revenue__c", 
     "Segment__c", 
-    "Size_of_Company__c", ////////////////////////////////////////
+    "Size_of_Company__c",
     "State_Province__c", 
     "Street__c", 
-    "Working_with_anyone_at_MarkLogic__c", ////////////////////////
+    "Working_with_anyone_at_MarkLogic__c", 
     "Zip_Code__c", 
     "Assistant_Phone__c", 
     "RecordTypeId_account", 
@@ -465,23 +465,23 @@
     "ERPTest__c", 
     "Days_SRL__c", 
     "eAML8confirmationlink", 
-    "registeredforEAML8", ////////////////////////////////
+    "registeredforEAML8",
     "agreedtoEAML8TC", 
-    "hasaccesstoEAML8", //////////////////////////////////
+    "hasaccesstoEAML8",
     "amazonIdforEAML8", 
     "Title_Standardized__c", 
     "cookies", 
     "Region__c", 
-    "registeredforNoSQLforDummies", //////////////////////////
+    "registeredforNoSQLforDummies",
     "Region_UK__c", 
     "Owner_Segment__c", 
     "Region__c_account", 
-    "markLogicContactEmail", /////////////////////??
+    "markLogicContactEmail",
     "eAML8username", 
     "MDR_Name__c", 
     "Primary_SIC__c", 
     "Primary_SIC__c_account", 
-    "Revenue_Range__c", //////////////////////////////////////
+    "Revenue_Range__c",
     "Revenue_Range__c_account", 
     "Employee_Ranges__c", 
     "Employee_Ranges__c_account", 
@@ -678,8 +678,8 @@
     "DC_Employees__c", 
     "DC_Clean_Status__c_lead", 
     "DC_Clean_Status_Final__c", 
-    "EA_ML9username", ///////////////////////////////////////////////////////////
-    "HasAccessToEAML9", /////////////////////////////////////////////////////////
+    "EA_ML9username",
+    "HasAccessToEAML9",
     "SocialMediaConsent", 
     "ISR__c", 
     "MDR__c_account", 
@@ -691,7 +691,7 @@
     "AccountDomain__c", 
     "of_Opportunities__c", 
     "Run_Domain_Matching__c", 
-    "Account_Approved__c", //////////////////////////////////////////////////////
+    "Account_Approved__c",
     "webinarName", 
     "DomainMatchError__c", 
     "On24_EventTitle__c", 
@@ -703,7 +703,6 @@
     "iv__InsideView_User_Last_Updated__c_account", 
     "testscoredemographic"
   ],
-  //urlParamAbridged matches what details.html displays.
   "urlParamAbridged": "company,website,personType,firstName,lastName,phone,address,city,state,country,title,postalCode,email,leadSource,createdAt,updatedAt,",
   "urlParam": "company,site,billingCity,billingState,billingCountry,billingPostalCode,website,mainPhone,annualRevenue,numberOfEmployees,industry,sicCode,mktoCompanyNotes,sfdcAccountId,jigsawCompanyId,jigsawCompanyStatus,id,mktoName,personType,mktoIsPartner,isLead,mktoIsCustomer,isAnonymous,salutation,firstName,middleName,lastName,email,phone,mobilePhone,fax,title,contactCompany,dateOfBirth,address,city,state,country,postalCode,personPrimaryLeadInterest,originalSourceType,originalSourceInfo,registrationSourceType,registrationSourceInfo,originalSearchEngine,originalSearchPhrase,originalReferrer,emailInvalid,emailInvalidCause,unsubscribed,doNotCall,mktoDoNotCallCause,doNotCallReason,mktoPersonNotes,sfdcType,sfdcContactId,inferredCompany,inferredCountry,inferredCity,inferredStateRegion,inferredPostalCode,inferredMetropolitanArea,inferredPhoneAreaCode,department,jigsawContactStatus,jigsawContactId,sfdcId,createdAt,updatedAt,leadPerson,leadRole,leadSource,leadStatus,leadScore,urgency,priority,relativeScore,rating,sfdcLeadId,sfdcLeadOwnerId,leadPartitionId,leadRevenueCycleModelId,leadRevenueStageId,acquisitionProgramId,mktoAcquisitionDate,Behavior,Demographic,RecordTypeId,EmailBouncedReason,EmailBouncedDate,EFB_initiative_in_place__c,Specific_Lead_Source__c,Newsletter_Sub__c,User_Conf_Invite__c,Multiple_and_complex_product_config__c,Reason__c,Department__c,How_did_you_hear_about_us__c,Message__c,license_type__c,developer_type__c,Target__c,Government_Industry__c,Type__c,Project__c,Budget__c,Main_Industry__c,DocReq__c,gartner_webinar_score__c,Priority__c,Do_you_sell_information_based_products__c,How_do_you_primarily_use_XML__c,Which_content_management_system_do_you_u__c,Host_Name__c,Agency__c,Bureau_Office__c,Program_Contract__c,Contract_Award_Status__c,Systems_Integrator__c,Biggst_Content_Challenge__c,Invite_to_2008_UC__c,Is_your_content_in_XML__c,Which_search_engine_are_you_using__c,D_U_N_S__c,FullName__c,Office_2007__c,Referred_By__c,Lead_Ranking__c,Tags__c,AdWords_Keyword__c,Contact_Info_Validated__c,Lead_Age_calc__c,Custom_Media_Source__c,NAIC_Description__c,SIC_Description__c,NAIC_Code__c,SIC_Code__c,Mark_Mail_Potential__c,AdWords_Source__c,Custom_Registration_Info__c,Fit_Score__c,Interest_Score__c,MTCLeadScore__c,User_Conference_Status__c,ManticoreID__c,Manticore_Full_Promotion_Code__c,Manticore_HasBounced__c,Manticore_Last_Search_Engine__c,Manticore_Last_Search_Phrase__c,Manticore_Last_Web_Visit__c,Manticore_Total_Web_Visits__c,Active_Partner__c,Quarterly_Newsletter__c,Assist_Email__c,AssistantName__c,Brief_Description__c,City__c,Competitive_Deal__c,Competitors__c,Contracts_Sent__c,Contracts_To_Send__c,Country__c,Date_of_New_Partner_Approval__c,Date_of_New_Portal_User_Approval__c,End_Customer_Region__c,Est_Close_Date__c,Estimated_Commission__c,Estimated_Value__c,I_am_the_primary_sales_contact__c,If_so_who__c,Interested_In__c,MarkLogic_Sales_Rep__c,Opportunity_Type__c,Other_Interests__c,Override_Est_Commission__c,Partner_Tier__c,Partner_Type__c,Portal_Link__c,Primary_Region_of_Business__c,Primary_Sales_Contact_Email__c,Primary_Sales_Contact_Name__c,Primary_Sales_Contact_Phone__c,Referral__c,Registration_Approved__c,Registration_Date__c,Registration_Expiration__c,Registration_Status__c,Registration__c,Rejection_Reason_Explanation__c,Rejection_Reason__c,Resend_All_Contracts__c,Revenue__c,Segment__c,Size_of_Company__c,State_Province__c,Street__c,Working_with_anyone_at_MarkLogic__c,Zip_Code__c,Assistant_Phone__c,RecordTypeId_account,IsPartner,Account_Type__c,Partner_Status__c,Main_Industry__c_account,D_U_N_S__c_account,NAIC_Code__c_account,SIC_Code__c_account,Office_2007__c_account,Top_25_Account__c,Magic_30_I_M_Account__c,NAIC_Description__c_account,SIC_Description__c_account,OK_to_use_External_Marketing__c,OK_to_use_External_Sales__c,Customer_Reference_Description__c,Customer_Reference_Case_Study__c,Customer_Reference_Whitepaper__c,Customer_Reference_Press_Releases__c,Customer_Reference_PowerPoint_Presos__c,Customer_Reference_Video__c,Customer_Reference_Marketing_Contact__c,Customer_Reference_Award_Applications__c,INterview_Notes_INTERNAL_USE_ONLY__c,Customer_Reference_Application__c,Partner_Tier__c_account,Partner_Type__c_account,Segment__c_account,Date_Approved_As_Partner__c,Primary_Region_of_Business__c_account,Revenue__c_account,Size_of_Company__c_account,erp_acct_ext_id__c,erp_acct_int_id__c,Assist_Email__c_contact,How_did_you_hear_about_us__c_contact,Newsletter__c,Contact_Left_Company__c,Bureau_Office__c_contact,Biggest_Content_Challenge__c,Which_CMS_do_you_use__c,LinkedIn_Profile__c,SFDC_Opt_Out__c,Date_Approved_As_Portal_User__c,temp_AssistName__c,temp_Assistant_Phone__c,AccountId,RegOnline__RegOnlineSessionID__c,echosign_dev1__EchoSign_Email_Verified__c,Start_Date__c,Branch__c,Behavior_Score__c,mkto_si__HideDate__c,mkto_si__Sales_Insight__c,mkto_si__IsCachingAnonWebActivityList__c,mkto_si__IsCachingBestBets__c,mkto_si__IsCachingEmailActivityList__c,mkto_si__IsCachingGroupedWebActivityList__c,mkto_si__IsCachingInterestingMomentsList__c,mkto_si__IsCachingScoringList__c,mkto_si__IsCachingStreamList__c,mkto_si__IsCachingWatchList__c,mkto_si__IsCachingWebActivityList__c,mkto_si__Sales_Insight_Counter__c,Score_Demographic__c,Lead_Score_Demographic__c,Lead_Score_Behavior__c,IgnoreValidations_YN__c,Account_Balance__c,Account_Overdue_Balance__c,Celigo_Update__c,Days_Overdue__c,NS_Sync__c,NetSuite_Id__c,NetSuite_Locked__c,NetSuite_Mapping__c,NetSuite_Pull__c,NetSuite_Push__c,Sync_in_Progress__c,Unbilled_Orders__c,Celigo_Update__c_contact,NS_Sync__c_contact,NetSuite_Id__c_contact,NetSuite_Locked__c_contact,NetSuite_Mapping__c_contact,NetSuite_Pull__c_contact,NetSuite_Push__c_contact,custom_search_decision,MDR__c,Unsubscribe-Events,Unsubscribed-Webinar,Unsubscribed-ProductAnnouncement,Unsubscribed-LearningandBestPractices,Manager_s_email__c,jsImpacts__Imported_from_Jigsaw__c,Unsubscribed-Newsletter,Lead_Next_Step__c,Server_Host_Name__c,Server_Platform__c,Num_of_CPUs__c,License_Type_New__c,License_Platform__c,License_Num_of_CPUs__c,License_Host__c,Owner_User_Info__c,Manager_email__c,ownermanageremail__c,Referrer,Account__c,SRL_Date__c,Owner_Actual_Name__c,Conv_Opportunity_ID__c,Conv_Contact_ID__c,Conv_Account_ID__c,LastModbyOwner__c,rkpi__Lead_Source__c,rkpi__TestField__c,rkpi__LeadSource__c,gender,facebookDisplayName,twitterDisplayName,linkedInDisplayName,facebookProfileURL,twitterProfileURL,linkedInProfileURL,facebookPhotoURL,twitterPhotoURL,linkedInPhotoURL,facebookReach,twitterReach,linkedInReach,facebookReferredVisits,twitterReferredVisits,linkedInReferredVisits,totalReferredVisits,facebookReferredEnrollments,twitterReferredEnrollments,linkedInReferredEnrollments,totalReferredEnrollments,lastReferredVisit,lastReferredEnrollment,Named_Account__c,DietaryRequirements,DietaryRequirements-Other,Email_Bounced_Reason__c,Email_Bounced_Date__c,HotelCheck-in,HotelCheck-out,ShirtSize,Specialhotelrequests,Department-Other,MainIndustry-Other,Contact_me__c,Contact_Me_Date__c,Reference_Notes__c,syndicationId,Role__c,Number_of_Employees_picklist__c,Time_to_deployment__c,CampaignA,CampaignB,CampaignC,CRMfusionDBR101__ProductInterest__c,Num_of_References__c,ML-POCFirstName,ML-POCLastName,ML-NumberofParticipant,ML-Executive,ML-GoalofMeeting,ML-DateandTime,ML-Passport,ML-GuestPassport,ML-GuestPhone,ML-GuestFirst,ML-GuestLast,ML-GuestSpecialDietaryRequirements,ML-GuestComments,EmergencyContactName,EmergencyContactNumber,ML-RoomType,ML-AirlineArrivalDate,ML-AirlineDepartureDate,ML-AirlineArrivalTime,ML-DepartureTime,ML-AirlineDepartingCity,ML-AirlineArrivalComment,ML-AirlineDepartureComment,ML-AirlineArrivalAirlineandFlight,ML-DepartureAirlineandFlight,MLGuestArrivalFlight,MLGuestDepartureFlight,ML-ArrivalGroundTransporation,ML-DepartureGroundTransporation,ML-Celebratingspecialeventatclub,ML-AirlineDepartureFinalDestination,ML-CabanaRental,ML-SpaTreatmentforYourself,ML-SpaTreatmentforyourGuest,ML-Nightclub,ML-PrivateYacht,ML-ActivitiesComment,ML-Nameofcustomersandprospects,rkpi2__rkCompanyId__c,rkpi2__rkContactId__c,rkpi2__rk_DefaultVisibility__c,rkpi2__rk_RetrievalFlag__c,rkpi2__rkCompanyId__c_account,rkpi2__rk_DefaultVisibility__c_account,rkpi2__rk_RetrievalFlag__c_account,ML-Date,ML-Time2,MLAirport,MLArrivalAirport,MLGuestDepartureAirport,MLGuestArrivalAirport,Sales_Consultant_Account__c,ML-Golf,Owner_Name__c,email_domain__c,Lead_Score_Total__c,cid,Num_of_Closed_Won_Opps__c,dinner_date,SRLEmailVP__c,SRL_VP_Email_Alert_c__c,Lead_Expiration_Date__c,NurtureTrackName,NurtureTrackStep,SurveyQ1,SurveyQ2,SurveyQ3,SurveyTextBox,SurveyTextBox2,SurveyQ4,SurveyQ5,SurveyQ6,SurveyQ7,SurveyQ8,SurveyQ9,SurveyTexBox3,facebookId,twitterId,linkedInId,License_Date,License_Expire,Status__c,TIMBASURVEYS__Survey__c,Named_Account__c_contact,Date_in_Open_Status__c,Open_Date__c,MQL_Date__c,mkto_si__MSIContactId__c,Owner_is_Active_T_F__c,Today__c,State_Old__c,State_Billing_Old__c,Country_Billing_Old__c,State_Shipping_Old__c,Country_Shipping_Old__c,State_Mailing_Old__c,State_Other_Old__c,Test1__c,Test__c,ERPTest__c,Days_SRL__c,eAML8confirmationlink,registeredforEAML8,agreedtoEAML8TC,hasaccesstoEAML8,amazonIdforEAML8,Title_Standardized__c,cookies,Region__c,registeredforNoSQLforDummies,Region_UK__c,Owner_Segment__c,Region__c_account,markLogicContactEmail,eAML8username,MDR_Name__c,Primary_SIC__c,Primary_SIC__c_account,_Range__Revenuec,Revenue_Range__c_account,Employee_Ranges__c,Employee_Ranges__c_account,Employee_Range__c,demandbase_sid__c,Employee_Range__c_account,demandbase_ip__c,demandbase_data_source__c,Fortune_1000__c,Forbes_2000__c,Sub_Industry__c,b2b__c,b2c__c,Audience__c,registry_latitude__c,registry_longitude__c,Latitude__c,Longitude__c,audience_segment__c,traffic__c,registry_company_name__c,registry_city__c,registry_state__c,registry_dma_code__c,registry_zip_code__c,registry_area_code__c,registry_country__c,registry_country_code__c,registry_country_code3__c,TickerSymbol__c,ISO2__c,dba_Company_Name__c,Test123__c,opt_in__c,opt_in_date__c,Opt_out_Date__c,Opt_In_Date_Implicit__c,Test_Region__c,Test_Geo__c,Test_Sector__c,Test_Region1__c,Region_Lock__c,Twitter__c,Facebook__c,State_Province_old__c,Pass_to_Telemarketing__c,contenttoday__c,Reason_Dead_End__c,MainCompetitor__c,OSKeyID__c,roleincontent__c,Database__c,Score__c,OReilly_Webinar_Score__c,Email_Domain__c_account,RegionName__c,testBC__c,RegionLink__c,Geo__c,Sub_Region__c,Sub_Region_Simple__c,Region_Simple__c,Region_Name__c,Region_Lookup__c,RegionLink__c_lead,Geo__c_lead,Sub_Region__c_lead,Sub_Region_Simple__c_lead,Region_Simple__c_lead,Region_Name__c_lead,Region_Lookup__c_lead,IsParent__c,Parent_Name__c,Parent_Account_Is_Parent__c,reasonforInquiry,Reason_for_Inquiry__c,Ultimate_Parent__c,Ultimate_Parent_1__c,Ultimate_Parent_OBSOLETE__c,Ultimate_Parent_IsParent__c,Ultimate_Parent_IsParent_AdminOnly__c,Account_Main_Industry__c,Reason_AE_Email_Opt_Out__c,AE_Email_Opt_Out_Date__c,TestGTA__c,Active_Age__c,Company_Name_Translated__c,Related_Lead__c,Exclude_Domain__c,Region_formula__c,Customer_Reference_Program__c,HTM_Activities__c,Company_Non_English__c,First_Name_Non_English__c,First_Name_Non_English__c_contact,Last_Name_Non_English__c,Full_Name_Non_English__c,Email_Non_English__c,Phone_Non_English__c,Company_Non_English__c_account,Country_Non_English__c,State_Non_English__c,Country_Non_English__c_account,State_Non_English__c_account,Account_Type__c_lead,Account_Status__c,Job_Title_Non_English__c,Department_Non_English__c,SRL_Lead_Source__c,MQL_Lead_Source__c,Address_Non_English__c,MLW_Workshop_Registered__c,Phonetic_Spelling_Pronunciation__c,Fiscal_Year_End__c,SRL_Meeting_Date__c,Owner_Region__c,Initial_SRL_Date__c,SRL_Source__c,SRL_Counter__c,SRL_Initial_Source__c,SRL_Initial_Date__c,SRL_Initial_Incubate_Date__c,SRL_Incubate_Date__c,SRL_Initial_Assign_to_SD_Date__c,SRL_Assign_to_SD_Date__c,SRL_Initial_Assign_to_AE_Date__c,SRL_Assign_AE_Date__c,SRL_Initial_Reject_Date__c,SRL_Reject_Date__c,SRL_Initial_Disqualified_Date__c,SRL_Disqualified_Date__c,HasBounced__c,Dormant_Date__c,Comm_or_PS__c,Comm_or_PS__c_account,Owner_Queue_Name__c,GEO_Region_Sub_Region__c,Region_Inactive__c,externalCompanyId,externalSalesPersonId,SRL_Current_Source__c,Owner_is_Queue__c,Rknews__News_Search_Override__c,Rknews__News_Search_Override__c_contact,Landing_Page_Specific_Lead_Source__c,SIC_Industry_from_SFDC_Clean_Info__c,SIC_Industry_from_SFDC_Clean_Info__c_account,XING__c,Status_Reason__c,Contact_Status_Reason__c,TestLink__c,LID__LinkedIn_Company_Id__c,LID__LinkedIn_Member_Token__c,LID__LinkedIn_Company_Id__c_account,Lead_Attribution_Source__c,Lead_Attibution_Source__c,User_Segment__c,Owner_Type__c,user_segment__c_contact,DC_Title__c,DC_Email__c,DC_Phone__c,User_Segment__c_account,Owner_Type__c_account,SRL_Attribution_Source__c,SRL_Specific_Attribution_Source__c,of_References__c,oN24EventID,oN24EventStatus,DC_Company_Name__c,DC_Phone__c_account,DC_Clean_Status__c,ddc_prospector__Sourced_from_Data_com__c,ddc_prospector__Sourced_from_Data_com__c_account,ddc_prospector__Sourced_from_Data_com__c_contact,DC_Title__c_lead,DC_Email__c_lead,DC_Phone__c_lead,DC_NoOfEmp__c,DC_Ann__c,DC_Duns__c,DC_SIC__c,on24email__c,DC_Description__c,DC_NAICS_Code__c,DC_NAICS_Description__c,DC_SIC_Code__c,DC_SIC_Description__c,DC_Website__c,DC_Annual_Rev__c,DC_DUNS__c_account,DC_Employees__c,DC_Clean_Status__c_lead,DC_Clean_Status_Final__c,EA_ML9username,HasAccessToEAML9,SocialMediaConsent,ISR__c,MDR__c_account,MQL_Counter__c,MQL_Date_Current__c,Inside_Sales_Pre_Sales__c,Actively_worked_by_ISR_MDR__c,Actively_worked_by_ISR_MDR_Date__c,AccountDomain__c,of_Opportunities__c,Run_Domain_Matching__c,Account_Approved__c,webinarName,DomainMatchError__c,On24_EventTitle__c,iv__InsideView_Created__c,iv__InsideView_Date_Last_Updated__c,iv__InsideView_User_Last_Updated__c,iv__InsideView_Created__c_account,iv__InsideView_Date_Last_Updated__c_account,iv__InsideView_User_Last_Updated__c_account,testscoredemographic"
 }

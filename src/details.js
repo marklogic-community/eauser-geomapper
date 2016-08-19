@@ -73,6 +73,16 @@ function display(user) {
   }
 */
 
+  // other marketo fields (dropdown)
+  $.ajax({
+    type: "GET",
+    url: "/scripts/getMarketoFields.sjs",
+    dataType: "json",
+    success: createDropdown,
+    error: fail
+  });
+
+
   // Marklogic account info
 //  $("#accountType").append(user.fullDetails.accountType);
   $("#username").append(user.fullDetails.username);
@@ -92,6 +102,33 @@ function display(user) {
   }
 
 };
+
+function createDropdown(MarketoFields) {
+  for (var field in MarketoFields) {
+    $("#other-select").append("<option value=\"" + MarketoFields[field] + "\">" + MarketoFields[field] + "</option>");
+  }
+  $("#other-select").change();
+}
+
+$("#other-select").change(function () {
+  var payload = {
+    "field": $('#other-select option:selected').val(),
+    "id": global_user.fullDetails.id
+  };
+
+  $.ajax({
+    type: "POST",
+    url: "/scripts/queryMarketoFieldForID.sjs",
+    data: JSON.stringify(payload),
+    contentType: "application/json",
+    dataType: "json",
+    success: function(res) {
+      $("#other-result").replaceWith("<td id=\"other-result\">" + res.val + "</td>");
+    },
+    error: fail
+  }); 
+});
+
 
 function displayCheckboxes(MLFeatures) {
 
