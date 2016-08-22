@@ -55,15 +55,19 @@
       text-align: center;
     }
     /* centers the date, industry, feature, and company selection menu divs */
-    #date, #selectIndustry, #selectFeature, #selectCompany {
+    #selectIndustry, #selectFeature, #selectCompany {
       margin-left: auto;
       margin-right: auto;
     }
-    /* alignment of glyphicons */
-    .glyphicon-calendar {
-      position: relative;
-      left: 10px;
+
+    /* centers the reset button */
+    #reset {
+      position: absolute;
+      margin-right: auto;
+      margin-left: 30px;
     }
+
+
     /* scrolling feature of the menu bars */
     .panel-collapse, #collapse1 #collapse2 #collapse3 {
       max-height: 200px;
@@ -78,9 +82,11 @@
       padding-left: 0px;
       padding-bottom: 15px;
     }
+
     lh {
       padding-left: 10px;
     }
+
   </style>
 
 </head>
@@ -96,14 +102,15 @@
 <div class="container">
   <div class="row">
     <div class="col-md-3">
-      <h3 id="featureTitle"></h3>
 
-<!-- Clear map button -->
-<!--       <div class="col-xs-6">
-        <button type="button" id="reset" class="btn btn-default btn-block">Reset</button>
-      </div> -->
+      <br><br><br><br><br><br>
 
-      <br><br><br><br>
+<!-- Reset button -->
+      <div class="col-sm-8">
+        <button type="button" id="reset" class="btn btn-default btn-block">Reset Map</button>
+      </div>
+
+      <br><br><br>
 
   <!-- Select Industry -->
       <div class="row" id="selectIndustry">
