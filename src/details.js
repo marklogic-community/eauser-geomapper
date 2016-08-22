@@ -1,4 +1,4 @@
-// url will be the form http://host.whatever/details22.html?username={{username}}
+// url will be the form http://host.whatever/details22.html?email={{email}}
 
 // from http://stackoverflow.com/questions/19491336/get-url-parameter-jquery-or-how-to-get-query-string-values-in-js
 var getUrlParameter = function getUrlParameter(sParam) {
@@ -16,10 +16,10 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
 };
 
-var username = getUrlParameter("username");
+var email = getUrlParameter("email");
 
 $(document).ready(function() {
-  payload = {"username": username};
+  payload = {"email": email};
   $.ajax({
     type: "POST",
     url: "/scripts/findUser.sjs",
@@ -61,22 +61,74 @@ function display(user) {
   // company details
   $("#company").append(user.fullDetails.company);
   $("#revenueRange").append(user.fullDetails.revenueRange);
+
+  // num employees is almost always null. Should we ignore it?
   $("#numEmployees").append(user.fullDetails.numEmployees);
   $("#website").append(user.fullDetails.website);
 
+/* No longer necessary with the Marketo REST api
   // Marketo xml source
-  $("#source").append(encodeXml(user.source));
+  if (user.source) {
+    $("#source").append(encodeXml(user.source));
+  }
+*/
+
+  // other marketo fields (dropdown)
+  $.ajax({
+    type: "GET",
+    url: "/scripts/getMarketoFields.sjs",
+    dataType: "json",
+    success: createDropdown,
+    error: fail
+  });
+
 
   // Marklogic account info
-  $("#accountType").append(user.fullDetails.accountType);
+//  $("#accountType").append(user.fullDetails.accountType);
   $("#username").append(user.fullDetails.username);
   $("#registeredForEAML8").append(user.fullDetails.registeredForEAML8);
   $("#hasAccessToEAML9").append(user.fullDetails.hasAccessToEAML9);
   $("#registeredForNoSQLforDummies").append(user.fullDetails.registeredForNoSQLforDummies);
-  $("#registrationDate").append(user.fullDetails.registrationDate);
   $("#leadSource").append(user.fullDetails.leadSource);
+  $("#registrationDate").append(user.fullDetails.registrationDate);
+  $("#marketoLastUpdated").append(user.fullDetails.marketoLastUpdated);
+  for (var i in user.fullDetails.ea_version) {
+    if (i == 0) {
+      $("#ea-version").append(user.fullDetails.ea_version[i]);
+    }
+    else {
+      $("#ea-version").append(", " + user.fullDetails.ea_version[i]);
+    }
+  }
 
 };
+
+function createDropdown(MarketoFields) {
+  for (var field in MarketoFields) {
+    $("#other-select").append("<option value=\"" + MarketoFields[field] + "\">" + MarketoFields[field] + "</option>");
+  }
+  $("#other-select").change();
+}
+
+$("#other-select").change(function () {
+  var payload = {
+    "field": $('#other-select option:selected').val(),
+    "id": global_user.fullDetails.id
+  };
+
+  $.ajax({
+    type: "POST",
+    url: "/scripts/queryMarketoFieldForID.sjs",
+    data: JSON.stringify(payload),
+    contentType: "application/json",
+    dataType: "json",
+    success: function(res) {
+      $("#other-result").replaceWith("<td id=\"other-result\">" + res.val + "</td>");
+    },
+    error: fail
+  }); 
+});
+
 
 function displayCheckboxes(MLFeatures) {
 
@@ -138,7 +190,7 @@ function save() {
   }
 
   var payload = {
-    "username": global_user.fullDetails.username,
+    "email": global_user.fullDetails.email,
     "features": features
   }
 
@@ -152,12 +204,12 @@ function save() {
       $("#features").append("<div class=\"alert alert-success\" role=\"alert\">"
                             + "<a href=\"#\" class=\"close\" data-dismiss=\"alert\" title=\"close\">×</a>"
                             + "Successfully updated "
-                            + global_user.fullDetails.username
+                            + global_user.fullDetails.email
                             + "'s features</div>");
       $("body").css("cursor", "default");
     },
     error: function(a,b,c) {
-      $("#features").append("<div class=\"alert alert-danger\" role=\"alert\">Something went wrong... :(</div>");
+      $("#features").append("<div class=\"alert alert-danger\" role=\"alert\"><a href=\"#\" class=\"close\" data-dismiss=\"alert\" title=\"close\">×</a>Something went wrong... :(</div>");
       fail(a,b,c);
       $("body").css("cursor", "default");
     }
@@ -165,6 +217,7 @@ function save() {
 
 }
 
+// no longer necessary with the Marketo REST api
 // from http://stackoverflow.com/questions/2959642/how-to-make-a-valid-string-for-xml-in-javascript
 function encodeXml(s) {
   return (s

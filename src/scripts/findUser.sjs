@@ -1,4 +1,4 @@
-// POST request body -> {username: <username>}
+// POST request body -> {email: <email>}
 
 var sr = require('/MarkLogic/jsearch.sjs');
 
@@ -9,11 +9,11 @@ var input = rawInput.toObject();
 try {
 
   var output = sr.documents()
-    .where(cts.elementWordQuery("username",input.username))
+    .where(cts.elementWordQuery("email",input.email))
     .result();
 
   var doc = output.results[0].document;
-  xdmp.log("found document for " + input.username);
+  xdmp.log("found document for " + input.email);
 
 }
 catch (err) {

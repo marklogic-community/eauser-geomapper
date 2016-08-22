@@ -39,10 +39,18 @@
     .container h3 {
       text-align: center;
     }
-    textarea {
+/*    textarea {
       width: 100%;
-      height: 70px;
+      height: 100px;
     }
+*/
+    #other-select {
+      width: 45%;
+      height: 28px;
+      overflow: hidden;
+      border: 1px solid #ccc;
+    }
+
   </style>
 </head>
 
@@ -132,24 +140,41 @@
       </tr>
     </table>
 
-
+<!-- No longer necessary with the Marketo REST api
     <div>
       <h4>Marketo XML Source:</h4>
       <br/>
       <textarea readonly id="source"></textarea>
+    </div>
+-->
+    <br/>
+    <div>
+      <h4>Other Marketo Fields:</h4>
+      <br/>
+      <table class="table table-hover">
+        <tr>
+          <td>
+            <select id="other-select">
+            </select>
+          </td>
+          <td id="other-result"></td>
+        </tr>
+      </table>
     </div>
   </div>
 
   <div class="col-sm-6">
     <h4>MarkLogic Account info:</h4>
     <br/>
-    <table class="table table-hover">  
+    <table class="table table-hover">
+<!--
       <tr>
         <td>Account Type</td>
         <td id="accountType"></td>
       </tr>
+-->
       <tr>
-        <td>username</td>
+        <td>Username</td>
         <td id="username"></td>
       </tr>
       <tr>
@@ -165,12 +190,20 @@
         <td id="registeredForNoSQLforDummies"></td>
       </tr>
       <tr>
+        <td>Lead Source</td>
+        <td id="leadSource"></td>
+      </tr>
+      <tr>
         <td>Registration Date</td>
         <td id="registrationDate"></td>
       </tr>
       <tr>
-        <td>Lead Source</td>
-        <td id="leadSource"></td>
+        <td>Last Updated</td>
+        <td id="marketoLastUpdated"></td>
+      </tr>
+      <tr>
+        <td>EA Versions Downloaded</td>
+        <td id="ea-version"></td>
       </tr>
     </table>
   </div>

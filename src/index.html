@@ -30,54 +30,64 @@
   <!-- Private Keys -->
   <script type="text/javascript" src="private/browserKeys.js"></script>
 
+  <!-- Predrawn Custom Shapes -->
+  <script type="text/javascript" src="shapes.js"></script>
+
   <!-- Start of CSS -->
   <style>
     body {
-      padding: 50px;
+      padding: 0px;
     }
+
     .title {
-      padding: 40px 15px;
+      padding: 10px 10px;
       text-align: center;
     }
+
+    .container {
+      width: 90%;
+    }
+
     li.list-group-item {
       border: none;
       padding-bottom: 0px;
     }
+
     .col-xs-3 {
       border: none;
     }
+
     /* centers features and map display titles */
     #featureTitle, #mapTitle {
       text-align: center;
     }
+
     /* centers text on selection menu */
-    #selectIndustry h3, #selectFeature h3, #selectCompany h3 {
+    #selectIndustry h4, #selectFeature h4,
+    #selectCompany h4, #selectRegion h4 {
       text-align: center;
     }
+
     /* centers the date, industry, feature, and company selection menu divs */
-    #selectIndustry, #selectFeature, #selectCompany {
+    #date, #selectIndustry, #selectFeature,
+    #selectCompany, #selectRegion {
       margin-left: auto;
       margin-right: auto;
     }
 
-    /* centers the reset button */
-    #reset {
-      position: absolute;
-      margin-right: auto;
-      margin-left: 30px;
-    }
-
-
     /* scrolling feature of the menu bars */
-    .panel-collapse, #collapse1 #collapse2 #collapse3 {
+    .panel-collapse, #collapse1 #collapse2
+     #collapse3 #collapse4 {
       max-height: 200px;
       overflow: hidden;
       overflow-y: auto;
     }
+
     #mapid {
       height: 700px;
       background: none;
     }
+
     #displayFeaturesList {
       padding-left: 0px;
       padding-bottom: 15px;
@@ -85,6 +95,12 @@
 
     lh {
       padding-left: 10px;
+    }
+
+    /* centers the reset button */
+    #reset {
+      text-align: center;
+      position: center;
     }
 
   </style>
@@ -102,23 +118,22 @@
 <div class="container">
   <div class="row">
     <div class="col-md-3">
+    <br>
 
-      <br><br><br><br><br><br>
-
-<!-- Reset button -->
-      <div class="col-sm-8">
+      <!-- Reset button -->
+      <div class="col-sm-10">
         <button type="button" id="reset" class="btn btn-default btn-block">Reset Map</button>
       </div>
 
       <br><br><br>
 
-  <!-- Select Industry -->
+      <!-- Select Industry -->
       <div class="row" id="selectIndustry">
         <div class="col-sm-12">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Select Industry</a></h4>
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Industries</a></h4>
               </div>
               <div id="collapse1" class="panel-collapse collapse in">
                 <ul class="list-group" id="industryUL">
@@ -130,15 +145,13 @@
         </div>
       </div>
 
-      <br>
-
-  <!-- Select Features -->
+      <!-- Select Features -->
       <div class="row" id="selectFeature">
         <div class="col-sm-12">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Select Feature</a></h4>
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">MarkLogic 9 Features</a></h4>
               </div>
               <div id="collapse2" class="panel-collapse collapse in">
                 <ul class="list-group" id="featureUL">
@@ -150,15 +163,13 @@
         </div>
       </div>
 
-      <br>
-
-  <!-- Select Company -->
+      <!-- Select Company -->
       <div class="row" id="selectCompany">
         <div class="col-sm-12">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Select Company</a></h4>
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Companies</a></h4>
               </div>
               <div id="collapse3" class="panel-collapse collapse in">
                 <ul class="list-group" id="companyUL">
@@ -170,34 +181,40 @@
         </div>
       </div>
 
+      <!-- Select Region -->
+      <div class="row" id="selectRegion">
+        <div class="col-sm-10">
+          <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapse4">Regions</a></h4>
+              </div>
+              <div id="collapse4" class="panel-collapse collapse in">
+                <ul class="list-group" id="regionUL"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Close container -->
     </div>
 
-    <br>
 
-<!--     Map -->
+  <!-- Map -->
     <div class="col-md-9">
       <p id="lastUpdated" align="right">Last updated - </p>
       <p align="right">Displaying <span id="count"></span> users</p>
       <h3 id="mapTitle"><!--Map Display--></h3>
       <br>
       <div id="mapid"></div>
-
     </div>
+
   </div>
 
 
 <!-- Displaying the map (in JS) -->
 <script type="text/javascript" src="public/map.js"></script>
-
-<div id = "dialogFeatureEdit" hidden title="Edit user features">
-  <div id = "userFeatures">
-    <div>
-      <p id = "dialogUserEmail"></p>
-    </div>
-    <b> Features: </b>
-    <textarea rows="3" cols="30" id="FeatureText"></textarea>
-  </div>
-</div>
 
 </body>
 </html>

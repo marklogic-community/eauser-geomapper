@@ -5,8 +5,6 @@ var jsearch = require('/MarkLogic/jsearch.sjs');
 var rawInput = xdmp.getRequestBody();
 var input = rawInput.toObject();
 
-xdmp.log(input);
-
 //bounds is a box representing the current map window
 var bounds;
 var searchRegions = [];
@@ -15,10 +13,10 @@ var searchResults;
 
 
 // Check if searchRegions is given, and if no drawn regions, then use map window
-if (input.searchRegions && input.searchRegions.features.length === 0) {
+if (input.searchRegions.features && input.searchRegions.features.length === 0) {
   searchRegions.push(cts.box.apply(null,input.mapWindow));
 }// if length > 0 so something is drawn on the map
-else if (input.searchRegions) {
+else if (input.searchRegions.features && !input.firstLoad) {
   //loop through the user's search regions and populate the searchRegions array.
   for (var i = 0; i < input.searchRegions.features.length; i++) {
     //decode input from GeoJSON format
