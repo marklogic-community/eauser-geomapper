@@ -465,7 +465,6 @@ function removeAllFeatures() {
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
-5;
   var str = "";
   if (!properties) return str;
 
