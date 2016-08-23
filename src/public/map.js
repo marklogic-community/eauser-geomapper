@@ -299,9 +299,6 @@ function displayRegions() {
   regionKeys = {};
   shapes = getShapes();
 
-  var geoJson = L.geoJson(shapes);
-  var shapeJson = geoJson._layers;
-
   var geojsonLayer = L.geoJson(shapes, {
     onEachFeature: function (feature, layer) {
       var name = feature.properties;
