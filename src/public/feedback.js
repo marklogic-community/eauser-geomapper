@@ -4,8 +4,8 @@ $("#feedback-window").dialog({
   modal: true,
   show: "blind",
   hide: "blind",
-  width: 600,
-  height: 320,
+  width: 525,
+  height: 350,
   my: "center",
   at: "center",
   of: window
