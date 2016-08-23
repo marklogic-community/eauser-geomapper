@@ -518,6 +518,13 @@ but --no-prompt parameter prevents prompting for password. Assuming 8.'
   end
 
   def restart
+    @ml_username = @properties['ml.bootstrap-user'] || @properties['ml.user']
+    if @ml_username == @properties['ml.bootstrap-user']
+      @ml_password = @properties['ml.bootstrap-password']
+    else
+      @ml_password = @properties['ml.password']
+    end
+
     group = nil
     ARGV.each do |arg|
       # Exclude any argument passed from command line.
@@ -633,6 +640,13 @@ but --no-prompt parameter prevents prompting for password. Assuming 8.'
   def bootstrap
     raise ExitException.new("Bootstrap requires the target environment's hostname to be defined") unless @hostname.present?
 
+    @ml_username = @properties['ml.bootstrap-user'] || @properties['ml.user']
+    if @ml_username == @properties['ml.bootstrap-user']
+      @ml_password = @properties['ml.bootstrap-password']
+    else
+      @ml_password = @properties['ml.password']
+    end
+
     internals = find_arg(['--replicate-internals'])
     if internals
 
@@ -730,6 +744,14 @@ but --no-prompt parameter prevents prompting for password. Assuming 8.'
   end
 
   def wipe
+
+    @ml_username = @properties['ml.bootstrap-user'] || @properties['ml.user']
+    if @ml_username == @properties['ml.bootstrap-user']
+      @ml_password = @properties['ml.bootstrap-password']
+    else
+      @ml_password = @properties['ml.password']
+    end
+
     if @environment != "local"
       expected_response = %Q{I WANT TO WIPE #{@environment.upcase}}
       print %Q{
@@ -919,6 +941,13 @@ In order to proceed please type: #{expected_response}
   alias_method :validate, :validate_install
 
   def deploy
+    @ml_username = @properties['ml.deploy-user'] || @properties['ml.user']
+    if @ml_username == @properties['ml.deploy-user']
+      @ml_password = @properties['ml.deploy-password']
+    else
+      @ml_password = @properties['ml.password']
+    end
+
     what = ARGV.shift
     raise HelpException.new("deploy", "Missing WHAT") unless what
 
@@ -1139,41 +1168,87 @@ In order to proceed please type: #{expected_response}
   end
 
   def corb
+    @ml_username = @properties['ml.corb-user'] || @properties['ml.user']
+    if @ml_username == @properties['ml.corb-user']
+      @ml_password = @properties['ml.corb-password']
+    else
+      @ml_password = @properties['ml.password']
+    end
+
     password_prompt
     encoded_password = url_encode(@ml_password)
     connection_string = %Q{xcc://#{@properties['ml.user']}:#{encoded_password}@#{@properties['ml.server']}:#{@properties['ml.xcc-port']}/#{@properties['ml.content-db']}}
-    collection_name = find_arg(['--collection']) || '""'
-    xquery_module = find_arg(['--modules'])
-    uris_module = find_arg(['--uris']) || '""'
 
+    options = Hash.new("")
+    # handle Roxy convention for CoRB properties first
+    process_module = find_arg(['--modules']) || ''
+    process_module = process_module.reverse.chomp("/").reverse
+    if !process_module.blank?
+        options["PROCESS-MODULE"] = process_module
+    end
 
-    raise HelpException.new("corb", "modules is required") if xquery_module.blank?
-    raise HelpException.new("corb", "uris or collection is required ") if uris_module == '""' && collection_name == '""'
+    collection_name = find_arg(['--collection']) || ''
+    if !collection_name.blank?
+        options["COLLECTION-NAME"] = collection_name
+        # when COLLECTION-NAME is specified, assume CoRB 1.0 convention,
+        # and set URIS-MODULE with an inline module to return the URIs of all docs in the specified collection(s)
+        options["URIS-MODULE"] = "INLINE-XQUERY|xquery version '1.0-ml'; declare variable \\$URIS as xs:string external; let \\$uris := cts:uris('', ('document'), cts:collection-query(\\$URIS)) return (count(\\$uris), \\$uris)"
+    end
 
-    xquery_module = xquery_module.reverse.chomp("/").reverse
-    uris_module = uris_module.reverse.chomp("/").reverse
-    thread_count = find_arg(['--threads']) || "1"
+    uris_module = find_arg(['--uris']) || ''
+    uris_module = uris_module.reverse.chomp('/').reverse
+    if !uris_module.blank?
+        options["URIS-MODULE"] = uris_module
+    end
+
+    thread_count = find_arg(['--threads'])
     thread_count = thread_count.to_i
-    module_root = find_arg(['--root']) || '"/"'
-    modules_database = @properties['ml.modules-db']
-    install = find_arg(['--install']) == "true" || uris_module == '""'
+    if thread_count > 0
+        options["THREAD-COUNT"] = thread_count
+    end
+
+    module_root = find_arg(['--root']) || ''
+    if !module_root.blank?
+        options["MODULE-ROOT"] = module_root
+    end
+
+    modules_database = @properties['ml.modules-db'] || ''
+    if !modules_database.blank?
+        options["MODULES-DATABASE"] = modules_database
+    end
+
+    # collect options with either "--" or "-D" prefix, and normalize options to be UPPER-CASE
+    optionArgPattern = /^(--|-D)([^.]*?)(\..*?)?="?(.*)"?/
+    ARGV.each do |arg|
+      if arg.match(optionArgPattern)
+        matches = arg.match(optionArgPattern).to_a
+        options[matches[2].to_s.upcase + matches[3].to_s] = matches[4]
+      end
+    end
+
+    # we have normalized the options, now clear the args
+    ARGV.clear
+
+    # collect options and set as Java system properties switches
+    systemProperties = options.delete_if{ |key, value| value.blank? }
+                        .map{ |key, value| "-D#{key}=\"#{value}\""}
+                        .join(' ')
 
     # Find the jars
-    corb_file = find_jar("corb")
-    xcc_file = find_jar("xcc")
+    corb_file = find_jar('corb')
+    xcc_file = find_jar('xcc')
 
-    if install
+    runme = %Q{java -cp #{corb_file}#{path_separator}#{xcc_file} #{systemProperties} com.marklogic.developer.corb.Manager #{connection_string}}
+    logger.debug runme
+
+    if options.fetch("INSTALL", false)
       # If we're installing, we need to change directories to the source
       # directory, so that the xquery_modules will be visible with the
       # same path that will be used to see it in the modules database.
       Dir.chdir(@properties['ml.xquery.dir']) do
-        runme = %Q{java -cp #{corb_file}#{path_separator}#{xcc_file} com.marklogic.developer.corb.Manager #{connection_string} #{collection_name} #{xquery_module} #{thread_count} #{uris_module} #{module_root} #{modules_database} #{install}}
-        logger.info runme
         `#{runme}`
       end
     else
-      runme = %Q{java -cp #{corb_file}#{path_separator}#{xcc_file} com.marklogic.developer.corb.Manager #{connection_string} #{collection_name} #{xquery_module} #{thread_count} #{uris_module} #{module_root} #{modules_database} #{install}}
-      logger.info runme
       `#{runme}`
     end
   end
@@ -1230,7 +1305,12 @@ In order to proceed please type: #{expected_response}
     end
 
     @ml_username = @properties['ml.mlcp-user'] || @properties['ml.user']
-    @ml_password = @properties['ml.mlcp-password'] || @ml_password
+    if @ml_username == @properties['ml.mlcp-user']
+      @ml_password = @properties['ml.mlcp-password']
+    else
+      @ml_password = @properties['ml.password']
+    end
+
     if ARGV.length > 0
       password_prompt
       connection_string = %Q{ -username #{@ml_username} -password #{@ml_password} -host #{@properties['ml.server']} -port #{@properties['ml.xcc-port']}}
@@ -1403,6 +1483,13 @@ Provides listings of various kinds of settings supported within ml-config.xml.
   end
 
   def deploy_triggers
+    @ml_username = @properties['ml.deploy-user'] || @properties['ml.user']
+    if @ml_username == @properties['ml.deploy-user']
+      @ml_password = @properties['ml.deploy-password']
+    else
+      @ml_password = @properties['ml.password']
+    end
+
     logger.info "Deploying Triggers"
     if !@properties["ml.triggers-db"]
       raise ExitException.new("Deploy triggers requires a triggers database")
@@ -2584,9 +2671,9 @@ private
 
     properties.merge!(ServerConfig.load_properties(env_properties_file, "ml.")) if File.exists? env_properties_file
 
-    properties = ServerConfig.substitute_properties(properties, properties, "ml.")
-
     properties = load_prop_from_args(properties)
+
+    properties = ServerConfig.substitute_properties(properties, properties, "ml.")
   end
 
 end
