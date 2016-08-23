@@ -26,8 +26,8 @@ var EA3programID = keys.EA3programID;
 
 // Email list that will receive status updates and user feedback
 var emailRecipient = keys.emailRecipient;
-  var name = emailRecipient.name;
-  var address = emailRecipient.address;
+var name = emailRecipient.name;
+var address = emailRecipient.address;
 
 ```
 
