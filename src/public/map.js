@@ -299,7 +299,6 @@ function displayRegions() {
   regionKeys = {};
   shapes = getShapes();
 
-  // console.log(shapes);
   var geoJson = L.geoJson(shapes);
   var shapeJson = geoJson._layers;
 
@@ -318,22 +317,6 @@ function displayRegions() {
       }
     }
   });
-
-  // var $regions =  $("regionUL .rChecker");
-
-  // console.log($regions);
-  // for (var i = 0; i < $regions.length; i++) {
-  //   $regions[i].onclick = function(e) {
-  //     if (e.target.value === 0) {
-  //       // e.target.value is 0 when click is on text in html and not on the check box
-  //     }
-  //     else {
-  //       console.log(e);
-  //       //updateSelections("Region", e.target.nextSibling.data);
-  //       //doPost("/search.sjs", displayGeoJSON, false);
-  //     }
-  //   }
-  // }
 
 }
 
