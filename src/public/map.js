@@ -54,11 +54,21 @@ function start() {
   map.addLayer(markers);
   map.addLayer(drawnShapes);
 
-  // Reset Button - Removes all current facets (if any) and reloads the map.
-  $("#reset").click(function () {
-    removeAllFeatures();
+  // Reset Button removes all current facets (if any) and reloads the map.
+  function resetClickHandler(e) {
+    var $allSelectBoxes = $('#select_all_f, #select_all_i, #select_all_c');
+    var $allBoxes = $('#featureUL .fChecker , #industryUL .iChecker , #companyUL .cChecker');
+    var allOrNone = "all";
+
+    $allSelectBoxes.prop('checked', true);
+    $allBoxes.prop('checked', true);
+
+    updateSelections("Feature", allOrNone, true);
+    updateSelections("Industry", allOrNone, true);
+    updateSelections("Company", allOrNone, true);
     doPost("/search.sjs", displayGeoJSON, false);
-  });
+  }
+  $('#reset').click(resetClickHandler);
 
   //Selections will hold info on the current state of selected options to query
   selections = {
@@ -225,48 +235,86 @@ function displayFeatures(response) {
     html += '</ul>';
     $('#featureUL').append(html);
   }
-  var $features =  $("#featureUL .fChecker");
 
-  for (var i = 0; i < $features.length; i++) {
-    $features[i].onclick = function(e) {
-      if (e.target.value === 0) {
-        // e.target.value is 0 when click is on text in html and not on the check box
-      }
-      else {
-        updateSelections("Feature", e.target.nextSibling.data);
-        doPost("/search.sjs", displayGeoJSON, false);
-      }
+  var $features =  $("#featureUL .fChecker");
+  var $selectF = $('#select_all_f');
+
+  function featureClickHandler(e) { // for when a feature is clicked
+    if (this.checked === false) {
+      $('#select_all_f').prop('checked', false);
     }
+    var status = $('#select_all_f').prop('checked');
+    updateSelections("Feature", e.target.nextSibling.data, status);
+    doPost("/search.sjs", displayGeoJSON, false);
+  }
+
+  function selectFClickHandler(e) { // for when select all is clicked
+    var status = this.checked;
+    var allOrNone;
+
+    for (var i = 0; i < $features.length; i++) {
+      $features[i].checked = status;
+    }
+
+    if (status === true) { // select all
+      allOrNone = "all";
+    }
+    else { // deselect all
+      allOrNone = "none";
+    } 
+    updateSelections("Feature", allOrNone, status);
+    doPost("/search.sjs", displayGeoJSON, false);
+  }
+
+  $selectF[0].onclick = selectFClickHandler;
+  for (var i = 0; i < $features.length; i++) {
+   $features[i].onclick = featureClickHandler;
   }
 }
 
 // industries is an object
 function displayIndustries(industries) {
-
   for (var obj in industries) {
     var count = industries[obj]; // frequency of each industry
     $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>&nbsp;'+obj+'<i> ('+count+')</i></li>');
 
     //Add value to the selections so code works with what is being displayed in menu
-    updateSelections("Industry", obj.toString());
+    updateSelections("Industry", obj.toString(), "default");
   }
 
   var $industries =  $("#industryUL .iChecker");
-  // The 'length' property refers to the number of elements
-  // appended to the selector
-  // This stuff not normally there, in other words, the length is the number
-  // of industries in the UL.
-  // and they occur at properties 0 -> $industries.length
-  for (var i = 0; i < $industries.length; i++) {
-    $industries[i].onclick = function(e) {
-      if (e.target.value === 0) {
-        // e.target.value is 0 when click is on text in html and not on the check box
-      }
-      else {
-        updateSelections("Industry", e.target.nextSibling.data);
-        doPost("/search.sjs", displayGeoJSON, false);
-      }
+  var $selectI = $('#select_all_i');
+
+  function industryClickHandler(e) { // for when an industry is clicked
+    if (this.checked === false) {
+      $('#select_all_i').prop('checked', false);
     }
+    var status = $('#select_all_i').prop('checked');
+    updateSelections("Industry", e.target.nextSibling.data, status);
+    doPost("/search.sjs", displayGeoJSON, false);
+  }
+
+  function selectIClickHandler(e) { // for when select all is clicked
+    var status = this.checked;
+    var allOrNone;
+
+    for (var i = 0; i < $industries.length; i++) {
+      $industries[i].checked = status;
+    }
+
+    if (status === true) { // select all
+      allOrNone = "all";
+    }
+    else { // deselect all
+      allOrNone = "none";
+    } 
+    updateSelections("Industry", allOrNone, status);
+    doPost("/search.sjs", displayGeoJSON, false);
+  }
+  
+  $selectI[0].onclick = selectIClickHandler;
+  for (var i = 0; i < $industries.length; i++) {
+    $industries[i].onclick = industryClickHandler;
   }
 }
 
@@ -275,22 +323,42 @@ function displayCompanies(companies) {
 
   for (var obj in companies) {
     // does not include the count -- assuming that there is only one user for most companies
-
     $('#collapse3 ul').append('<li class="list-group-item"><input checked type="checkbox" class="cChecker" value='+ obj+ '>&nbsp;' + obj + '</li>');
     updateSelections("Company", obj.toString());
   }
-  var $companies = $("#companyUL .cChecker");
 
-  for (var i = 0; i < $companies.length; i++) {
-    $companies[i].onclick = function(e) {
-      if (e.target.value == 0) {
-        // e.target.value is 0 when click is on text in html and not on the check box
-      }
-      else {
-        updateSelections("Company", e.target.nextSibling.data);
-        doPost("/search.sjs", displayGeoJSON, false);
-      }
+  var $companies = $("#companyUL .cChecker");
+  var $selectC = $('#select_all_c');
+
+  function companyClickHandler(e) { // for when a company is clicked
+    if (this.checked === false) {
+      $('#select_all_c').prop('checked', false);
     }
+    var status = $('#select_all_c').prop('checked');
+    updateSelections("Company", e.target.nextSibling.data, status);
+    doPost("/search.sjs", displayGeoJSON, false);
+  }
+
+  function selectCClickHandler(e) { // for when select all is clicked
+    var status = this.checked;
+    var allOrNone;
+    for (var i = 0; i < $companies.length; i++) {
+      $companies[i].checked = status;
+    }
+
+    if (status === true) { // select all
+      allOrNone = "all";
+    }
+    else { // deselect all
+      allOrNone = "none";
+    } 
+    updateSelections("Company", allOrNone, status);
+    doPost("/search.sjs", displayGeoJSON, false);
+  }
+
+  $selectC[0].onclick = selectCClickHandler;
+  for (var i = 0; i < $companies.length; i++) {
+    $companies[i].onclick = companyClickHandler;
   }
 }
 
@@ -313,56 +381,103 @@ function displayRegions() {
       }
     }
   });
-
 }
 
-function updateSelections(which, value) {
+function updateSelections(which, value, select) {
   var index;
-
+  
   if (which !== "Region") {
     value = value.trim();
   }
 
   if (which === "Industry") {
-    // Check if 'value' is in the array
-    // If index = -1 then value is not in array,
-    // user must have just checked the box so add to array
-    // If index > -1 then value is in array,
-    // so user must have just unchecked the box
-    // so remove from array
     index = selections.industries.indexOf(value);
+    var $industries =  $("#industryUL .iChecker");
 
-    if (index > -1) { //unchecked the box
-      // Already in the array, aka box was checked, so unchecking was just done
-      selections.industries.splice(index, 1);
-    }
-    else { //checked the box
+    if (select === "default") { // default settings
       selections.industries.push(value);
+    }
+
+    else if (select === true) { // select === true (select all is checked)
+      if (value === "all") {
+        selections.industries = [];
+        pushAll("Industry", $industries);
+      }
+    }
+
+    else { // select === false
+      if (value === "none") {
+        selections.industries = [];
+      }
+      else {
+        if (index > -1) {
+          selections.industries.splice(index, 1);
+        }
+        else {
+          selections.industries.push(value);
+        }
+      }
     }
   }
 
-
   else if (which === "Feature") {
     index = selections.features.indexOf(value);
+    var $features =  $("#featureUL .fChecker");
 
-    if (index > -1) { //unchecked the box
-      // Already in the array, aka checked already, so unchecking was done
-      selections.features.splice(index, 1);
-    }
-    else { //checked the box
+    if (select === "default") { // default settings
       selections.features.push(value);
     }
+
+    else if (select === true) { // select === true (select all is checked)
+      if (value === "all") {
+        selections.features = [];
+        pushAll("Feature", $features);
+      }
+    }
+
+    else { // select === false
+      if (value === "none") {
+        selections.features = [];
+      }
+      else {
+        if (index > -1) {
+          selections.features.splice(index, 1);
+        }
+        else {
+          selections.features.push(value);
+        }
+      }
+    }    
   }
 
   else if (which === "Company") {
 
     index = selections.companies.indexOf(value);
-    if (index > -1) { //unchecked the box
-      // Already in the array, aka checked already, so unchecking was done
-      selections.companies.splice(index, 1);
-    }
-    else { // checked the box
+    var $companies = $("#companyUL .cChecker");
+
+    if (select === "default") { // default settings
       selections.companies.push(value);
+    }
+
+    else if (select === true) { // select === true (select all is checked)
+      if (value === "all") {
+        selections.companies = [];
+        pushAll("Company", $companies);
+      }
+    }
+
+    else { // select === false
+      if (value === "none") {
+        selections.companies = [];
+      }
+      else {
+        if (index > -1) {
+          selections.companies.splice(index, 1);
+        }
+        else {
+          selections.companies.push(value);
+        }
+      }
     }
   }
 
@@ -393,6 +508,25 @@ function updateSelections(which, value) {
 
       map.addLayer(regionKeys[regionName]);
     }
+  }
+
+}
+
+// Pushes all checkbox values into the corresponding selections array
+function pushAll(which, checkboxes) {
+  for (var i = 0; i < checkboxes.length; i++) {
+    var values = checkboxes[i].nextSibling.data;
+    var selection;
+    if (which === "Industry") {
+      selection = selections.industries;
+    }
+    if (which === "Feature") {
+      selection = selections.features;
+    }
+    if (which === "Company") {
+      selection = selections.companies;
+    }
+    selection.push(values);
   }
 }
 
@@ -514,38 +648,3 @@ function formatPopup(properties) {
   str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"email\" value=\"" + email + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>";
   return str;
 }
-
-// Date Range Picker
-$(function filterDate() {
-
-  $('input[name="datefilter"]').daterangepicker({
-    autoUpdateInput: false,
-    locale: {
-      cancelLabel: 'Clear'
-    }
-  });
-
-  $('span[name="calendar"]').daterangepicker({
-      autoUpdateInput: false,
-      locale: {
-        cancelLabel: 'Clear'
-      }
-  });
-
-  $('input[name="datefilter"]').on('apply.daterangepicker', function (ev, picker) {
-    $(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-  });
-
-  $('input[name="datefilter"]').on('cancel.daterangepicker', function (ev, picker) {
-    $(this).val('');
-  });
-
-  $('span[name="calendar"]').on('apply.daterangepicker', function (ev, picker) {
-    $('input[name="datefilter"]').val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-  });
-
-  $('span[name="calendar"]').on('cancel.daterangepicker', function (ev, picker) {
-    $('input[name="datefilter"]').val('');
-  });
-
-});

@@ -5,7 +5,6 @@ var jsearch = require('/MarkLogic/jsearch.sjs');
 var rawInput = xdmp.getRequestBody();
 var input = rawInput.toObject();
 
-
 //bounds is a box representing the current map window
 var bounds;
 var searchRegions = [];
