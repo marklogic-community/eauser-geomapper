@@ -298,30 +298,30 @@ function displayRegions() {
   regionKeys = {};
   shapes = getShapes();
 
-  for (var region in shapes) {
-    $('#collapse4 ul').append('<li class="list-group-item"><input type="checkbox" class="rChecker" value='+ region+ '>&nbsp;' + region + '</li>');
-  }
+  var geojsonLayer = L.geoJson(shapes, {
+    onEachFeature: function (feature, layer) {
+      var name = feature.properties;
+      // Add country name to drop down
+      var stuff = $('#collapse4 ul').append('<li class="list-group-item"><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</li>');
+      var $regions =  $(".rChecker");
+      var length = $regions.length;
+      var lastNdx = length - 1;
 
-  var $regions =  $("#regionUL .rChecker");
-
-  for (var i = 0; i < $regions.length; i++) {
-    $regions[i].onclick = function(e) {
-      if (e.target.value === 0) {
-        // e.target.value is 0 when click is on text in html and not on the check box
-      }
-      else {
-        updateSelections("Region", e.target.nextSibling.data);
+      $regions[lastNdx].onclick = function(e) {
+        updateSelections("Region", feature);
         doPost("/search.sjs", displayGeoJSON, false);
       }
     }
-  }
+  });
 
 }
 
 function updateSelections(which, value) {
   var index;
 
-  value = value.trim();
+  if (which !== "Region") {
+    value = value.trim();
+  }
 
   if (which === "Industry") {
     // Check if 'value' is in the array
@@ -367,23 +367,31 @@ function updateSelections(which, value) {
   }
 
   else if (which === "Region") {
-
-    if (selections.regions[value] != undefined) { //unchecked the box
+    var regionName = value.properties;
+    if (selections.regions[regionName] != undefined) { //unchecked the box
       // If value is in array then unchecking was done
-      map.removeLayer(regionKeys[value]);
+      map.removeLayer(regionKeys[regionName]);
 
-      selections.regions[value] = undefined;
-      delete regionKeys[value];
+      selections.regions[regionName] = undefined;
+      delete regionKeys[regionName];
     }
     else { // checked the box
       // Indicates the value is present on map
-      selections.regions[value] = 'defined';
+      selections.regions[regionName] = 'defined';
       // Was getting cyclic value error from JSON.parse when using selections.regions[value]
       // to store the result from L.polygon(...);
       // Need to store result of L.polygon so the value can
       // be used to delete off map
-      regionKeys[value] = L.polygon(shapes[value]);
-      map.addLayer(regionKeys[value]);
+      var coords = value.geometry.coordinates;
+      var type = value.geometry.type;
+      if (type === "MultiPolygon") {
+        regionKeys[regionName] = L.multiPolygon(coords);
+      }
+      else if (type === "Polygon") {
+        regionKeys[regionName] = L.polygon(coords);
+      }
+
+      map.addLayer(regionKeys[regionName]);
     }
   }
 }
@@ -428,7 +436,7 @@ function updateCount(points) {
   if (points) {
     currentCount = points.length;
   }
-  else{
+  else {
     currentCount = 0;
   }
   $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
@@ -439,7 +447,7 @@ function updateCount(points) {
 // Should they all be reset to as they were on page load?
 function removeAllFeatures() {
   markers.clearLayers();
-  drawnShapes.clearLayers();
+  //drawnShapes.clearLayers();
 
   // Remove the shapes from the regions menu
   for (var region in regionKeys) {
@@ -456,7 +464,6 @@ function removeAllFeatures() {
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
-
   var str = "";
   if (!properties) return str;
 
