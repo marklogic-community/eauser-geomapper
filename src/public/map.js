@@ -55,12 +55,21 @@ function start() {
   map.addLayer(markers);
   map.addLayer(drawnShapes);
 
-  // Reset Button - Removes all current facets (if any) and reloads the map.
-  $("#reset").click(function () {
-    removeAllFeatures();
-    // should also reset checkboxes
+  // Reset Button removes all current facets (if any) and reloads the map.
+  function resetClickHandler(e) {
+    var $allSelectBoxes = $('#select_all_f, #select_all_i, #select_all_c');
+    var $allBoxes = $('#featureUL .fChecker , #industryUL .iChecker , #companyUL .cChecker');
+    var allOrNone = "all";
+
+    $allSelectBoxes.prop('checked', true);
+    $allBoxes.prop('checked', true);
+
+    updateSelections("Feature", allOrNone, true);
+    updateSelections("Industry", allOrNone, true);
+    updateSelections("Company", allOrNone, true);
     doPost("/search.sjs", displayGeoJSON, false);
-  });
+  }
+  $('#reset').click(resetClickHandler);
 
   //Selections will hold info on the current state of selected options to query
   selections = {
