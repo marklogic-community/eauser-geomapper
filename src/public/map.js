@@ -13,7 +13,6 @@ var totalCount;
 var currentCount;
 var shapes;
 var regionKeys;
-var companies_pretty; // data from /config/companies.json
 
 // Run this function before any other
 function start() {
