@@ -11,6 +11,7 @@ var clientSecret = keys.clientSecret_REST;
 var EA1programID = keys.EA1programID;
 var EA2programID = keys.EA2programID;
 var EA3programID = keys.EA3programID;
+var emailRecipient = keys.emailRecipient;
 
 //switch out the values depending on what you want :)
 var EA = {
@@ -129,9 +130,9 @@ try {
     var content = "Completed data ingestion at " + timestamp + "\n\n";
     content += "Number of users: " + numUsers;
 
-    var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-                 "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
-                 "subject":"EA tracker - success - initial data ingestion",
+    var message = {"from":{"name": "eauser-geomapper", "address": "eauser.geomapper@marklogic.com"},
+                 "to":{"name": emailRecipient.name, "address": emailRecipient.address},
+                 "subject": "EA tracker - success - initial data ingestion",
                  "content": content};
     xdmp.email(message);
   }
@@ -140,7 +141,7 @@ try {
     var content = "Failed data ingestion at " + timestamp + "\n\n";
 
     var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-                 "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
+                 "to":{"name": emailRecipient.name, "address": emailRecipient.address},
                  "subject":"EA tracker - fail - initial data ingestion",
                  "content": content};
     xdmp.email(message);

@@ -11,6 +11,7 @@ var clientSecret = keys.clientSecret_REST;
 var EA1programID = keys.EA1programID;
 var EA2programID = keys.EA2programID;
 var EA3programID = keys.EA3programID;
+var emailRecipient = keys.emailRecipient;
 
 // set to EA2 right now.
 // when you want EA3, replace this with the one below
@@ -140,7 +141,7 @@ try {
     content += "Number of new users: " + emailNewUsers + "\n\n";
     content += "Previously updated at: " + emailLastUpdated + "\n";
 
-    var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+    var message = {"from":{"name":emailRecipient.name, "address":emailRecipient.address},
                  "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
                  "subject":"EA tracker - success - data update",
                  "content": content};
@@ -150,7 +151,7 @@ try {
     var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Failed data update at " + timestamp + "\n\n";
 
-    var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+    var message = {"from":{"name":emailRecipient.name, "address":emailRecipient.address},
                  "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
                  "subject":"EA tracker - fail - initial data ingestion",
                  "content": content};
