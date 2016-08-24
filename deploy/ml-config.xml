@@ -27,7 +27,7 @@
             <task-path>/scripts/updateData_REST.sjs</task-path>
             <task-root>${modules-root}</task-root>
             <task-type>daily</task-type>
-            <task-period>2</task-period> <!-- what is a task period? -->
+            <task-period>1</task-period>
             <task-start-time>00:00:00-07:00</task-start-time>
             <task-database name="${content-db}"/>
             <task-modules name="${app-modules-db}"/>
@@ -479,10 +479,19 @@
       </collections>
       <privileges>
         <privilege>
+          <privilege-name>any-uri</privilege-name>
+        </privilege>
+        <privilege>
           <privilege-name>xdmp:value</privilege-name>
         </privilege>
         <privilege>
           <privilege-name>xdmp:add-response-header</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:email</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:http-get</privilege-name>
         </privilege>
         <privilege>
           <privilege-name>xdmp:invoke</privilege-name>
