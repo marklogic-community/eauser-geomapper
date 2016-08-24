@@ -160,7 +160,7 @@ try {
   }
 }
 catch (err) {
-  xdmp.log("updateData_REST email status report failed to send");
+  xdmp.log("updateData_REST email status report failed to send: " + JSON.stringify(err));
 }
 
 xdmp.log("updateData_REST DONE");
