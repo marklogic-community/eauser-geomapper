@@ -488,6 +488,9 @@
           <privilege-name>xdmp:add-response-header</privilege-name>
         </privilege>
         <privilege>
+          <privilege-name>xdmp:email</privilege-name>
+        </privilege>
+        <privilege>
           <privilege-name>xdmp:http-get</privilege-name>
         </privilege>
         <privilege>
