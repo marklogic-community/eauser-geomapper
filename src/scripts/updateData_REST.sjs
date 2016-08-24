@@ -56,7 +56,7 @@ try {
     // process the data and insert it into MarkLogic
     var users = res.toArray()[1].root.result;
 
-    xdmp.log("about to insert " + users.length + " documents");
+    xdmp.log("updateData_REST: about to insert " + users.length + " documents");
 
     for (var i in users) {
 
@@ -94,16 +94,17 @@ try {
         }
 
         xdmp.nodeReplace(oldDoc, json);
-        xdmp.log("  updated " + email);
-        continue;
+        xdmp.log("updateData_REST: updated " + email);
+
+      } else {
+        // else this is a new user
+
+        emailNewUsers++;
+
+        xdmp.log("updateData_REST inserted " + email);
+        xdmp.documentInsert(uri, json);
       }
 
-      // else this is a new user
-
-      emailNewUsers++;
-
-      xdmp.log("  inserted " + email);
-      xdmp.documentInsert(uri, json);
     }
 
   } while (nextPageToken && nextPageToken !== "")
@@ -123,10 +124,10 @@ try {
 
   xdmp.nodeReplace(oldSystemInfo, oldSystemInfoDoc);
 
-  xdmp.log("  updated systemInfo.json");
+  xdmp.log("updateData_REST updated systemInfo.json");
 }
 catch(err) {
-  xdmp.log("failed to update data");
+  xdmp.log("updateData_REST failed to update data");
   xdmp.log(err);
   completed = false;
 }
@@ -142,7 +143,7 @@ try {
     content += "Previously updated at: " + emailLastUpdated + "\n";
 
     var message = {"from":{"name":emailRecipient.name, "address":emailRecipient.address},
-                 "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
+                 "to":{"name":emailRecipient.name, "address":emailRecipient.address},
                  "subject":"EA tracker - success - data update",
                  "content": content};
     xdmp.email(message);
@@ -152,15 +153,15 @@ try {
     var content = "Failed data update at " + timestamp + "\n\n";
 
     var message = {"from":{"name":emailRecipient.name, "address":emailRecipient.address},
-                 "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
+                 "to":{"name":emailRecipient.name, "address":emailRecipient.address},
                  "subject":"EA tracker - fail - initial data ingestion",
                  "content": content};
     xdmp.email(message);
   }
 }
 catch (err) {
-  xdmp.log("email status report failed to send");
+  xdmp.log("updateData_REST email status report failed to send");
 }
 
-xdmp.log("DONE");
+xdmp.log("updateData_REST DONE");
 
