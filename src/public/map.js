@@ -485,7 +485,9 @@ function updateSelections(which, value, select) {
   }
 
   else if (which === "Region") {
-    var regionName = value.properties;
+    // debuggin'
+    var regionName = value.properties.continent;
+
     if (selections.regions[regionName] != undefined) { //unchecked the box
       // If value is in array then unchecking was done
       map.removeLayer(regionKeys[regionName]);
