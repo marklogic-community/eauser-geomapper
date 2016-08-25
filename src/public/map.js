@@ -261,7 +261,7 @@ function displayFeatures(response) {
     }
     else { // deselect all
       allOrNone = "none";
-    } 
+    }
     updateSelections("Feature", allOrNone, status);
     doPost("/search.sjs", displayGeoJSON, false);
   }
@@ -307,11 +307,11 @@ function displayIndustries(industries) {
     }
     else { // deselect all
       allOrNone = "none";
-    } 
+    }
     updateSelections("Industry", allOrNone, status);
     doPost("/search.sjs", displayGeoJSON, false);
   }
-  
+
   $selectI[0].onclick = selectIClickHandler;
   for (var i = 0; i < $industries.length; i++) {
     $industries[i].onclick = industryClickHandler;
@@ -351,7 +351,7 @@ function displayCompanies(companies) {
     }
     else { // deselect all
       allOrNone = "none";
-    } 
+    }
     updateSelections("Company", allOrNone, status);
     doPost("/search.sjs", displayGeoJSON, false);
   }
@@ -366,26 +366,29 @@ function displayRegions() {
   regionKeys = {};
   shapes = getShapes();
 
-  var geojsonLayer = L.geoJson(shapes, {
-    onEachFeature: function (feature, layer) {
-      var name = feature.properties;
-      // Add country name to drop down
-      var stuff = $('#collapse4 ul').append('<li class="list-group-item"><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</li>');
-      var $regions =  $(".rChecker");
-      var length = $regions.length;
-      var lastNdx = length - 1;
+  for (var region in shapes) {
+    var geojsonLayer = L.geoJson(shapes[region], {
+      onEachFeature: function (feature, layer) {
+        var name = region;
+        // Add country name to drop down
+        var stuff = $('#collapse4 ul').append('<li class="list-group-item"><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</li>');
+        var $regions =  $(".rChecker");
+        var length = $regions.length;
+        var lastNdx = length - 1;
 
-      $regions[lastNdx].onclick = function(e) {
-        updateSelections("Region", feature);
-        doPost("/search.sjs", displayGeoJSON, false);
+        $regions[lastNdx].onclick = function(e) {
+          updateSelections("Region", feature);
+          doPost("/search.sjs", displayGeoJSON, false);
+        }
       }
-    }
-  });
+    });
+  }
+
 }
 
 function updateSelections(which, value, select) {
   var index;
-  
+
   if (which !== "Region") {
     value = value.trim();
   }
@@ -447,7 +450,7 @@ function updateSelections(which, value, select) {
           selections.features.push(value);
         }
       }
-    }    
+    }
   }
 
   else if (which === "Company") {
@@ -482,7 +485,9 @@ function updateSelections(which, value, select) {
   }
 
   else if (which === "Region") {
-    var regionName = value.properties;
+    // debuggin'
+    var regionName = value.properties.continent;
+
     if (selections.regions[regionName] != undefined) { //unchecked the box
       // If value is in array then unchecking was done
       map.removeLayer(regionKeys[regionName]);
