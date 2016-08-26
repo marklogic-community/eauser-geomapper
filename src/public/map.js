@@ -9,7 +9,7 @@ var MLFeatures; // Array
 var selections; // Object
 var maxBounds; // lat long range of entire map
 var oms; // Overlapping Marker Spiderfier
-var totalCount;
+var totalCount; // Set in drawPage function
 var currentCount;
 var shapes;
 var regionKeys;
