@@ -56,7 +56,7 @@ function start() {
 
   // Reset Button removes all current facets (if any) and reloads the map.
   function resetClickHandler(e) {
-    var $allSelectBoxes = $('#select_all_f, #select_all_i, #select_all_c, #select_all_r');
+    var $allSelectBoxes = $('#select_all_f, #select_all_i, #select_all_c');
     var $allBoxes = $('#featureUL .fChecker , #industryUL .iChecker , #companyUL .cChecker');
     var $regionBoxes = $('#regionUL .rChecker');
     var allOrNone = "all";
