@@ -58,14 +58,29 @@ function start() {
   function resetClickHandler(e) {
     var $allSelectBoxes = $('#select_all_f, #select_all_i, #select_all_c');
     var $allBoxes = $('#featureUL .fChecker , #industryUL .iChecker , #companyUL .cChecker');
+    var $regionBoxes = $('#regionUL .rChecker');
     var allOrNone = "all";
 
     $allSelectBoxes.prop('checked', true);
     $allBoxes.prop('checked', true);
+    // Choosing to not show drawn regions on map on reset because:
+    // 1. Users may not be found in any of the regions
+    // 2. Map looks cleaner and simpler without the drawn regions
+    $regionBoxes.prop('checked', false);
 
     updateSelections("Feature", allOrNone, true);
     updateSelections("Industry", allOrNone, true);
     updateSelections("Company", allOrNone, true);
+
+    // Clear regions
+    for (var regionName in regionKeys) {
+      map.removeLayer(regionKeys[regionName]);
+      regionKeys[regionName] = "undefined";
+      selections.regions[regionName] = undefined;
+      delete regionKeys[regionName];
+    }
+
+
     doPost("/search.sjs", displayGeoJSON, false);
   }
   $('#reset').click(resetClickHandler);
@@ -225,7 +240,7 @@ function displayFeatures(response) {
     for (var subfield in features[category]) {
       count = 0;
 
-      if (counts[features[category][subfield]] !== undefined) {
+      if (counts && counts[features[category][subfield]] !== undefined) {
         count = counts[features[category][subfield]];
       }
       html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value=';
@@ -485,7 +500,7 @@ function updateSelections(which, value, select) {
   }
 
   else if (which === "Region") {
-    // debuggin'
+
     var regionName = value.properties.continent;
 
     if (selections.regions[regionName] != undefined) { //unchecked the box
@@ -581,23 +596,11 @@ function updateCount(points) {
   $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
 }
 
-//event when reset map button is clicked
+// event when reset map button is clicked
 // How should all check boxes in each menu be handled?
 // Should they all be reset to as they were on page load?
 function removeAllFeatures() {
   markers.clearLayers();
-  //drawnShapes.clearLayers();
-
-  // Remove the shapes from the regions menu
-  for (var region in regionKeys) {
-    // updateSelections will uncheck the region and remove it from map
-    updateSelections("Region", region.toString());
-  }
-  var $regions =  $("#regionUL .rChecker");
-  for (var i = 0; i < $regions.length; i++) {
-    $regions[i].checked = false; // Unchecks box
-  }
-
   map.setView([0, 0], 2);
 }
 
