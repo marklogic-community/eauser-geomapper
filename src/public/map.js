@@ -19,6 +19,7 @@ function start() {
   style = keys.mapboxStyle;
   token = keys.mapboxToken;
 
+  // Bounds of entire map/world
   maxBounds = L.latLngBounds(
     L.latLng(-90, -180),
     L.latLng(90, 180)
@@ -111,16 +112,16 @@ function start() {
     error: fail
   });
 
-  $.ajax({
-    type: "GET",
-    url: "/scripts/getTotalCount.sjs",
-    dataType:"json",
-    success: function(response) {
-      totalCount = response.totalCount;
-      currentCount = totalCount;
-    },
-    error: fail
-  });
+  // $.ajax({
+  //   type: "GET",
+  //   url: "/scripts/getTotalCount.sjs",
+  //   dataType:"json",
+  //   success: function(response) {
+  //     totalCount = response.totalCount;
+  //     currentCount = totalCount;
+  //   },
+  //   error: fail
+  // });
 
 
 }
@@ -167,6 +168,10 @@ function drawPage(response) {
   displayFeatures(response);
   displayCompanies(response.facets.Company);
   displayRegions();
+
+  // Number at top right above map for "Displaying X out of [totalCount] users."
+  totalCount = response.documents.length;
+
   // After all industries and features are known, fetch the
   // users from the database and display markers
   doPost('/search.sjs', displayGeoJSON, false);
@@ -581,12 +586,12 @@ function displayGeoJSON(geojsonFeatures) {
   });
 
   markers.addLayer(geojsonLayer);
-
   updateCount(geojsonFeatures.documents);
 }
 
 // update the number of users being displayed
 function updateCount(points) {
+
   if (points) {
     currentCount = points.length;
   }
