@@ -112,18 +112,6 @@ function start() {
     error: fail
   });
 
-  // $.ajax({
-  //   type: "GET",
-  //   url: "/scripts/getTotalCount.sjs",
-  //   dataType:"json",
-  //   success: function(response) {
-  //     totalCount = response.totalCount;
-  //     currentCount = totalCount;
-  //   },
-  //   error: fail
-  // });
-
-
 }
 
 // Start! Initialize the map and all things awesome.
