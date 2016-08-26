@@ -601,13 +601,6 @@ function updateCount(points) {
 // Should they all be reset to as they were on page load?
 function removeAllFeatures() {
   markers.clearLayers();
-
-  var $regions =  $("#regionUL .rChecker");
-  for (var i = 0; i < $regions.length; i++) {
-    console.log("Unchecking region box");
-    $regions[i].checked = false; // Unchecks box
-  }
-
   map.setView([0, 0], 2);
 }
 
