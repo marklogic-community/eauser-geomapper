@@ -157,9 +157,10 @@ function addMapEvents() {
 
 // Draw markers on map
 function drawPage(response) {
-  displayIndustries(response.facets.Industry);
+  displayFacet(response.facets.Industry, '#collapse1', 'Industries', 'Industry');
   displayFeatures(response);
-  displayCompanies(response.facets.Company);
+  displayFacet(response.facets.Company, '#collapse3', 'Companies', 'Company');
+  //displayCompanies(response.facets.Company);
   displayRegions();
 
   // Number at top right above map for "Displaying X out of [totalCount] users."
@@ -299,78 +300,35 @@ function displayFeatures(response) {
   }
 }
 
-// industries is an object
-function displayIndustries(industries) {
-  for (var obj in industries) {
-    var count = industries[obj]; // frequency of each industry
-    $('#collapse1 ul').append('<li class="list-group-item"><input checked type="checkbox"class="iChecker"value='+obj+'>&nbsp;'+obj+'<i> ('+count+')</i></li>');
-
-    //Add value to the selections so code works with what is being displayed in menu
-    updateSelections("Industry", obj.toString(), "default");
-  }
-
-  var $industries =  $("#industryUL .iChecker");
-  var $selectI = $('#select_all_i');
-
-  function industryClickHandler(e) { // for when an industry is clicked
-    if (this.checked === false) {
-      $('#select_all_i').prop('checked', false);
-    }
-    var status = $('#select_all_i').prop('checked');
-    updateSelections("Industry", e.target.nextSibling.data, status);
-    doPost("/search.sjs", displayGeoJSON, false);
-  }
-
-  function selectIClickHandler(e) { // for when select all is clicked
-    var status = this.checked;
-    var allOrNone;
-
-    for (var i = 0; i < $industries.length; i++) {
-      $industries[i].checked = status;
-    }
-
-    if (status === true) { // select all
-      allOrNone = "all";
-    }
-    else { // deselect all
-      allOrNone = "none";
-    }
-    updateSelections("Industry", allOrNone, status);
-    doPost("/search.sjs", displayGeoJSON, false);
-  }
-
-  $selectI[0].onclick = selectIClickHandler;
-  for (var i = 0; i < $industries.length; i++) {
-    $industries[i].onclick = industryClickHandler;
-  }
-}
-
-// companies is an object {}
-function displayCompanies(companies) {
-
-  for (var obj in companies) {
+function displayFacet(data, targetId, label, name) {
+  var checkbox, label;
+  for (var obj in data) {
+    var count = data[obj];
     // does not include the count -- assuming that there is only one user for most companies
-    $('#collapse3 ul').append('<li class="list-group-item"><input checked type="checkbox" class="cChecker" value='+ obj+ '>&nbsp;' + obj + '</li>');
-    updateSelections("Company", obj.toString());
+    checkbox = '<input checked type="checkbox" class="checker" value='+ obj+ '>';
+    label = obj + ' <i>(' + count + ')</i>';
+    $(targetId + ' ul')
+      .append('<li class="list-group-item">' + checkbox + '&nbsp' + label + '</li>');
+    updateSelections(label, obj.toString());
   }
 
-  var $companies = $("#companyUL .cChecker");
-  var $selectC = $('#select_all_c');
+  var $values = $(targetId + ' .checker');
+  var $selectAll = $(targetId + ' .select-all');
 
-  function companyClickHandler(e) { // for when a company is clicked
+  function valueClickHandler(e) { // for when a value is clicked
     if (this.checked === false) {
-      $('#select_all_c').prop('checked', false);
+      $selectAll.prop('checked', false);
     }
-    var status = $('#select_all_c').prop('checked');
-    updateSelections("Company", e.target.nextSibling.data, status);
+    var status = $selectAll.prop('checked');
+    updateSelections(name, e.target.nextSibling.data, status);
     doPost("/search.sjs", displayGeoJSON, false);
   }
 
-  function selectCClickHandler(e) { // for when select all is clicked
+  function selectAllClickHandler(e) { // for when select all is clicked
     var status = this.checked;
     var allOrNone;
-    for (var i = 0; i < $companies.length; i++) {
-      $companies[i].checked = status;
+    for (var i = 0; i < $values.length; i++) {
+      $values[i].checked = status;
     }
 
     if (status === true) { // select all
@@ -379,14 +337,15 @@ function displayCompanies(companies) {
     else { // deselect all
       allOrNone = "none";
     }
-    updateSelections("Company", allOrNone, status);
+    updateSelections(name, allOrNone, status);
     doPost("/search.sjs", displayGeoJSON, false);
   }
 
-  $selectC[0].onclick = selectCClickHandler;
-  for (var i = 0; i < $companies.length; i++) {
-    $companies[i].onclick = companyClickHandler;
+  $selectAll[0].onclick = selectAllClickHandler;
+  for (var i = 0; i < $values.length; i++) {
+    $values[i].onclick = valueClickHandler;
   }
+
 }
 
 function displayRegions() {
@@ -422,7 +381,7 @@ function updateSelections(which, value, select) {
 
   if (which === "Industry") {
     index = selections.industries.indexOf(value);
-    var $industries =  $("#industryUL .iChecker");
+    var $industries =  $("#industryUL .checker");
 
     if (select === "default") { // default settings
       selections.industries.push(value);
@@ -483,7 +442,7 @@ function updateSelections(which, value, select) {
   else if (which === "Company") {
 
     index = selections.companies.indexOf(value);
-    var $companies = $("#companyUL .cChecker");
+    var $companies = $("#companyUL .checker");
 
     if (select === "default") { // default settings
       selections.companies.push(value);
