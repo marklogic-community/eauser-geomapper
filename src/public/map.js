@@ -249,15 +249,15 @@ function displayFeatures(response) {
   for (var category in features) {
     html = '';
 
-    html += '<ul id=\'displayFeaturesList\'><lh><b>'+ category + '</b></lh>';
+    html += '<ul id=\'displayFeaturesList\'><label><lh>'+ category + '</lh></label>';
     for (var subfield in features[category]) {
       count = 0;
 
       if (counts && counts[features[category][subfield]] !== undefined) {
         count = counts[features[category][subfield]];
       }
-      html += '<li class="list-group-item"><input checked type="checkbox"class="fChecker"value=';
-      html += features[category][subfield]+'>&nbsp;'+features[category][subfield]+'<i> ('+count+')</i></li>';
+      html += '<li class="list-group-item"><label class=\'unbold\'><input checked type="checkbox"class="fChecker"value=';
+      html += features[category][subfield]+'>&nbsp;'+features[category][subfield]+'<i> ('+count+')</i></label></li>';
       updateSelections("Feature", features[category][subfield].toString());
     }
     html += '</ul>';
@@ -305,8 +305,8 @@ function displayFacet(data, targetId, label, name) {
   for (var obj in data) {
     var count = data[obj];
     // does not include the count -- assuming that there is only one user for most companies
-    checkbox = '<input checked type="checkbox" class="checker" value='+ obj+ '>';
-    label = obj + ' <i>(' + count + ')</i>';
+    checkbox = '<label class=\'unbold\'><input checked type="checkbox" class="checker" value='+ obj+ '>';
+    label = obj + ' <i>(' + count + ')</i></label>';
     $(targetId + ' ul')
       .append('<li class="list-group-item">' + checkbox + '&nbsp' + label + '</li>');
     updateSelections(label, obj.toString());
@@ -357,7 +357,7 @@ function displayRegions() {
       onEachFeature: function (feature, layer) {
         var name = region;
         // Add country name to drop down
-        var stuff = $('#collapse4 ul').append('<li class="list-group-item"><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</li>');
+        var stuff = $('#collapse4 ul').append('<li class="list-group-item"><label class=\'unbold\'><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</label></li>');
         var $regions =  $(".rChecker");
         var length = $regions.length;
         var lastNdx = length - 1;
