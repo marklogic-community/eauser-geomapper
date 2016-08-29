@@ -44,7 +44,10 @@ function start() {
 
   // Initialize Overlapping Marker Spiderfier
   //   (the thing that spreads out markers that overlap)
-  oms = new OverlappingMarkerSpiderfier(map);
+  var spiderOptions = {
+    keepSpiderfied: true
+  };
+  oms = new OverlappingMarkerSpiderfier(map, spiderOptions);
 
   // Initialize the FeatureGroup to store editable layers (shapes drawn by user)
   // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
@@ -81,6 +84,8 @@ function start() {
       delete regionKeys[regionName];
     }
 
+    markers.clearLayers();
+    drawnShapes.clearLayers();
 
     doPost("/search.sjs", displayGeoJSON, false);
   }
@@ -172,8 +177,22 @@ function getAllGeoJson() {
     // check if has a togeoJSON function and has original points to be sure
     // the thing is some type of drawn shape on the map, not just a marker
     // or something else
+
     if (map._layers[ndx].toGeoJSON && map._layers[ndx]._originalPoints) {
-      geoObjs.push(map._layers[ndx].toGeoJSON());
+      // This removes LineStrings from the map. LineStrings cannot be drawn by the user. LineStrings
+      // are created on the map by the oms.min.js file when "spiderfy-ing" occurs to spiral overlapping
+      // markers. We do not want to treat these LineStrings as search regions for the map to look
+      // for users in; they should be removed from the map whenever this function is called.
+      // getAllGeoJson() is called anytime the map is going to do a new search for users and
+      // redraw the map.
+      // ** TL;DR : Don't treat linestrings as search regions to look for users in (Because who
+      // cares if you live on a line? Not the developers anyways..)
+      if (map._layers[ndx].toGeoJSON().geometry.type === "LineString") {
+        map.removeLayer(map._layers[ndx]);
+      }
+      else {
+         geoObjs.push(map._layers[ndx].toGeoJSON());
+      }
     }
   }
 
@@ -528,7 +547,7 @@ function updateSelections(which, value, select) {
 // Pushes all checkbox values into the corresponding selections array
 function pushAll(which, checkboxes) {
   for (var i = 0; i < checkboxes.length; i++) {
-    var values = checkboxes[i].nextSibling.data;
+    var value = checkboxes[i].nextSibling.data;
     var selection;
     if (which === "Industry") {
       selection = selections.industries;
@@ -539,7 +558,7 @@ function pushAll(which, checkboxes) {
     if (which === "Company") {
       selection = selections.companies;
     }
-    selection.push(values);
+    selection.push(value.trim());
   }
 }
 
@@ -554,8 +573,8 @@ var red_dot = L.icon({
 // Draw geojson data on map, data will originate from Marketo
 function displayGeoJSON(geojsonFeatures) {
   // Every doPost call redraws all markers on the map
-  // removeAllFeatures() removes all markers from the map
   markers.clearLayers();
+  oms.clearMarkers();
 
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
@@ -587,14 +606,6 @@ function updateCount(points) {
     currentCount = 0;
   }
   $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
-}
-
-// event when reset map button is clicked
-// How should all check boxes in each menu be handled?
-// Should they all be reset to as they were on page load?
-function removeAllFeatures() {
-  markers.clearLayers();
-  map.setView([0, 0], 2);
 }
 
 // firstName, lastname, email, city, state, industry, company
