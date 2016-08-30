@@ -70,7 +70,7 @@ if (input.selections && input.selections.features.length !== 0) {
 var companyQuery = cts.trueQuery();
 if (input.selections && input.selections.companies.length !== 0) {
   // some companies specified, note if none specified the code works as if
-  // all industries are specified, ie. finds users from all companies.
+  // all companies are specified, ie. finds users from all companies.
   companyQuery = cts.jsonPropertyValueQuery("company", input.selections.companies);
 }
 
@@ -93,8 +93,7 @@ users =
   )
   .result();
 
-// Need to transform results to only be the document contents for drawGeoJson() in map.js
-for(var obj in users.documents) {
+for (var obj in users.documents) {
   users.documents[obj] = users.documents[obj].extracted[0];
 }
 
@@ -103,4 +102,4 @@ if (input.firstLoad === true) {
   users.features = cts.search(cts.directoryQuery("/config/features/"));
 }
 
-users;
+ users;
