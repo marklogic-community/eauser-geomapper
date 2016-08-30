@@ -73,9 +73,9 @@ function start() {
     // 2. Map looks cleaner and simpler without the drawn regions
     $regionBoxes.prop('checked', false);
 
-    updateSelections("Feature", allOrNone, true);
-    updateSelections("Industry", allOrNone, true);
-    updateSelections("Company", allOrNone, true);
+    updateSelections("Feature", allOrNone, false);
+    updateSelections("Industry", allOrNone, false);
+    updateSelections("Company", allOrNone, false);
 
     // Clear regions
     for (var regionName in regionKeys) {
