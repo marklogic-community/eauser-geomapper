@@ -160,8 +160,9 @@ function drawPage(response) {
   displayFacet(response.facets.Industry, '#collapse1', 'Industries', 'Industry');
   displayFeatures(response);
   displayFacet(response.facets.Company, '#collapse3', 'Companies', 'Company');
-  //displayCompanies(response.facets.Company);
-  displayRegions();
+
+  regionKeys = {};
+  getShapes();
 
   // Number at top right above map for "Displaying X out of [totalCount] users."
   totalCount = response.documents.length;
@@ -348,12 +349,13 @@ function displayFacet(data, targetId, label, name) {
 
 }
 
-function displayRegions() {
-  regionKeys = {};
-  shapes = getShapes();
+function displayRegions(response) {
+  shapes = response;
+  console.log("Displaying regions....");
+  console.log(shapes);
 
-  for (var region in shapes) {
-    var geojsonLayer = L.geoJson(shapes[region], {
+  for (var region in shapes.features) {
+    var geojsonLayer = L.geoJson(shapes.features[region], {
       onEachFeature: function (feature, layer) {
         var name = region;
         // Add country name to drop down
