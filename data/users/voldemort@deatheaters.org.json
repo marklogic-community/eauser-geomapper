@@ -20,7 +20,7 @@
     "postalCode":"66666",
     "registeredForEAML8":true,
     "registeredForNoSQLforDummies":false,
-    "registrationDate":"2016-04-02T05:43:19Z",
+    "registrationDate":"2016-08-24T05:43:19Z",
     "revenueRange":null,
     "leadSource":"MarkLogic Download",
     "website":"deatheaters.org",
@@ -36,7 +36,8 @@
       "JavaScript",
       "Query Console"
     ],
-    "lastUpdated":"2016-08-18T01:06:03.935719-07:00"
+    "lastUpdated":"2016-08-18T01:06:03.935719-07:00",
+    "isMarkLogic": false
   }, "geometry":{
     "type":"Point",
     "coordinates":[-57.327625, -63.419414]

@@ -20,7 +20,7 @@
     "postalCode":"77777", 
     "registeredForEAML8":true, 
     "registeredForNoSQLforDummies":false, 
-    "registrationDate":"2016-04-02T05:43:19Z", 
+    "registrationDate":"2016-08-23T05:43:19Z", 
     "revenueRange":null, 
     "leadSource":"MarkLogic Download", 
     "website":"hogwarts.edu", 
@@ -35,7 +35,8 @@
       "JavaScript", 
       "Query Console"
     ], 
-    "lastUpdated":"2016-08-18T01:06:03.935719-07:00"
+    "lastUpdated":"2016-08-18T01:06:03.935719-07:00",
+    "isMarkLogic": true
   }, "geometry":{
     "type":"Point", 
     "coordinates":[-0.111490, 51.497553]

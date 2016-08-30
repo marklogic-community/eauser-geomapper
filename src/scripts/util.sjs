@@ -23,6 +23,7 @@ var getCoord = function(postalCode, country) {
     var point = res.toArray()[1].root.results[0].geometry.location;
     var lat = point.lat;
     var long = point.lng;
+
     return [long, lat];
   }
   catch (err) {

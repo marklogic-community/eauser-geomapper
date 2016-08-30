@@ -59,14 +59,15 @@ function start() {
   map.addLayer(drawnShapes);
 
   // Reset Button removes all current facets (if any) and reloads the map.
+  // Reloads the map with everything UNchecked.
   function resetClickHandler(e) {
-    var $allSelectBoxes = $('#select_all_f, #select_all_i, #select_all_c');
-    var $allBoxes = $('#featureUL .fChecker , #industryUL .iChecker , #companyUL .cChecker');
+    var $allSelectBoxes = $('#select_all_f, .select-all');
+    var $allBoxes = $('#featureUL .fChecker , .checker');
     var $regionBoxes = $('#regionUL .rChecker');
-    var allOrNone = "all";
+    var allOrNone = "none";
 
-    $allSelectBoxes.prop('checked', true);
-    $allBoxes.prop('checked', true);
+    $allSelectBoxes.prop('checked', false);
+    $allBoxes.prop('checked', false);
     // Choosing to not show drawn regions on map on reset because:
     // 1. Users may not be found in any of the regions
     // 2. Map looks cleaner and simpler without the drawn regions
@@ -526,7 +527,17 @@ function pushAll(which, checkboxes) {
 var red_dot = L.icon({
   "iconUrl": "images/red-dot.png",
   "iconSize": [8, 8]
-})
+});
+
+// Refer to https://github.com/pointhi/leaflet-color-markers
+var redMarker = L.icon({
+  iconUrl: "images/red-marker.png",
+  shadowURL: "images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
 
 // Draw geojson data on map, data will originate from Marketo
@@ -537,11 +548,20 @@ function displayGeoJSON(geojsonFeatures) {
 
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
-      var marker = new L.marker(latlng, {
-        "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
-        // if you want to use red dots...
-        // ,"icon": red_dot
-      });
+    // Check to see if the user is a MarkLogic user
+      if (feature.fullDetails.isMarkLogic) { // isMarkLogic === true
+          var marker = new L.marker(latlng, {
+          "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
+          ,"icon": redMarker
+          });
+      }
+      else {
+        var marker = new L.marker(latlng, {
+          "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
+          // if you want to use red dots...
+          // ,"icon": red_dot
+          });
+      }
 
       oms.addMarker(marker);
       return marker;
