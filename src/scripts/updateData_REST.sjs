@@ -106,7 +106,6 @@ try {
 
         emailNewUsers++;
 
-        xdmp.log("updateData_REST inserted " + email);
         xdmp.documentInsert(uri, json);
       }
 
