@@ -34,6 +34,8 @@ for (var region in regions) {
   }
   //gon as in polyGON, put the points in lat-long order because that is how l.polygon and
   // l.multipolygon expects the points to be formatted.
+  // Data is in long-lat order in shapes.js because the data is geoJSON,
+  // so this is converting from long-lat order to lat-long order
   for (var ndx in coordsContainer) {
     for (var gon in coordsContainer[ndx][0]) {
       var lat = coordsContainer[ndx][0][gon][0];
