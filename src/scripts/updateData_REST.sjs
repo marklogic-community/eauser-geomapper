@@ -97,7 +97,6 @@ try {
           json.fullDetails.ea_version.push(oldDoc.root.fullDetails.ea_version[0]);
         }
         
-        xdmp.log('replacing document with: ' + JSON.stringify(json));
         xdmp.nodeReplace(oldDoc, json);
         xdmp.log("updateData_REST: updated " + email);
 
