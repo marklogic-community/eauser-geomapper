@@ -59,14 +59,15 @@ function start() {
   map.addLayer(drawnShapes);
 
   // Reset Button removes all current facets (if any) and reloads the map.
+  // Reloads the map with everything UNchecked.
   function resetClickHandler(e) {
-    var $allSelectBoxes = $('#select_all_f, #select_all_i, #select_all_c');
-    var $allBoxes = $('#featureUL .fChecker , #industryUL .iChecker , #companyUL .cChecker');
+    var $allSelectBoxes = $('#select_all_f, .select-all');
+    var $allBoxes = $('#featureUL .fChecker , .checker');
     var $regionBoxes = $('#regionUL .rChecker');
-    var allOrNone = "all";
+    var allOrNone = "none";
 
-    $allSelectBoxes.prop('checked', true);
-    $allBoxes.prop('checked', true);
+    $allSelectBoxes.prop('checked', false);
+    $allBoxes.prop('checked', false);
     // Choosing to not show drawn regions on map on reset because:
     // 1. Users may not be found in any of the regions
     // 2. Map looks cleaner and simpler without the drawn regions
