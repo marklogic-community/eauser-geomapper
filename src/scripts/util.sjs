@@ -9,6 +9,7 @@ var endpoint = keys.endpoint;
 var userID = keys.userID;
 var secretkey = keys.secretkey;
 
+xdmp.log("what's going on..");
 
 // Calls the Google Maps geocoding api, and returns the lat/long associated with a postal code in a certain country
 var getCoord = function(postalCode, country) {
@@ -23,6 +24,12 @@ var getCoord = function(postalCode, country) {
     var point = res.toArray()[1].root.results[0].geometry.location;
     var lat = point.lat;
     var long = point.lng;
+
+    xdmp.log("hmm");
+    xdmp.log(point);
+    xdmp.log(lat);
+    xdmp.log(long);
+
     return [long, lat];
   }
   catch (err) {

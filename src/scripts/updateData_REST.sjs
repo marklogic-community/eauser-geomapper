@@ -73,6 +73,10 @@ try {
         break;
       }
 
+      // check email for marklogic
+      var str = email.toString();
+      json.fullDetails.isMarkLogic = str.includes('@marklogic.com');
+
       // uri template for EA users
       var uri = "/users/" + email + ".json";
 
@@ -92,7 +96,8 @@ try {
         if (!(EA.version in oldDoc.root.fullDetails.ea_version)) {
           json.fullDetails.ea_version.push(oldDoc.root.fullDetails.ea_version[0]);
         }
-
+        
+        xdmp.log('replacing document with: ' + JSON.stringify(json));
         xdmp.nodeReplace(oldDoc, json);
         xdmp.log("updateData_REST: updated " + email);
 

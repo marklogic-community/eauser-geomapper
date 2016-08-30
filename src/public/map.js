@@ -540,7 +540,17 @@ function pushAll(which, checkboxes) {
 var red_dot = L.icon({
   "iconUrl": "images/red-dot.png",
   "iconSize": [8, 8]
-})
+});
+
+// Refer to https://github.com/pointhi/leaflet-color-markers
+var redMarker = L.icon({
+  iconUrl: "images/red-marker.png",
+  shadowURL: "images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
 
 
 // Draw geojson data on map, data will originate from Marketo
@@ -548,14 +558,22 @@ function displayGeoJSON(geojsonFeatures) {
   // Every doPost call redraws all markers on the map
   // removeAllFeatures() removes all markers from the map
   markers.clearLayers();
-
   var geojsonLayer = L.geoJson(geojsonFeatures.documents, {
     pointToLayer: function (feature, latlng) {
-      var marker = new L.marker(latlng, {
-        "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
-        // if you want to use red dots...
-        // ,"icon": red_dot
-      });
+    // Check to see if the user is a MarkLogic user
+      if (feature.fullDetails.isMarkLogic) { // isMarkLogic === true
+          var marker = new L.marker(latlng, {
+          "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
+          ,"icon": redMarker
+          });
+      }
+      else {
+        var marker = new L.marker(latlng, {
+          "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
+          // if you want to use red dots...
+          // ,"icon": red_dot
+          });
+      }
 
       oms.addMarker(marker);
       return marker;

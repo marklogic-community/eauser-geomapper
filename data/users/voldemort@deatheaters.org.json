@@ -36,7 +36,8 @@
       "JavaScript",
       "Query Console"
     ],
-    "lastUpdated":"2016-08-18T01:06:03.935719-07:00"
+    "lastUpdated":"2016-08-18T01:06:03.935719-07:00",
+    "isMarkLogic": false
   }, "geometry":{
     "type":"Point",
     "coordinates":[-57.327625, -63.419414]
