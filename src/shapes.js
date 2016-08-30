@@ -264,11 +264,11 @@ function getShapes() {
     contentType: "application/json",
     dataType: "json",
     success: function(response) {
-      console.log("YAYY");
+      //displayRegions in map.js
       displayRegions(response);
     },
     error: function() {
-      console.log("BOOO");
+      console.log("formatShapes.sjs failed");
     }
   });
 

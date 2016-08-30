@@ -351,13 +351,11 @@ function displayFacet(data, targetId, label, name) {
 
 function displayRegions(response) {
   shapes = response;
-  console.log("Displaying regions....");
-  console.log(shapes);
 
   for (var region in shapes.features) {
     var geojsonLayer = L.geoJson(shapes.features[region], {
       onEachFeature: function (feature, layer) {
-        var name = region;
+        var name = shapes.features[region].properties.name;
         // Add country name to drop down
         var stuff = $('#collapse4 ul').append('<li class="list-group-item"><label class=\'unbold\'><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</label></li>');
         var $regions =  $(".rChecker");
@@ -474,7 +472,7 @@ function updateSelections(which, value, select) {
 
   else if (which === "Region") {
 
-    var regionName = value.properties.continent;
+    var regionName = value.properties.name;
 
     if (selections.regions[regionName] != undefined) { //unchecked the box
       // If value is in array then unchecking was done

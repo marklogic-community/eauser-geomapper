@@ -4,8 +4,6 @@
 var rawInput = xdmp.getRequestBody();
 var regions = rawInput.toObject();
 
-xdmp.log(regions);
-
 var final = {"type": "FeatureCollection", "features": []};
 var currRegion;
 
