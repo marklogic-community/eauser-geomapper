@@ -20,12 +20,28 @@ var getCoord = function(postalCode, country) {
   var res = xdmp.httpGet(noSpaceUrl);
 
   try {
-    var point = res.toArray()[1].root.results[0].geometry.location;
-    var lat = point.lat;
-    var long = point.lng;
+
+    var lat, long;
+
+    if (postalCode === '94070') { // Default all San Carlos, CA postal codes to the San Carlos location
+      lat = 37.523182;
+      long = -122.233676;
+    }
+
+    else if (postalCode === null) { // Deported to the Island Republic of MarkLogic
+      lat = 0;
+      long = 0;
+    }
+    
+    else {
+      var point = res.toArray()[1].root.results[0].geometry.location;
+      lat = point.lat;
+      long = point.lng;
+    }
 
     return [long, lat];
   }
+
   catch (err) {
     xdmp.log("" + err);
     xdmp.log("  placing this user in the Island Republic of MarkLogic");
