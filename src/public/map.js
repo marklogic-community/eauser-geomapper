@@ -258,9 +258,9 @@ function displayFeatures(response) {
       if (counts && counts[features[category][subfield]] !== undefined) {
         count = counts[features[category][subfield]];
       }
-      html += '<li class="list-group-item"><label class=\'unbold\'><input checked type="checkbox"class="fChecker"value=';
+      html += '<li class="list-group-item"><label class=\'unbold\'><input type="checkbox"class="fChecker"value=';
       html += features[category][subfield]+'>&nbsp;'+features[category][subfield]+'<i> ('+count+')</i></label></li>';
-      updateSelections("Feature", features[category][subfield].toString());
+      updateSelections("Feature", features[category][subfield].toString(), "default");
     }
     html += '</ul>';
     $('#featureUL').append(html);
@@ -307,11 +307,14 @@ function displayFacet(data, targetId, label, name) {
   for (var obj in data) {
     var count = data[obj];
     // does not include the count -- assuming that there is only one user for most companies
-    checkbox = '<label class=\'unbold\'><input checked type="checkbox" class="checker" value='+ obj+ '>';
+    checkbox = '<label class=\'unbold\'><input type="checkbox" class="checker" value='+ obj+ '>';
     label = obj + ' <i>(' + count + ')</i></label>';
     $(targetId + ' ul')
       .append('<li class="list-group-item">' + checkbox + '&nbsp' + label + '</li>');
-    updateSelections(label, obj.toString());
+      // console.log(label);
+      // console.log(obj.toString());
+    // updateSelections(label, obj.toString());
+    updateSelections("defaultSettings", obj.toString());
   }
 
   var $values = $(targetId + ' .checker');
@@ -347,7 +350,6 @@ function displayFacet(data, targetId, label, name) {
   for (var i = 0; i < $values.length; i++) {
     $values[i].onclick = valueClickHandler;
   }
-
 }
 
 function displayRegions(response) {
@@ -370,7 +372,6 @@ function displayRegions(response) {
       }
     });
   }
-
 }
 
 function updateSelections(which, value, select) {
@@ -384,11 +385,7 @@ function updateSelections(which, value, select) {
     index = selections.industries.indexOf(value);
     var $industries =  $("#industryUL .checker");
 
-    if (select === "default") { // default settings
-      selections.industries.push(value);
-    }
-
-    else if (select === true) { // select === true (select all is checked)
+    if (select === true) { // select === true (select all is checked)
       if (value === "all") {
         selections.industries = [];
         pushAll("Industry", $industries);
@@ -415,7 +412,7 @@ function updateSelections(which, value, select) {
     var $features =  $("#featureUL .fChecker");
 
     if (select === "default") { // default settings
-      selections.features.push(value);
+      selections.features = [];
     }
 
     else if (select === true) { // select === true (select all is checked)
@@ -445,11 +442,7 @@ function updateSelections(which, value, select) {
     index = selections.companies.indexOf(value);
     var $companies = $("#companyUL .checker");
 
-    if (select === "default") { // default settings
-      selections.companies.push(value);
-    }
-
-    else if (select === true) { // select === true (select all is checked)
+    if (select === true) { // select === true (select all is checked)
       if (value === "all") {
         selections.companies = [];
         pushAll("Company", $companies);
@@ -500,6 +493,10 @@ function updateSelections(which, value, select) {
 
       map.addLayer(regionKeys[regionName]);
     }
+  }
+  else if (which === "defaultSettings") { // no selections by default
+    selections.industries = [];
+    selections.companies = [];
   }
 
 }
