@@ -635,7 +635,15 @@ function formatPopup(properties) {
     str += "<b>Features:</b> None specified";
   }
   if (properties.customNotes !== undefined && properties.customNotes !== "") {
-    str += "<b>Notes: </b>" + properties.customNotes;
+    var notes = properties.customNotes;
+    if (notes.length > 100) {
+      // Just give a preview of all notes
+      str += "<b>Notes: </b>" + notes.substring(0,100) + " ...";
+    }
+    else {
+      //display all notes when < 100 characters
+      str += "<b>Notes: </b>" + notes;
+    }
   }
 
   // str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
