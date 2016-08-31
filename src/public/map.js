@@ -591,6 +591,7 @@ function updateCount(points) {
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
+
   var str = "";
   if (!properties) return str;
 
@@ -629,15 +630,17 @@ function formatPopup(properties) {
       str += "<LI>" + properties.features[ndx];
     }
     str += "</UL>";
-    str += "<br>";
   }
   else if (properties.features && properties.features.length === 0) {
     str += "<b>Features:</b> None specified";
-    str += "<br>";
+  }
+  if (properties.customNotes !== undefined && properties.customNotes !== "") {
+    str += "<b>Notes: </b>" + properties.customNotes;
   }
 
   // str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
-  var email = "" + properties.email;
+  var email = properties.email;
   str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"email\" value=\"" + email + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>";
+
   return str;
 }

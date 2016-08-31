@@ -126,7 +126,7 @@ $("#other-select").change(function () {
       $("#other-result").replaceWith("<td id=\"other-result\">" + res.val + "</td>");
     },
     error: fail
-  }); 
+  });
 });
 
 
@@ -167,19 +167,24 @@ function displayCheckboxes(MLFeatures) {
     str += "</div>"; //closes the second col-sm-6
     str += "</div>"; //closes .row
 
-    str += "<br/><button onclick=\"save()\">Save Changes</button>";
+    str += "<div id=\"saveButtonDiv\"><br/><button onclick=\"save()\">Save Changes</button></div>";
 
-    $("#features").append(str);
   }
   else {
-    $("#features").append("<h5>No features to list</h5");
+    str = "<h5>No features to list</h5";
   }
+  var customNotes = global_user.fullDetails.customNotes;
+  customNotes = customNotes != undefined ? customNotes : "";
 
+  str += "<div id=\"customNotesDiv\"><h4> Notes: </h4> <textarea id=customNotesArea rows=\"5\" cols=\"70\">" + customNotes + "</textarea></div>";
+  $("#features").append(str);
 }
 
 // saves any changes made to the features list.
 function save() {
   $("body").css("cursor", "progress");
+
+  var customNotes = document.getElementById("customNotesArea").value;
 
   var n = $("input:checked").length;
 
@@ -191,7 +196,8 @@ function save() {
 
   var payload = {
     "email": global_user.fullDetails.email,
-    "features": features
+    "features": features,
+    "customNotes": customNotes
   }
 
   $.ajax({
