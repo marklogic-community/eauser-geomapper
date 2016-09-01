@@ -30,6 +30,7 @@ try {
 
   newDoc.fullDetails.features = input.features;
   newDoc.fullDetails.lastUpdated = fn.currentDateTime();
+  newDoc.fullDetails.customNotes = input.customNotes;
 
   xdmp.nodeReplace(oldDoc, newDoc);
 
