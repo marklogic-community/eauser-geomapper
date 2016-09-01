@@ -253,10 +253,12 @@ function displayFeatures(response) {
 
     html += '<ul id=\'displayFeaturesList\'><label><lh>'+ category + '</lh></label>';
     for (var subfield in features[category]) {
-      count = 0;
 
       if (counts && counts[features[category][subfield]] !== undefined) {
         count = counts[features[category][subfield]];
+      }
+      else {
+        count = 0;
       }
       html += '<li class="list-group-item"><label class=\'unbold\'><input type="checkbox"class="fChecker"value=';
       html += features[category][subfield]+'>&nbsp;'+features[category][subfield]+'<i> ('+count+')</i></label></li>';
@@ -298,7 +300,7 @@ function displayFeatures(response) {
 
   $selectF[0].onclick = selectFClickHandler;
   for (var i = 0; i < $features.length; i++) {
-   $features[i].onclick = featureClickHandler;
+    $features[i].onclick = featureClickHandler;
   }
 }
 
@@ -306,14 +308,11 @@ function displayFacet(data, targetId, label, name) {
   var checkbox, label;
   for (var obj in data) {
     var count = data[obj];
-    // does not include the count -- assuming that there is only one user for most companies
+
     checkbox = '<label class=\'unbold\'><input type="checkbox" class="checker" value='+ obj+ '>';
     label = obj + ' <i>(' + count + ')</i></label>';
     $(targetId + ' ul')
       .append('<li class="list-group-item">' + checkbox + '&nbsp' + label + '</li>');
-      // console.log(label);
-      // console.log(obj.toString());
-    // updateSelections(label, obj.toString());
     updateSelections("defaultSettings", obj.toString());
   }
 
@@ -352,6 +351,8 @@ function displayFacet(data, targetId, label, name) {
   }
 }
 
+// Populates the region side menu and adds click events to the options
+// in the region menu
 function displayRegions(response) {
   shapes = response;
 
@@ -360,10 +361,9 @@ function displayRegions(response) {
       onEachFeature: function (feature, layer) {
         var name = shapes.features[region].properties.name;
         // Add country name to drop down
-        var stuff = $('#collapse4 ul').append('<li class="list-group-item"><label class=\'unbold\'><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</label></li>');
-        var $regions =  $(".rChecker");
-        var length = $regions.length;
-        var lastNdx = length - 1;
+        $('#collapse4 ul').append('<li class="list-group-item"><label class=\'unbold\'><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</label></li>');
+        var $regions = $(".rChecker");
+        var lastNdx = $regions.length - 1;
 
         $regions[lastNdx].onclick = function(e) {
           updateSelections("Region", feature);
@@ -377,6 +377,7 @@ function displayRegions(response) {
 function updateSelections(which, value, select) {
   var index;
 
+  // value is a JSON object when which is Region
   if (which !== "Region") {
     value = value.trim();
   }
@@ -392,7 +393,7 @@ function updateSelections(which, value, select) {
       }
     }
 
-    else { // select === false
+    else { // select all is not checked
       if (value === "none") {
         selections.industries = [];
       }
@@ -415,7 +416,7 @@ function updateSelections(which, value, select) {
       selections.features = [];
     }
 
-    else if (select === true) { // select === true (select all is checked)
+    else if (select === true) { //select all is checked
       if (value === "all") {
         selections.features = [];
         pushAll("Feature", $features);
@@ -478,7 +479,7 @@ function updateSelections(which, value, select) {
     else { // checked the box
       // Indicates the value is present on map
       selections.regions[regionName] = 'defined';
-      // Was getting cyclic value error from JSON.parse when using selections.regions[value]
+      // Cyclic value error occurs from JSON.parse when using selections.regions[value]
       // to store the result from L.polygon(...);
       // Need to store result of L.polygon so the value can
       // be used to delete off map
@@ -548,16 +549,14 @@ function displayGeoJSON(geojsonFeatures) {
     // Check to see if the user is a MarkLogic user
       if (feature.fullDetails.isMarkLogic) { // isMarkLogic === true
           var marker = new L.marker(latlng, {
-          "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
-          ,"icon": redMarker
+            "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname,
+            "icon": redMarker
           });
       }
       else {
         var marker = new L.marker(latlng, {
           "title": feature.fullDetails.firstname + " " + feature.fullDetails.lastname
-          // if you want to use red dots...
-          // ,"icon": red_dot
-          });
+        });
       }
 
       oms.addMarker(marker);
@@ -586,6 +585,7 @@ function updateCount(points) {
 
 // firstName, lastname, email, city, state, industry, company
 function formatPopup(properties) {
+
   var str = "";
   if (!properties) return str;
 
@@ -618,21 +618,31 @@ function formatPopup(properties) {
   // Features of ML9 the EA user listed they use when signing up for EA
   if (properties.features && properties.features.length > 0) {
     // Features used in ML9
-    // ** Assuming properties.features will be string array of ML9 Features **
+    // Loaded from /data/config/features/
     str += "<b>Features:</b><UL>";
     for (var ndx in properties.features) {
       str += "<LI>" + properties.features[ndx];
     }
     str += "</UL>";
-    str += "<br>";
-    }
+  }
   else if (properties.features && properties.features.length === 0) {
     str += "<b>Features:</b> None specified";
-    str += "<br>";
+  }
+  if (properties.customNotes !== undefined && properties.customNotes !== "") {
+    var notes = properties.customNotes;
+    if (notes.length > 100) {
+      // Just give a preview of all notes
+      str += "<b>Notes: </b>" + notes.substring(0,100) + " ...";
+    }
+    else {
+      //display all notes when < 100 characters
+      str += "<b>Notes: </b>" + notes;
+    }
   }
 
   // str += "<button id=\"popup-button\" ng-click=\"showDetail=!showDetail\" ng-init=\"showDetail=false\">Show Full Details</button>";
-  var email = "" + properties.email;
+  var email = properties.email;
   str += "<form id=\"popup-button\" action=\"details.html\" method=\"GET\" target=\"_blank\"><input type=\"hidden\" name=\"email\" value=\"" + email + "\"/> <input type=\"submit\" value=\"Show Full Details\"/></form>";
+
   return str;
 }

@@ -29,8 +29,8 @@ for (var region in regions) {
       for (var ndx in geometry.coordinates) {
         coordsContainer.push(geometry.coordinates[ndx]);
       }
-
     }
+
   }
   //gon as in polyGON, put the points in lat-long order because that is how l.polygon and
   // l.multipolygon expects the points to be formatted.
