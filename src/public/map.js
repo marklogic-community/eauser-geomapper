@@ -89,6 +89,7 @@ function start() {
     drawnShapes.clearLayers();
 
     doPost("/search.sjs", displayGeoJSON, false);
+    map.setView([0, 0], 2);
   }
   $('#reset').click(resetClickHandler);
 
