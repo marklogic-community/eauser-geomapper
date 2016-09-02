@@ -581,7 +581,7 @@ function updateCount(points) {
   else {
     currentCount = 0;
   }
-  $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + "</span>");
+  $("#count").replaceWith("<span id=\"count\">" + currentCount + " out of " + totalCount + " total EA </span>");
 }
 
 // firstName, lastname, email, city, state, industry, company
