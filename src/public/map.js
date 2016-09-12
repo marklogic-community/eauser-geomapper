@@ -626,8 +626,8 @@ function formatPopup(properties) {
     }
     str += "</UL>";
   }
-  else if (properties.features && properties.features.length === 0) {
-    str += "<b>Features:</b> None specified";
+  else if (!properties.features || properties.features.length === 0) {
+    str += "<b>Features:</b> None specified<br>";
   }
   if (properties.customNotes !== undefined && properties.customNotes !== "") {
     var notes = properties.customNotes;
