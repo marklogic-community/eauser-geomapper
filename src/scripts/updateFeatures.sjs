@@ -63,6 +63,7 @@ try {
     for (var feature in input.features) {
       content += "\t- " + input.features[feature] + "\n";
     }
+    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
 
     // because of how we insert feature arrays into MarkLogic,
     // the order features appear in the array is preserved
@@ -70,19 +71,24 @@ try {
       exit;
     }
 
-    var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-                 "to":{"name":emailRecipient.name, "address":emailRecipient.address},
-                 "subject":"EA tracker - success - feature update for " + input.email,
-                 "content": content};
+    var message = {
+      "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+      "to":{"name":emailRecipient.name, "address":emailRecipient.address},
+      "subject":"EA tracker - success - feature update for " + input.email,
+      "content": content
+    };
     xdmp.email(message);
   }
   else {
     var content = "Failed feature update at " + timestamp + "\n\n";
+    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
 
-    var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-                 "to":{"name":emailRecipient.name, "address":emailRecipient.address},
-                 "subject":"EA tracker - fail - feature update for " + input.email,
-                 "content": content};
+    var message = {
+      "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+      "to":{"name":emailRecipient.name, "address":emailRecipient.address},
+      "subject":"EA tracker - fail - feature update for " + input.email,
+      "content": content
+    };
     xdmp.email(message);
   }
 }

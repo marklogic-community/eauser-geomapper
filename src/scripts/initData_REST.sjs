@@ -128,22 +128,28 @@ try {
   if (completed) {
     var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Completed data ingestion at " + timestamp + "\n\n";
-    content += "Number of users: " + numUsers;
+    content += "Number of users: " + numUsers + "\n";
+    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
 
-    var message = {"from":{"name": "eauser-geomapper", "address": "eauser.geomapper@marklogic.com"},
-                 "to":{"name": emailRecipient.name, "address": emailRecipient.address},
-                 "subject": "EA tracker - success - initial data ingestion",
-                 "content": content};
+    var message = {
+      "from":{"name": "eauser-geomapper", "address": "eauser.geomapper@marklogic.com"},
+      "to":{"name": emailRecipient.name, "address": emailRecipient.address},
+      "subject": "EA tracker - success - initial data ingestion",
+      "content": content
+    };
     xdmp.email(message);
   }
   else {
     var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Failed data ingestion at " + timestamp + "\n\n";
+    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
 
-    var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-                 "to":{"name": emailRecipient.name, "address": emailRecipient.address},
-                 "subject":"EA tracker - fail - initial data ingestion",
-                 "content": content};
+    var message = {
+      "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+      "to":{"name": emailRecipient.name, "address": emailRecipient.address},
+      "subject":"EA tracker - fail - initial data ingestion",
+      "content": content
+    };
     xdmp.email(message);
   }
 }

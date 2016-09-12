@@ -15,10 +15,15 @@ var input = rawInput.toObject();
 var success = true;
 
 try {
-  var email = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-                 "to":{"name":emailRecipient.name, "address":emailRecipient.address},
-                 "subject": input.subject,
-                 "content": input.message};
+  var content = input.message + "\n\n";
+  content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+
+  var email = {
+    "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+    "to":{"name":emailRecipient.name, "address":emailRecipient.address},
+    "subject": input.subject,
+    "content": input.message
+  };
   xdmp.email(email);
   xdmp.log("successfully emailed feedback: " + input.subject);
 }

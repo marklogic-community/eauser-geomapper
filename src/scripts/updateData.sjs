@@ -99,12 +99,15 @@ try {
   var content = "Completed update at " + time + "\n\n";
   content += "Last updated: " + emailLastUpdated + "\n";
   content += "\tPrevious number of users: " + emailOldNumDocs + "\n\n";
-  content += "Current number of users:" + newNumDocuments;
+  content += "Current number of users:" + newNumDocuments + "\n";
+  content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
 
-  var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-               "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
-               "subject":"EA tracker update",
-               "content": content};
+  var message = {
+    "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+    "to":{"name":"gyin", "address":"grace.yin@marklogic.com"},
+    "subject":"EA tracker update",
+    "content": content
+  };
   xdmp.email(message);
 }
 catch(error) {
