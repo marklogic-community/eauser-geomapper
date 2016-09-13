@@ -1,4 +1,4 @@
-/* global keys, L, OverlappingMarkerSpiderfier, getShapes */
+/* global keys, L, OverlappingMarkerSpiderfier */
 /* jshint devel:true */
 
 'use strict';
@@ -9,7 +9,6 @@ var map; // Leaflet map
 var url; // String
 var markers; //FeatureGroup
 var drawnShapes; //FeatureGroup
-var MLFeatures; // Array
 var selections; // Object
 var maxBounds; // lat long range of entire map
 var oms; // Overlapping Marker Spiderfier
@@ -501,6 +500,53 @@ function displayFeatures(response) {
   }
 }
 
+// Populates the region side menu and adds click events to the options
+// in the region menu
+function displayRegions(response) {
+  shapes = response;
+
+  function makefeatureBuilder(region) {
+    return function(feature, layer) {
+      var name = shapes.features[region].properties.name;
+      // Add country name to drop down
+      $('#collapse4 ul').append('<li class="list-group-item"><label class=\'unbold\'><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</label></li>');
+      var $regions = $('.rChecker');
+      var lastNdx = $regions.length - 1;
+
+      $regions[lastNdx].onclick = function(e) {
+        updateSelections('Region', feature);
+        doPost('/search.sjs', displayGeoJSON, false);
+      };
+    };
+  }
+
+  for (var region in shapes.features) {
+    L.geoJson(shapes.features[region], {
+      onEachFeature: makefeatureBuilder(region)
+    });
+  }
+}
+
+// Retrieve the geoJSON shapes used for the regions
+function getShapes() {
+  'use strict';
+
+  $.ajax({
+    type: 'POST',
+    url: '/scripts/formatShapes.sjs',
+    contentType: 'application/json',
+    dataType: 'json',
+    success: function(response) {
+      //displayRegions is in map.js
+      displayRegions(response);
+    },
+    error: function() {
+      console.log('formatShapes.sjs failed');
+    }
+  });
+
+}
+
 // Draw markers on map
 function drawPage(response) {
   displayFacet(response.facets.Industry, '#collapse1', 'Industry');
@@ -629,32 +675,4 @@ function start() {
 // For debugging, check MarkLogic's 8040_ErrorLog.txt
 // and your browser's inspection tool
 start();
-
-
-// Populates the region side menu and adds click events to the options
-// in the region menu
-function displayRegions(response) {
-  shapes = response;
-
-  function makefeatureBuilder(region) {
-    return function(feature, layer) {
-      var name = shapes.features[region].properties.name;
-      // Add country name to drop down
-      $('#collapse4 ul').append('<li class="list-group-item"><label class=\'unbold\'><input type="checkbox" class="rChecker" value='+ name+'>&nbsp;' + name + '</label></li>');
-      var $regions = $('.rChecker');
-      var lastNdx = $regions.length - 1;
-
-      $regions[lastNdx].onclick = function(e) {
-        updateSelections('Region', feature);
-        doPost('/search.sjs', displayGeoJSON, false);
-      };
-    };
-  }
-
-  for (var region in shapes.features) {
-    L.geoJson(shapes.features[region], {
-      onEachFeature: makefeatureBuilder(region)
-    });
-  }
-}
 
