@@ -129,7 +129,7 @@ try {
     var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Completed data ingestion at " + timestamp + "\n\n";
     content += "Number of users: " + numUsers + "\n";
-    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+    content += util.getEmailSource();
 
     var message = {
       "from":{"name": "eauser-geomapper", "address": "eauser.geomapper@marklogic.com"},
@@ -142,7 +142,7 @@ try {
   else {
     var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Failed data ingestion at " + timestamp + "\n\n";
-    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+    content += util.getEmailSource();
 
     var message = {
       "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},

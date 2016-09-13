@@ -144,7 +144,7 @@ try {
     content += "Total number of users: " + (emailOldUsers + emailNewUsers) + "\n";
     content += "Number of new users: " + emailNewUsers + "\n\n";
     content += "Previously updated at: " + emailLastUpdated + "\n";
-    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+    content += util.getEmailSource();
 
     var message = {
       "from":{"name":emailRecipient.name, "address":emailRecipient.address},
@@ -157,7 +157,7 @@ try {
   else {
     var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Failed data update at " + timestamp + "\n\n";
-    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+    content += util.getEmailSource();
 
     var message = {
       "from":{"name":emailRecipient.name, "address":emailRecipient.address},

@@ -63,7 +63,7 @@ try {
     for (var feature in input.features) {
       content += "\t- " + input.features[feature] + "\n";
     }
-    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+    content += util.getEmailSource();
 
     // because of how we insert feature arrays into MarkLogic,
     // the order features appear in the array is preserved
@@ -81,7 +81,7 @@ try {
   }
   else {
     var content = "Failed feature update at " + timestamp + "\n\n";
-    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+    content += util.getEmailSource();
 
     var message = {
       "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
