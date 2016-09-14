@@ -94,7 +94,7 @@ else {
     var timestamp = fn.formatDateTime(fn.currentDateTime(), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Completed data ingestion at " + timestamp + "\n\n";
     content += "Number of users: " + system.numDocuments + "\n";
-    content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+    content += util.getEmailSource();
 
     var message = {
       "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},

@@ -247,6 +247,9 @@ var exists = function(email) {
   return cts.exists(cts.elementWordQuery("email", email));
 };
 
+var getEmailSource = function() {
+  return 'Sent from ' + xdmp.hostName() + ' using ' + xdmp.databaseName(xdmp.database()) + '\n';
+}
 
 module.exports = {
   "convertToJson": convertToJson,
@@ -262,6 +265,8 @@ module.exports = {
 
   "removeSpaces": removeSpaces,
 
-  "exists": exists
+  "exists": exists,
+
+  'getEmailSource': getEmailSource
 }
 

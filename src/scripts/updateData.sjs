@@ -100,7 +100,7 @@ try {
   content += "Last updated: " + emailLastUpdated + "\n";
   content += "\tPrevious number of users: " + emailOldNumDocs + "\n\n";
   content += "Current number of users:" + newNumDocuments + "\n";
-  content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+  content += util.getEmailSource();
 
   var message = {
     "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},

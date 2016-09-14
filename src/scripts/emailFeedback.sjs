@@ -2,6 +2,8 @@
 //  Subject has already been formatted properly
 
 var keys = require("/private/keys.sjs");
+var util = require('/scripts/util.sjs');
+
 var emailRecipient = keys.emailRecipient;
 
 declareUpdate();
@@ -16,7 +18,8 @@ var success = true;
 
 try {
   var content = input.message + "\n\n";
-  content += "Sent from " + xdmp.serverName(xdmp.server()) + "\n";
+
+  content += util.getEmailSource();
 
   var email = {
     "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
