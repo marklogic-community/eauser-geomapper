@@ -62,6 +62,8 @@ try {
 
       var json = util.convertToJson_REST(users[i], EA.version);
 
+      json.geometry = util.addCoordinates(json);
+
       var email = json.fullDetails.email;
 
       // just in case... ('cause why not? :) )
