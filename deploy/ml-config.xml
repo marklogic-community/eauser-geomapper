@@ -490,6 +490,15 @@
           <privilege-name>xdmp:email</privilege-name>
         </privilege>
         <privilege>
+          <privilege-name>xdmp:eval</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:eval-in</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:filesystem-directory</privilege-name>
+        </privilege>
+        <privilege>
           <privilege-name>xdmp:http-get</privilege-name>
         </privilege>
         <privilege>
