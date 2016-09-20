@@ -52,6 +52,8 @@ try {
     for (var i in users) {
       var json = util.convertToJson_REST(users[i], EA.version);
 
+      json.geometry = util.addCoordinates(json);
+
       var email = json.fullDetails.email;
 
       // if we have reached the end of the list of users

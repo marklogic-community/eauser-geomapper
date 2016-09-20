@@ -170,17 +170,19 @@ var convertToJson_REST = function(user, ea_version) {
   doc["type"] = "Feature";
   doc["fullDetails"] = properties;
 
-  var coord = getCoord(properties.postalCode, properties.country);
+  return doc;
+};
 
-  doc["geometry"] = {
+var addCoordinates = function(user) {
+  var coord = getCoord(user.fullDetails.postalCode, user.fullDetails.country);
+
+  var geometry = {
     "type": "Point",
     "coordinates": coord
   };
 
-  return doc;
+  return geometry;
 };
-
-
 
 // returns the date/time of a day ago.
 var oneDayAgo = function(currentDateTime) {
@@ -267,6 +269,8 @@ module.exports = {
 
   "exists": exists,
 
-  'getEmailSource': getEmailSource
+  'getEmailSource': getEmailSource,
+
+  'addCoordinates': addCoordinates
 }
 
