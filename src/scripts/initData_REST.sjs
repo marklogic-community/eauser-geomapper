@@ -31,10 +31,15 @@ var completed = true;
 
 var numUsers;
 
+var duplicates = [];
+
 try {
   var nextPageToken = "";
 
   numUsers = 0;
+
+  // watch out for multiple users from Marketo that have the same email address
+  var emailsProcessed = {};
 
   do {
 
@@ -62,16 +67,27 @@ try {
         break;
       }
 
-      numUsers++;
+      if (emailsProcessed[email]) {
+        xdmp.log('Duplicate email: ' + email);
+        duplicates.push(email);
+      } else {
 
-      // just in case... highly unlikely this will change anything though..
-      email = util.removeSpaces("" + email, "+");
+        numUsers++;
 
-      // uri template for EA users
-      var uri = "/users/" + email + ".json";
+        // just in case... highly unlikely this will change anything though..
+        email = util.removeSpaces("" + email, "+");
 
-      xdmp.log("  inserted " + email);
-      xdmp.documentInsert(uri, json);
+        // uri template for EA users
+        var uri = "/users/" + email + ".json";
+
+        var update = util.mergeRecords(json, uri);
+
+        xdmp.documentInsert(uri, json);
+        xdmp.log("  inserted " + email);
+
+        emailsProcessed[email] = true;
+      }
+
     }
 
   } while (nextPageToken && nextPageToken !== "")
@@ -131,6 +147,9 @@ try {
     var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Completed data ingestion at " + timestamp + "\n\n";
     content += "Number of users: " + numUsers + "\n";
+    if (duplicates.length > 0) {
+      content += '\nDuplicate users: ' + fn.stringJoin(duplicates, ', ') + '\n\n';
+    }
     content += util.getEmailSource();
 
     var message = {
