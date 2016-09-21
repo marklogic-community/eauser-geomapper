@@ -1,7 +1,9 @@
-// POST request body -> {email: <email>, features: [<features>]}
-var util = require("/scripts/util.sjs");
+/* global require, declareUpdate, xdmp, cts, fn */
 
-var keys = require("/private/keys.sjs");
+// POST request body -> {email: <email>, features: [<features>]}
+var util = require('/scripts/util.sjs');
+
+var keys = require('/private/keys.sjs');
 var emailRecipient = keys.emailRecipient;
 
 declareUpdate();
@@ -12,9 +14,9 @@ var rawInput = xdmp.getRequestBody();
 
 var input = rawInput.toObject();
 
-var email = util.removeSpaces(input.email, "+");
+var email = util.removeSpaces(input.email, '+');
 
-var uri = "/users/" + email + ".json";
+var uri = '/users/' + email + '.json';
 
 var res = null;
 
@@ -35,7 +37,7 @@ try {
   xdmp.nodeReplace(oldDoc, newDoc);
 
   var output = sr.documents()
-    .where(cts.elementWordQuery("email", input.email))
+    .where(cts.elementWordQuery('email', input.email))
     .result();
 
   res = output.results[0].document;
@@ -51,50 +53,50 @@ catch(err) {
 
 // email feature changes (only if there's actually a change, of course - no one likes spam :D)
 try {
-  var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
+  var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), '[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ');
 
   if (completed) {
-    var content = "Completed feature update at " + timestamp + "\n\n";
-    content += "Old features:\n";
+    var content = 'Completed feature update at ' + timestamp + '\n\n';
+    content += 'Old features:\n';
     for (var feature in oldFeatures) {
-      content += "\t- " + oldFeatures[feature] + "\n";
+      content += '\t- ' + oldFeatures[feature] + '\n';
     }
-    content += "\nNew features:\n";
+    content += '\nNew features:\n';
     for (var feature in input.features) {
-      content += "\t- " + input.features[feature] + "\n";
+      content += '\t- ' + input.features[feature] + '\n';
     }
     content += util.getEmailSource();
 
     // because of how we insert feature arrays into MarkLogic,
     // the order features appear in the array is preserved
-    if ("" + oldFeatures === "" + input.features) {
+    if ('' + oldFeatures === '' + input.features) {
       exit;
     }
 
     var message = {
-      "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-      "to":{"name":emailRecipient.name, "address":emailRecipient.address},
-      "subject":"EA tracker - success - feature update for " + input.email,
-      "content": content
+      'from':{'name':'eauser-geomapper', 'address':'eauser.geomapper@marklogic.com'},
+      'to':{'name':emailRecipient.name, 'address':emailRecipient.address},
+      'subject':'EA tracker - success - feature update for ' + input.email,
+      'content': content
     };
     xdmp.email(message);
   }
   else {
-    var content = "Failed feature update at " + timestamp + "\n\n";
+    var content = 'Failed feature update at ' + timestamp + '\n\n';
     content += util.getEmailSource();
 
     var message = {
-      "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-      "to":{"name":emailRecipient.name, "address":emailRecipient.address},
-      "subject":"EA tracker - fail - feature update for " + input.email,
-      "content": content
+      'from':{'name':'eauser-geomapper', 'address':'eauser.geomapper@marklogic.com'},
+      'to':{'name':emailRecipient.name, 'address':emailRecipient.address},
+      'subject':'EA tracker - fail - feature update for ' + input.email,
+      'content': content
     };
     xdmp.email(message);
   }
 }
 catch (err) {
   xdmp.log(err);
-  xdmp.log("email status report failed to send");
+  xdmp.log('email status report failed to send');
 }
 
 res;

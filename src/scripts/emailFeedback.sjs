@@ -1,4 +1,4 @@
-/* global declareUpdate, require, xdmp */
+/* global require, xdmp */
 
 // POST request body -? {message: <message>, subject: <subject>}
 //  Subject has already been formatted properly
