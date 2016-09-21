@@ -1,4 +1,5 @@
 /* global declareUpdate, require, xdmp, cts, fn */
+/* jshint camelcase: false */
 
 declareUpdate();
 
@@ -40,10 +41,14 @@ var emailNewUsers;
 var emailOldUsers;
 var emailLastUpdated;
 
+var duplicates = [];
+
 try {
   var nextPageToken = '';
 
   emailNewUsers = 0;
+
+  var emailsProcessed = {};
 
   do {
 
@@ -75,39 +80,50 @@ try {
         break;
       }
 
-      // check email for marklogic
-      var str = email.toString();
-      json.fullDetails.isMarkLogic = str.includes('@marklogic.com');
-
-      // uri template for EA users
-      var uri = '/users/' + email + '.json';
-
-      if (util.exists(email)) {
-        // find the old dateAdded field
-        var oldDoc = cts.doc(uri);
-
-        var dateAdded = oldDoc.root.fullDetails.dateAdded;
-
-        // the new document will preserve the dateAdded field.
-        json.fullDetails.dateAdded = dateAdded;
-        if (oldDoc.root.fullDetails.features) {
-          json.fullDetails.features = oldDoc.root.fullDetails.features;
-        }
-
-        // check if this is a new EA version for this user
-        if (!(EA.version in oldDoc.root.fullDetails.ea_version)) {
-          json.fullDetails.ea_version.push(oldDoc.root.fullDetails.ea_version[0]);
-        }
-        
-        xdmp.nodeReplace(oldDoc, json);
-        xdmp.log('updateData_REST: updated ' + email);
-
+      if (emailsProcessed[email]) {
+        // we've already updated this user. Marketo must have multiple users
+        // with the same email address. 
+        xdmp.log('Duplicate email: ' + email);
+        duplicates.push(email);
       } else {
-        // else this is a new user
 
-        emailNewUsers++;
+        // check email for marklogic
+        var str = email.toString();
+        json.fullDetails.isMarkLogic = str.includes('@marklogic.com');
 
-        xdmp.documentInsert(uri, json);
+        // uri template for EA users
+        var uri = '/users/' + email + '.json';
+
+        if (util.exists(email)) {
+          // find the old dateAdded field
+          var oldDoc = cts.doc(uri);
+
+          var dateAdded = oldDoc.root.fullDetails.dateAdded;
+
+          // the new document will preserve the dateAdded field.
+          json.fullDetails.dateAdded = dateAdded;
+          if (oldDoc.root.fullDetails.features) {
+            json.fullDetails.features = oldDoc.root.fullDetails.features;
+          }
+
+          // check if this is a new EA version for this user
+          if (!(EA.version in oldDoc.root.fullDetails.ea_version)) {
+            json.fullDetails.ea_version.push(oldDoc.root.fullDetails.ea_version[0]);
+          }
+          
+          xdmp.nodeReplace(oldDoc, json);
+          xdmp.log('updateData_REST: updated ' + email);
+
+        } else {
+          // else this is a new user
+
+          emailNewUsers++;
+
+          xdmp.documentInsert(uri, json);
+        }
+
+        // record that we've updated this user
+        emailsProcessed[email] = true;
       }
 
     }
@@ -145,6 +161,9 @@ try {
     var content = 'Completed data update at ' + timestamp + '\n\n';
     content += 'Total number of users: ' + (emailOldUsers + emailNewUsers) + '\n';
     content += 'Number of new users: ' + emailNewUsers + '\n\n';
+    if (duplicates.length > 0) {
+      content += '\nDuplicate users: ' + fn.stringJoin(duplicates, ', ') + '\n\n';
+    }
     content += 'Previously updated at: ' + emailLastUpdated + '\n';
     content += util.getEmailSource();
 
