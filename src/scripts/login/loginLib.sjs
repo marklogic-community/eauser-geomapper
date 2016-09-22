@@ -3,12 +3,12 @@
 function canUserEdit(user) {
   var roles = xdmp.eval(`
     var sec= require("/MarkLogic/security.xqy");
-    var roles = xdmp.getCurrentRoles();
     sec.getRoleNames(roles)`,
-    null,
     {
-      database: xdmp.database('Security'),
-      userId: xdmp.user(user)
+      roles: xdmp.userRoles(user)
+    },
+    {
+      database: xdmp.database('Security')
     }
   )
   var roleArray = roles.toArray();
