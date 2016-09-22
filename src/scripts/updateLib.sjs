@@ -67,21 +67,15 @@ function updateFeatures(email, features, customNotes, reporter) {
         exit;
       }
 
-      var message = {
-        'subject':'EA tracker - success - feature update for ' + email,
-        'content': content
-      };
-      reporter.send(message);
+      var subject = 'EA tracker - success - feature update for ' + email;
+      reporter.send(subject, content);
     }
     else {
       var content = 'Failed feature update at ' + timestamp + '\n\n';
       content += util.getEmailSource();
 
-      var message = {
-        'subject':'EA tracker - fail - feature update for ' + email,
-        'content': content
-      };
-      reporter.send(message);
+      var subject = 'EA tracker - fail - feature update for ' + email;
+      reporter.send(subject, content);
 
     }
   }
