@@ -14,19 +14,10 @@ var EA2programID = keys.EA2programID;
 var EA3programID = keys.EA3programID;
 var emailRecipient = keys.emailRecipient;
 
-// set to EA2 right now.
-// when you want EA3, replace this with the one below
-var EA = {
-  'programID': EA2programID,
-  'version': 'EA2'
-};
-
-/*
 var EA = {
   'programID': EA3programID,
   'version': 'EA3'
-}
-*/
+};
 
 // get access token (valid for 1 hour)
 var auth = xdmp.httpGet(endpoint + '/identity/oauth/token?grant_type=client_credentials&client_id=' + clientID + '&client_secret=' + clientSecret);
@@ -82,7 +73,7 @@ try {
 
       if (emailsProcessed[email]) {
         // we've already updated this user. Marketo must have multiple users
-        // with the same email address. 
+        // with the same email address.
         xdmp.log('Duplicate email: ' + email);
         duplicates.push(email);
       } else {
@@ -110,7 +101,7 @@ try {
           if (!(EA.version in oldDoc.root.fullDetails.ea_version)) {
             json.fullDetails.ea_version.push(oldDoc.root.fullDetails.ea_version[0]);
           }
-          
+
           xdmp.nodeReplace(oldDoc, json);
           xdmp.log('updateData_REST: updated ' + email);
 
