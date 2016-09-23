@@ -20,9 +20,9 @@ var customNotes = `This is a custom note.
 // Mock out the email functionality
 var reporter =
 {
-  send: function(message) {
-    assertions.push(test.assertExists(message.subject));
-    assertions.push(test.assertExists(message.content));
+  send: function(subject, content) {
+    assertions.push(test.assertExists(subject));
+    assertions.push(test.assertExists(content));
   }
 };
 

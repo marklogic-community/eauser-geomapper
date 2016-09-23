@@ -20,3 +20,23 @@ module namespace c = "http://marklogic.com/roxy/test-config";
 (: configured at deploy time by Roxy deployer :)
 declare variable $c:USER := "@ml.user";
 declare variable $c:PASSWORD := "@ml.password";
+
+declare variable $c:GUEST-ROLE := "@ml.app-role";
+declare variable $c:EDITOR-ROLE := "@ml.app-name-editor-role";
+
+(: If using the file system, Roxy won't substitute. Provide defaults. :)
+declare function c:get-guest-role()
+{
+  if (fn:matches($c:GUEST-ROLE, "@ml")) then
+    "eauser-geomapper-role"
+  else
+    $c:GUEST-ROLE
+};
+
+declare function c:get-editor-role()
+{
+  if (fn:matches($c:EDITOR-ROLE, "@ml")) then
+    "eauser-geomapper-editor-role"
+  else
+    $c:EDITOR-ROLE
+};

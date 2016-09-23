@@ -1,6 +1,8 @@
 
 declareUpdate();
 
+var config = require('/test/test-config.xqy');
+
 // a user with no features selected
 xdmp.documentInsert(
   '/users/testy@mctestface.com.json',
@@ -42,8 +44,8 @@ xdmp.documentInsert(
     }
   },
   [
-    xdmp.permission("eauser-geomapper-editor-role", "update"),
-    xdmp.permission("eauser-geomapper-role", "read")
+    xdmp.permission(config.getEditorRole(), "update"),
+    xdmp.permission(config.getGuestRole(), "read")
   ]
 );
 
@@ -92,7 +94,7 @@ xdmp.documentInsert(
     }
   },
   [
-    xdmp.permission("eauser-geomapper-editor-role", "update"),
-    xdmp.permission("eauser-geomapper-role", "read")
+    xdmp.permission(config.getEditorRole(), "update"),
+    xdmp.permission(config.getGuestRole(), "read")
   ]
 );
