@@ -171,7 +171,7 @@ function formatPopup(properties) {
 
   // str += '<button id=\'popup-button\' ng-click=\'showDetail=!showDetail\' ng-init=\'showDetail=false\'>Show Full Details</button>';
   var email = properties.email;
-  str += 
+  str +=
     '<form id="popup-button" action="details.html" method="GET" target="_blank">' +
       '<input type="hidden" name="email" value="' + email + '"/> ' +
       '<input type="submit" value="Show Full Details"/>' +
@@ -231,15 +231,15 @@ function addMapEvents() {
   // Events for drawControl
   map.on('draw:created', function (e) {
     drawnShapes.addLayer(e.layer);
-    doPost('/search.sjs', displayGeoJSON, false);
+    doPost('/scripts/search.sjs', displayGeoJSON, false);
   });
 
   map.on('draw:edited', function (e) {
-    doPost('/search.sjs', displayGeoJSON, false);
+    doPost('/scripts/search.sjs', displayGeoJSON, false);
   });
 
   map.on('draw:deleted', function (e) {
-    doPost('/search.sjs', displayGeoJSON, false);
+    doPost('/scripts/search.sjs', displayGeoJSON, false);
   });
 
 }
@@ -411,7 +411,7 @@ function displayFacet(data, targetId, name) {
     }
     var status = $selectAll.prop('checked');
     updateSelections(name, e.target.nextSibling.data, status);
-    doPost('/search.sjs', displayGeoJSON, false);
+    doPost('/scripts/search.sjs', displayGeoJSON, false);
   }
 
   function selectAllClickHandler(e) { // for when select all is clicked
@@ -428,7 +428,7 @@ function displayFacet(data, targetId, name) {
       allOrNone = 'none';
     }
     updateSelections(name, allOrNone, status);
-    doPost('/search.sjs', displayGeoJSON, false);
+    doPost('/scripts/search.sjs', displayGeoJSON, false);
   }
 
   $selectAll[0].onclick = selectAllClickHandler;
@@ -473,7 +473,7 @@ function displayFeatures(response) {
     }
     var status = $('#select_all_f').prop('checked');
     updateSelections('Feature', e.target.nextSibling.data, status);
-    doPost('/search.sjs', displayGeoJSON, false);
+    doPost('/scripts/search.sjs', displayGeoJSON, false);
   }
 
   function selectFClickHandler(e) { // for when select all is clicked
@@ -491,7 +491,7 @@ function displayFeatures(response) {
       allOrNone = 'none';
     }
     updateSelections('Feature', allOrNone, status);
-    doPost('/search.sjs', displayGeoJSON, false);
+    doPost('/scripts/search.sjs', displayGeoJSON, false);
   }
 
   $selectF[0].onclick = selectFClickHandler;
@@ -515,7 +515,7 @@ function displayRegions(response) {
 
       $regions[lastNdx].onclick = function(e) {
         updateSelections('Region', feature);
-        doPost('/search.sjs', displayGeoJSON, false);
+        doPost('/scripts/search.sjs', displayGeoJSON, false);
       };
     };
   }
@@ -561,7 +561,7 @@ function drawPage(response) {
 
   // After all industries and features are known, fetch the
   // users from the database and display markers
-  doPost('/search.sjs', displayGeoJSON, false);
+  doPost('/scripts/search.sjs', displayGeoJSON, false);
 }
 
 // Run this function before any other
@@ -638,7 +638,7 @@ function start() {
     markers.clearLayers();
     drawnShapes.clearLayers();
 
-    doPost('/search.sjs', displayGeoJSON, false);
+    doPost('/scripts/search.sjs', displayGeoJSON, false);
     map.setView([0, 0], 2);
   }
   $('#reset').click(resetClickHandler);
@@ -654,7 +654,7 @@ function start() {
   };
 
   // Load all MarkLogic feature and industry options for dropdown menus
-  doPost('/search.sjs', drawPage, true);
+  doPost('/scripts/search.sjs', drawPage, true);
 
   addMapEvents();
 
