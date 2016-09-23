@@ -4,18 +4,18 @@
 <head>
 
   <!-- Leaflet -->
-  <link rel="stylesheet" href="leaflet/leaflet.css">
-  <link rel="stylesheet" href="leaflet/leaflet.draw.css">
-  <script src="leaflet/leaflet-src.js"></script>
-  <script src="leaflet/leaflet.draw.js"></script>
+  <link rel="stylesheet" href="public/leaflet/leaflet.css">
+  <link rel="stylesheet" href="public/leaflet/leaflet.draw.css">
+  <script src="public/leaflet/leaflet-src.js"></script>
+  <script src="public/leaflet/leaflet.draw.js"></script>
 
   <!-- Overlapping Marker Spiderfier : https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet -->
-  <script src="oms.min.js"></script>
+  <script src="public/oms.min.js"></script>
 
   <!-- jQuery, required by Bootstrap -->
-  <script src="jquery-1.12.1.min.js"></script>
-  <script src="jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="jquery-ui.min.css">
+  <script src="public/jquery-1.12.1.min.js"></script>
+  <script src="public/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="public/jquery-ui.min.css">
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="public/bootstrap-3.3.6.min.css">
@@ -111,6 +111,9 @@
 
 <body>
 
+<div id="user" class="pull-right">
+</div>
+
 <div class="title">
   <h1>TEACUP</h1>
   <h4> <i><b>T</b>rack <b>E</b>arly <b>A</b>ccess <b>C</b>ustomers <b>U</b>se of <b>P</b>roduct</i></h4>
@@ -121,14 +124,14 @@
 <div class="container">
   <div class="row">
     <div class="col-md-3">
-    <br>
+      <br/>
 
       <!-- Reset button -->
       <div class="col-sm-10">
         <button type="button" id="reset" class="btn btn-default btn-block">Reset Map</button>
       </div>
 
-      <br><br><br>
+      <br/><br/><br/>
 
       <!-- Select Industry -->
       <div class="row" id="selectIndustry">
@@ -204,20 +207,20 @@
     </div>
 
 
-  <!-- Map -->
+    <!-- Map -->
     <div class="col-md-9">
       <p id="lastUpdated" align="right">Last updated - </p>
       <p align="right">Displaying <span id="count"></span> users</p>
       <p align="right">  </p>
       <h3 id="mapTitle"><!--Map Display--></h3>
-      <br>
+      <br/>
       <div id="mapid"></div>
       <br/>
       <br/>
       <div align="center">Have opinions? <a id="feedback-link" href="javascript:{}">Give us feedback!</a></div>
     </div>
 
-  <!-- Feedback popup windows -->
+    <!-- Feedback popup windows -->
     <div id="feedback-window" title="Feedback?">
       <p>So... what are your thoughts on EA Tracker?</p>
       <textarea id="feedback-subject" rows="1" cols = "50" placeholder="Subject line"></textarea>
@@ -235,10 +238,12 @@
     </div>
 
   </div>
+</div>
 
 <!-- Displaying the map (in JS) -->
 <script type="text/javascript" src="public/map.js"></script>
 <script type="text/javascript" src="public/feedback.js"></script>
+<script type="text/javascript" src="public/user.js"></script>
 
 </body>
 </html>

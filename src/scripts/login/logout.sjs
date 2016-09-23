@@ -1,0 +1,2 @@
+
+xdmp.logout();

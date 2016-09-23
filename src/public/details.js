@@ -27,7 +27,7 @@ var email = getUrlParameter('email');
 
 function createDropdown(MarketoFields) {
   'use strict';
-  
+
   for (var field in MarketoFields) {
     $('#other-select').append('<option value="' + MarketoFields[field] + '">' + MarketoFields[field] + '</option>');
   }
@@ -234,9 +234,10 @@ function save() {
                             '\'s features</div>');
       $('body').css('cursor', 'default');
     },
-    error: function(a,b,c) {
-      $('#features').append('<div class="alert alert-danger" role="alert"><a href="#" class="close" data-dismiss="alert" title="close">×</a>Something went wrong... :(</div>');
-      fail(a,b,c);
+    error: function(jqXHR, status, errorThrown) {
+      var message = errorThrown;
+      $('#features').append('<div class="alert alert-danger" role="alert"><a href="#" class="close" data-dismiss="alert" title="close">×</a>' + message + '</div>');
+      fail(jqXHR, status, errorThrown);
       $('body').css('cursor', 'default');
     }
   });
