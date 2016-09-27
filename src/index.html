@@ -51,27 +51,18 @@
       border: none;
     }
 
-    /* centers features and map display titles */
-    #featureTitle, #mapTitle {
+    /* centers map display titles */
+    #mapTitle {
       text-align: center;
     }
 
     /* centers text on selection menu */
-    #selectIndustry h4, #selectFeature h4,
-    #selectCompany h4, #selectRegion h4 {
+    .facet h4 {
       text-align: center;
     }
 
-    /* centers the date, industry, feature, and company selection menu divs */
-    #date, #selectIndustry, #selectFeature,
-    #selectCompany, #selectRegion {
-      margin-left: auto;
-      margin-right: auto;
-    }
-
     /* scrolling feature of the menu bars */
-    .panel-collapse, #collapse1 #collapse2
-     #collapse3 #collapse4 {
+    .panel-collapse {
       max-height: 200px;
       overflow: hidden;
       overflow-y: auto;
@@ -127,15 +118,32 @@
       <br/>
 
       <!-- Reset button -->
-      <div class="col-sm-10">
+      <div class="">
         <button type="button" id="reset" class="btn btn-default btn-block">Reset Map</button>
       </div>
 
       <br/><br/><br/>
 
+      <div class="facet" id="selectEA">
+        <div class="">
+          <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapseEA">EA Version</a></h4>
+              </div>
+              <div id="collapseEA" class="panel-collapse collapse in">
+                <ul class="list-group" id="eaUL">
+                  <li><label><input type="checkbox" class="select-all" id="select_all_i"/>Select All</label></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Select Industry -->
-      <div class="row" id="selectIndustry">
-        <div class="col-sm-10">
+      <div class="facet" id="selectIndustry">
+        <div class="">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
@@ -152,8 +160,8 @@
       </div>
 
       <!-- Select Features -->
-      <div class="row" id="selectFeature">
-        <div class="col-sm-10">
+      <div class="facet" id="selectFeature">
+        <div class="">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
@@ -170,8 +178,8 @@
       </div>
 
       <!-- Select Company -->
-      <div class="row" id="selectCompany">
-        <div class="col-sm-10">
+      <div class="facet" id="selectCompany">
+        <div class="">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
@@ -188,8 +196,8 @@
       </div>
 
       <!-- Select Region -->
-      <div class="row" id="selectRegion">
-        <div class="col-sm-10">
+      <div class="facet" id="selectRegion">
+        <div class="">
           <div class="panel-group" id="accordion">
             <div class="panel panel-default">
               <div class="panel-heading">
