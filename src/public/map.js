@@ -262,6 +262,33 @@ function pushAll(which, checkboxes) {
   }
 }
 
+function updateFacetSelection(name, value, select, key, selector) {
+  var index = selections[key].indexOf(value);
+  var $checkBoxes =  $(selector);
+
+  if (select === true) { // select === true (select all is checked)
+    if (value === 'all') {
+      selections[key] = [];
+      pushAll(name, $checkBoxes);
+    }
+  }
+
+  else { // select all is not checked
+    if (value === 'none') {
+      selections[key] = [];
+    }
+    else {
+      if (index > -1) {
+        selections[key].splice(index, 1);
+      }
+      else {
+        selections[key].push(value);
+      }
+    }
+  }
+
+}
+
 function updateSelections(which, value, select) {
   var index;
 
@@ -271,29 +298,15 @@ function updateSelections(which, value, select) {
   }
 
   if (which === 'Industry') {
-    index = selections.industries.indexOf(value);
-    var $industries =  $('#industryUL .checker');
+    updateFacetSelection('Industry', value, select, 'industries', '#industryUL .checker');
+  }
 
-    if (select === true) { // select === true (select all is checked)
-      if (value === 'all') {
-        selections.industries = [];
-        pushAll('Industry', $industries);
-      }
-    }
+  else if (which === 'Company') {
+    updateFacetSelection('Company', value, select, 'companies', '#companyUL .checker');
+  }
 
-    else { // select all is not checked
-      if (value === 'none') {
-        selections.industries = [];
-      }
-      else {
-        if (index > -1) {
-          selections.industries.splice(index, 1);
-        }
-        else {
-          selections.industries.push(value);
-        }
-      }
-    }
+  else if (which === 'EA version') {
+    updateFacetSelection('EA version', value, select, 'eaVersions', '#eaUL .checker');
   }
 
   else if (which === 'Feature') {
@@ -321,33 +334,6 @@ function updateSelections(which, value, select) {
         }
         else {
           selections.features.push(value);
-        }
-      }
-    }
-  }
-
-  else if (which === 'Company') {
-
-    index = selections.companies.indexOf(value);
-    var $companies = $('#companyUL .checker');
-
-    if (select === true) { // select === true (select all is checked)
-      if (value === 'all') {
-        selections.companies = [];
-        pushAll('Company', $companies);
-      }
-    }
-
-    else { // select === false
-      if (value === 'none') {
-        selections.companies = [];
-      }
-      else {
-        if (index > -1) {
-          selections.companies.splice(index, 1);
-        }
-        else {
-          selections.companies.push(value);
         }
       }
     }
@@ -549,6 +535,7 @@ function getShapes() {
 
 // Draw markers on map
 function drawPage(response) {
+  displayFacet(response.facets.EAversions, '#collapseEA', 'EA version');
   displayFacet(response.facets.Industry, '#collapse1', 'Industry');
   displayFeatures(response);
   displayFacet(response.facets.Company, '#collapse3', 'Company');
@@ -623,9 +610,9 @@ function start() {
     // 2. Map looks cleaner and simpler without the drawn regions
     $regionBoxes.prop('checked', false);
 
-    updateSelections('Feature', allOrNone, false);
-    updateSelections('Industry', allOrNone, false);
-    updateSelections('Company', allOrNone, false);
+    for (var facet of ['Feature', 'Industry', 'Company', 'EAversions']) {
+      updateSelections(facet, allOrNone, false);
+    }
 
     // Clear regions
     for (var regionName in regionKeys) {
@@ -649,11 +636,12 @@ function start() {
     industries: [],
     companies: [],
     regions: {},
+    eaVersions: [],
     date1: '',
     date2: ''
   };
 
-  // Load all MarkLogic feature and industry options for dropdown menus
+  // Load all MarkLogic facet values
   doPost('/scripts/search.sjs', drawPage, true);
 
   addMapEvents();
