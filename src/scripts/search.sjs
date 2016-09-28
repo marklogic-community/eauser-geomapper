@@ -82,7 +82,7 @@ users =
       jsearch.facet('Industry', cts.jsonPropertyReference('industry')).orderBy('frequency', 'descending').slice(0,300),
       jsearch.facet('Feature', cts.jsonPropertyReference('features')).orderBy('frequency', 'descending').slice(0,50),
       jsearch.facet('Company', cts.jsonPropertyReference('company')).orderBy().slice(0,300),
-      jsearch.facet('EAversions', cts.jsonPropertyReference('ea_version')).orderBy('frequency', 'descending')
+      jsearch.facet('EAversions', cts.jsonPropertyReference('ea_version')).orderBy('item', 'ascending')
     ],
     jsearch.documents().slice(0,300).map({extract:{select:'all'}})
   )
