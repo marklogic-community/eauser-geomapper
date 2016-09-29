@@ -31,7 +31,7 @@
             <task-start-time>00:00:00-07:00</task-start-time>
             <task-database name="${content-db}"/>
             <task-modules name="${app-modules-db}"/>
-            <task-user name="${app-name}-user"/>
+            <task-user name="${app-name}-editor-user"/>
           </scheduled-task>
           <!--
           <scheduled-task>
