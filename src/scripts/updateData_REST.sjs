@@ -1,4 +1,4 @@
-  /* global declareUpdate, require, xdmp, cts, fn */
+/* global declareUpdate, require, xdmp, cts, fn */
 /* jshint camelcase: false */
 
 declareUpdate();
