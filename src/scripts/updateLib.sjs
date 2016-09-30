@@ -143,8 +143,8 @@ function updateFromMarketo(users, geocoder, eaVersion) {
         }
 
         // Preserve the customNote, if present
-        if (oldDoc.root.fullDetails.customNote) {
-          json.fullDetails.customNote = oldDoc.root.fullDetails.customNote;
+        if (oldDoc.root.fullDetails.customNotes) {
+          json.fullDetails.customNotes = oldDoc.root.fullDetails.customNotes;
         }
 
         // check if this is a new EA version for this user

@@ -87,7 +87,7 @@ xdmp.documentInsert(
         'feature X',
         'feature Y'
       ],
-      "customNote": "This is a custom note"
+      "customNotes": "This is a custom note"
     },
     "geometry":{
       "type": "Point",

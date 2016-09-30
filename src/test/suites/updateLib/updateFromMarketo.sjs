@@ -91,7 +91,7 @@ var features =
     'feature Y',
   ];
 
-var customNote = 'This is a custom note';
+var customNotes = 'This is a custom note';
 
 var actual0 = cts.doc('/users/' + marketoUsers[0].email + '.json').toObject();
 var actual1 = cts.doc('/users/' + marketoUsers[1].email + '.json').toObject();
@@ -101,8 +101,8 @@ var assertions = [
   test.assertEqual(marketoUsers[0].phone, actual0.fullDetails.phone),
   test.assertExists(actual0.fullDetails.features),
   test.assertEqual(features.length, actual0.fullDetails.features.length),
-  test.assertExists(actual0.fullDetails.customNote),
-  test.assertEqual(customNote, actual0.fullDetails.customNote),
+  test.assertExists(actual0.fullDetails.customNotes),
+  test.assertEqual(customNotes, actual0.fullDetails.customNotes),
   test.assertEqual(geoInfo.type, actual0.geometry.type),
   test.assertEqual(geoInfo.coordinates[0], actual0.geometry.coordinates[0]),
   test.assertEqual(geoInfo.coordinates[1], actual0.geometry.coordinates[1]),
