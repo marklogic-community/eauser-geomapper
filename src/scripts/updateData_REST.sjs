@@ -5,6 +5,7 @@ declareUpdate();
 
 var keys = require('../private/keys.sjs');
 var util = require('util.sjs');
+var update = require('updateLib.sjs');
 
 var endpoint = keys.endpoint_REST;
 var clientID = keys.clientID_REST;
@@ -39,85 +40,25 @@ try {
 
   emailNewUsers = 0;
 
-  var emailsProcessed = {};
-
   do {
 
     // returns a json response
     var res = xdmp.httpGet(endpoint + '/rest/v1/leads/programs/' + EA.programID + '.json?access_token=' + token + '&nextPageToken=' + nextPageToken + '&fields=' + listOfFields);
 
-    nextPageToken = res.toArray()[1].root.nextPageToken;
+    var resArray = res.toArray();
+
+    nextPageToken = resArray[1].root.nextPageToken;
 
 
     // process the data and insert it into MarkLogic
-    var users = res.toArray()[1].root.result;
+    var users = resArray[1].root.result;
 
     xdmp.log('updateData_REST: about to insert ' + users.length + ' documents');
 
-    for (var i in users) {
+    var updates = update.updateFromMarketo(users, util.addCoordinates, EA.version);
 
-      var json = util.convertToJson_REST(users[i], EA.version);
-
-      json.geometry = util.addCoordinates(json);
-
-      var email = json.fullDetails.email;
-
-      // just in case... ('cause why not? :) )
-      email = util.removeSpaces('' + email, '+');
-
-      // if we have reached the end of the list of users
-      // and have started to go through things like length, xpath, toString...
-      if (email === undefined || email + '' === 'undefined' || email + '' === 'null') {
-        break;
-      }
-
-      if (emailsProcessed[email]) {
-        // we've already updated this user. Marketo must have multiple users
-        // with the same email address.
-        xdmp.log('Duplicate email: ' + email);
-        duplicates.push(email);
-      } else {
-
-        // check email for marklogic
-        var str = email.toString();
-        json.fullDetails.isMarkLogic = str.includes('@marklogic.com');
-
-        // uri template for EA users
-        var uri = '/users/' + email + '.json';
-
-        if (util.exists(email)) {
-          // find the old dateAdded field
-          var oldDoc = cts.doc(uri);
-
-          var dateAdded = oldDoc.root.fullDetails.dateAdded;
-
-          // the new document will preserve the dateAdded field.
-          json.fullDetails.dateAdded = dateAdded;
-          if (oldDoc.root.fullDetails.features) {
-            json.fullDetails.features = oldDoc.root.fullDetails.features;
-          }
-
-          // check if this is a new EA version for this user
-          if (!(EA.version in oldDoc.root.fullDetails.ea_version)) {
-            json.fullDetails.ea_version.push(oldDoc.root.fullDetails.ea_version[0]);
-          }
-
-          xdmp.nodeReplace(oldDoc, json);
-          xdmp.log('updateData_REST: updated ' + email);
-
-        } else {
-          // else this is a new user
-
-          emailNewUsers++;
-
-          xdmp.documentInsert(uri, json);
-        }
-
-        // record that we've updated this user
-        emailsProcessed[email] = true;
-      }
-
-    }
+    duplicates.push(updates.duplicates);
+    emailNewUsers += updates.newUsers;
 
   } while (nextPageToken && nextPageToken !== '');
 
@@ -140,7 +81,7 @@ try {
 }
 catch(err) {
   xdmp.log('updateData_REST failed to update data');
-  xdmp.log(err);
+  xdmp.log(err.toString());
   completed = false;
 }
 
@@ -181,7 +122,7 @@ try {
   }
 }
 catch (err) {
-  xdmp.log('updateData_REST email status report failed to send: ' + JSON.stringify(err));
+  xdmp.log('updateData_REST email status report failed to send: ' + err.toString());
 }
 
 xdmp.log('updateData_REST DONE');

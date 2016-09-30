@@ -77,7 +77,7 @@ xdmp.documentInsert(
       "registrationDate": "2016-09-21T14:32:45Z",
       "revenueRange": "$1M - $5M",
       "leadSource": "spelunking",
-      "website": "mctestface.com",
+      "website": "stuff.com",
       "marketoLastUpdated": "2016-09-30T21:03:10Z",
       "appLastUpdated": "2016-09-30T10:39:29.776174-04:00",
       "dateAdded": "2016-09-24T10:19:30.678033-07:00",
@@ -86,7 +86,8 @@ xdmp.documentInsert(
       "features": [
         'feature X',
         'feature Y'
-      ]
+      ],
+      "customNote": "This is a custom note"
     },
     "geometry":{
       "type": "Point",
