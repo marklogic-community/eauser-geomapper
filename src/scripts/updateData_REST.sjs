@@ -57,7 +57,7 @@ try {
 
     var updates = update.updateFromMarketo(users, util.addCoordinates, EA.version);
 
-    duplicates.push(updates.duplicates);
+    duplicates.concat(updates.duplicates);
     emailNewUsers += updates.newUsers;
 
   } while (nextPageToken && nextPageToken !== '');
