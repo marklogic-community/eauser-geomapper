@@ -92,7 +92,7 @@ var actual = xdmp.invokeFunction(
   function() {
     'use strict';
 
-    return update.updateFromMarketo(marketoUsers, mockGeocoder, 'EAx');
+    return update.updateFromMarketo(marketoUsers, mockGeocoder, 'EA4');
   },
   {
     'isolation' : 'different-transaction',
@@ -112,6 +112,8 @@ var actual2 = cts.doc('/users/' + marketoUsers[2].email + '.json').toObject();
 
 var assertions = [
   test.assertExists(actual0),
+  test.assertEqual(1, actual0.fullDetails.ea_version.length),
+  test.assertTrue(actual0.fullDetails.ea_version.includes('EA4')),
 
   test.assertExists(actual1),
   test.assertEqual(marketoUsers[1].phone, actual1.fullDetails.phone),
@@ -122,6 +124,10 @@ var assertions = [
   test.assertEqual(geoInfo.type, actual1.geometry.type),
   test.assertEqual(geoInfo.coordinates[0], actual1.geometry.coordinates[0]),
   test.assertEqual(geoInfo.coordinates[1], actual1.geometry.coordinates[1]),
+  test.assertEqual(3, actual1.fullDetails.ea_version.length),
+  test.assertTrue(actual1.fullDetails.ea_version.includes('EA2')),
+  test.assertTrue(actual1.fullDetails.ea_version.includes('EA3')),
+  test.assertTrue(actual1.fullDetails.ea_version.includes('EA4')),
 
   test.assertExists(actual2),
   test.assertEqual(marketoUsers[2].Main_Industry__c, actual2.fullDetails.industry),

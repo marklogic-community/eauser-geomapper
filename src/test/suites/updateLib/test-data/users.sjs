@@ -32,7 +32,7 @@ var users = [
       'marketoLastUpdated': '2016-09-30T21:03:10Z',
       'appLastUpdated': '2016-09-30T10:39:29.776174-04:00',
       'dateAdded': '2016-09-24T10:19:30.678033-07:00',
-      'ea_version': ['EA2', 'EA2'],
+      'ea_version': ['EA4'],
       'isMarkLogic': false
     },
     'geometry':{
@@ -70,7 +70,7 @@ var users = [
       'marketoLastUpdated': '2016-09-30T21:03:10Z',
       'appLastUpdated': '2016-09-30T10:39:29.776174-04:00',
       'dateAdded': '2016-09-24T10:19:30.678033-07:00',
-      'ea_version': ['EA2', 'EA2'],
+      'ea_version': ['EA2', 'EA3'],
       'isMarkLogic': false,
       'features': [
         'feature X',

@@ -131,26 +131,30 @@ function updateFromMarketo(users, geocoder, eaVersion) {
       var uri = '/users/' + email + '.json';
 
       if (util.exists(email)) {
-        // find the old dateAdded field
         var oldDoc = cts.doc(uri);
-
-        var dateAdded = oldDoc.root.fullDetails.dateAdded;
+        var oldDocObj = oldDoc.toObject();
 
         // the new document will preserve the dateAdded field.
-        json.fullDetails.dateAdded = dateAdded;
-        if (oldDoc.root.fullDetails.features) {
-          json.fullDetails.features = oldDoc.root.fullDetails.features;
+        json.fullDetails.dateAdded = oldDocObj.fullDetails.dateAdded;
+        if (oldDocObj.fullDetails.features) {
+          json.fullDetails.features = oldDocObj.fullDetails.features;
         }
 
         // Preserve the customNote, if present
-        if (oldDoc.root.fullDetails.customNotes) {
-          json.fullDetails.customNotes = oldDoc.root.fullDetails.customNotes;
+        if (oldDocObj.fullDetails.customNotes) {
+          json.fullDetails.customNotes = oldDocObj.fullDetails.customNotes;
         }
 
+        oldDocObj.fullDetails.ea_version.forEach(function(version) {
+          if (!json.fullDetails.ea_version.includes(version)) {
+            json.fullDetails.ea_version.push(version);
+          }
+        })
+
         // check if this is a new EA version for this user
-        if (!(eaVersion in oldDoc.root.fullDetails.ea_version)) {
-          json.fullDetails.ea_version.push(oldDoc.root.fullDetails.ea_version[0]);
-        }
+        // if (!(eaVersion in oldDoc.root.fullDetails.ea_version)) {
+        //   json.fullDetails.ea_version.push(oldDoc.root.fullDetails.ea_version[0]);
+        // }
 
         xdmp.nodeReplace(oldDoc, json);
         xdmp.log('updateData_REST: updated ' + email);
