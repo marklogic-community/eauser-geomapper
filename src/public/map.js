@@ -1,7 +1,5 @@
-/* global keys, L, OverlappingMarkerSpiderfier */
+/* global $, keys, L, OverlappingMarkerSpiderfier */
 /* jshint devel:true */
-
-'use strict';
 
 var style; //MapBox API
 var token; //MapBox API
@@ -45,7 +43,7 @@ function getAllGeoJson() {
         map.removeLayer(map._layers[ndx]);
       }
       else {
-         geoObjs.push(map._layers[ndx].toGeoJSON());
+        geoObjs.push(map._layers[ndx].toGeoJSON());
       }
     }
   }
@@ -571,13 +569,13 @@ function start() {
   url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
   L.tileLayer(url,
-  {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
-    id: 'Basic',
-    accessToken: token
-  }).addTo(map);
+    {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      maxZoom: 18,
+      id: 'Basic',
+      accessToken: token
+    }).addTo(map);
 
   // Initialize Overlapping Marker Spiderfier
   //   (the thing that spreads out markers that overlap)
