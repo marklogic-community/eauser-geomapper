@@ -18,151 +18,155 @@
 </head>
 
 <body>
+  <div id="app">
 
-  <div id="user" class="pull-right">
-  </div>
-
-  <div class="title">
-    <h1>TEACUP</h1>
-    <h4> <i><b>T</b>rack <b>E</b>arly <b>A</b>ccess <b>C</b>ustomers <b>U</b>se of <b>P</b>roduct</i></h4>
-    <h4>All data on MarkLogic 9 EA downloads</h4>
-  </div>
-
-  <!-- MAP -->
-  <div class="container">
-    <div class="row">
-      <div class="col-md-3">
-        <br/>
-
-        <!-- Reset button -->
-        <div class="">
-          <button type="button" id="reset" class="btn btn-default btn-block">Reset Map</button>
-        </div>
-
-        <br/><br/><br/>
-
-        <div class="facet" id="selectEA">
-          <div class="">
-            <div class="panel-group" id="accordion">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <a data-toggle="collapse" href="#collapseEA"><h4 class="panel-title">EA Version</h4></a>
-                </div>
-                <div id="collapseEA" class="panel-collapse collapse in">
-                  <ul class="list-group" id="eaUL">
-                    <li><label><input type="checkbox" class="select-all" id="select_all_i"/>Select All</label></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Select Industry -->
-        <div class="facet" id="selectIndustry">
-          <div class="">
-            <div class="panel-group" id="accordion">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <a data-toggle="collapse" href="#collapse1"><h4 class="panel-title">Industries</h4></a>
-                </div>
-                <div id="collapse1" class="panel-collapse collapse in">
-                  <ul class="list-group" id="industryUL">
-                    <li><label><input type="checkbox" class="select-all" id="select_all_i"/>Select All</label></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Select Features -->
-        <div class="facet" id="selectFeature">
-          <div class="">
-            <div class="panel-group" id="accordion">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <a data-toggle="collapse" href="#collapse2"><h4 class="panel-title">MarkLogic 9 Features</h4></a>
-                </div>
-                <div id="collapse2" class="panel-collapse collapse in">
-                  <ul class="list-group" id="featureUL">
-                    <li><label><input type="checkbox" id="select_all_f"/>Select All</label></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Select Company -->
-        <div class="facet" id="selectCompany">
-          <div class="">
-            <div class="panel-group" id="accordion">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <a data-toggle="collapse" href="#collapse3"><h4 class="panel-title">Companies</h4></a>
-                </div>
-                <div id="collapse3" class="panel-collapse collapse in">
-                  <ul class="list-group" id="companyUL">
-                    <li><label><input type="checkbox" class="select-all" id="select_all_c"/>Select All</label></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Select Region -->
-        <div class="facet" id="selectRegion">
-          <div class="">
-            <div class="panel-group" id="accordion">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <a data-toggle="collapse" href="#collapse4"><h4 class="panel-title">Regions</h4></a>
-                </div>
-                <div id="collapse4" class="panel-collapse collapse in">
-                  <ul class="list-group" id="regionUL"></ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      <!-- Close container -->
-      </div>
-
-
-      <!-- Map -->
-      <div class="col-md-9">
-        <p id="lastUpdated" align="right">Last updated - </p>
-        <p align="right">Displaying <span id="count"></span> users</p>
-        <p align="right">  </p>
-        <h3 id="mapTitle"><!--Map Display--></h3>
-        <br/>
-        <div id="mapid"></div>
-        <br/>
-        <br/>
-        <div align="center">Have opinions? <a id="feedback-link" href="javascript:{}">Give us feedback!</a></div>
-      </div>
-
-      <!-- Feedback popup windows -->
-      <div id="feedback-window" title="Feedback?">
-        <p>So... what are your thoughts on EA Tracker?</p>
-        <textarea id="feedback-subject" rows="1" cols = "50" placeholder="Subject line"></textarea>
-        <textarea id="feedback-text" rows="8" cols="50" placeholder="no trolling please :)"></textarea>
-        <br/>
-        <button onclick="send()">Send</button>
-      </div>
-
-      <div id="feedback-success" title="Successfully Sent!">
-        <p>Thank you for your feedback!</p>
-      </div>
-
-      <div id="feedback-fail" title="Failed to send :(">
-        <p>For some reason, your message failed to send... Try again?</p>
-      </div>
-
+    <current-user class="pull-right"></current-user>
+    <div id="user" class="pull-right">
     </div>
+
+    <div class="title">
+      <h1>TEACUP</h1>
+      <h4> <i><b>T</b>rack <b>E</b>arly <b>A</b>ccess <b>C</b>ustomers <b>U</b>se of <b>P</b>roduct</i></h4>
+      <h4>All data on MarkLogic 9 EA downloads</h4>
+    </div>
+
+    <!-- MAP -->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <br/>
+
+          <!-- Reset button -->
+          <div class="">
+            <button type="button" id="reset" class="btn btn-default btn-block">Reset Map</button>
+          </div>
+
+          <br/><br/><br/>
+
+          <div class="facet" id="selectEA">
+            <div class="">
+              <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <a data-toggle="collapse" href="#collapseEA"><h4 class="panel-title">EA Version</h4></a>
+                  </div>
+                  <div id="collapseEA" class="panel-collapse collapse in">
+                    <ul class="list-group" id="eaUL">
+                      <li><label><input type="checkbox" class="select-all" id="select_all_i"/>Select All</label></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Select Industry -->
+          <div class="facet" id="selectIndustry">
+            <div class="">
+              <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <a data-toggle="collapse" href="#collapse1"><h4 class="panel-title">Industries</h4></a>
+                  </div>
+                  <div id="collapse1" class="panel-collapse collapse in">
+                    <ul class="list-group" id="industryUL">
+                      <li><label><input type="checkbox" class="select-all" id="select_all_i"/>Select All</label></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Select Features -->
+          <div class="facet" id="selectFeature">
+            <div class="">
+              <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <a data-toggle="collapse" href="#collapse2"><h4 class="panel-title">MarkLogic 9 Features</h4></a>
+                  </div>
+                  <div id="collapse2" class="panel-collapse collapse in">
+                    <ul class="list-group" id="featureUL">
+                      <li><label><input type="checkbox" id="select_all_f"/>Select All</label></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Select Company -->
+          <div class="facet" id="selectCompany">
+            <div class="">
+              <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <a data-toggle="collapse" href="#collapse3"><h4 class="panel-title">Companies</h4></a>
+                  </div>
+                  <div id="collapse3" class="panel-collapse collapse in">
+                    <ul class="list-group" id="companyUL">
+                      <li><label><input type="checkbox" class="select-all" id="select_all_c"/>Select All</label></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Select Region -->
+          <div class="facet" id="selectRegion">
+            <div class="">
+              <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <a data-toggle="collapse" href="#collapse4"><h4 class="panel-title">Regions</h4></a>
+                  </div>
+                  <div id="collapse4" class="panel-collapse collapse in">
+                    <ul class="list-group" id="regionUL"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- Close container -->
+        </div>
+
+
+        <!-- Map -->
+        <div class="col-md-9">
+          <p id="lastUpdated" align="right">Last updated - </p>
+          <p align="right">Displaying <span id="count"></span> users</p>
+          <p align="right">  </p>
+          <h3 id="mapTitle"><!--Map Display--></h3>
+          <br/>
+          <div id="mapid"></div>
+          <br/>
+          <br/>
+          <div align="center">Have opinions? <a id="feedback-link" href="javascript:{}">Give us feedback!</a></div>
+        </div>
+
+        <!-- Feedback popup windows -->
+        <div id="feedback-window" title="Feedback?">
+          <p>So... what are your thoughts on EA Tracker?</p>
+          <textarea id="feedback-subject" rows="1" cols = "50" placeholder="Subject line"></textarea>
+          <textarea id="feedback-text" rows="8" cols="50" placeholder="no trolling please :)"></textarea>
+          <br/>
+          <button onclick="send()">Send</button>
+        </div>
+
+        <div id="feedback-success" title="Successfully Sent!">
+          <p>Thank you for your feedback!</p>
+        </div>
+
+        <div id="feedback-fail" title="Failed to send :(">
+          <p>For some reason, your message failed to send... Try again?</p>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
   <script src="public/leaflet/leaflet-src.js"></script>
@@ -176,6 +180,8 @@
 
   <script src="public/bootstrap-3.3.6.min.js"></script>
 
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+
   <!-- Private Keys -->
   <script type="text/javascript" src="private/browserKeys.js"></script>
 
@@ -183,6 +189,15 @@
   <script type="text/javascript" src="public/map.js"></script>
   <script type="text/javascript" src="public/feedback.js"></script>
   <script type="text/javascript" src="public/user.js"></script>
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello <i>Vue</i>!'
+      }
+    });
+  </script>
 
 </body>
 </html>
