@@ -657,8 +657,4 @@ function start() {
 
 }
 
-// Start! Initialize the map and all things awesome.
-// For debugging, check MarkLogic's 8040_ErrorLog.txt
-// and your browser's inspection tool
-start();
 
