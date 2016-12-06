@@ -212,35 +212,35 @@ function displayGeoJSON(geojsonFeatures) {
   updateCount(geojsonFeatures.documents);
 }
 
-function addMapEvents() {
-  //drawControl is the map element that allows drawing and deleting of shapes/layers
-  var drawControl = new L.Control.Draw({
-    edit: { //allows editing/deleting of drawn shapes on map
-      featureGroup: drawnShapes
-    }, //https://github.com/Leaflet/Leaflet.draw/wiki/API-Reference#lcontroldraw
-    draw: { //all shapes enabled by default
-      polyline: false, //disable polylines
-      marker: false, // disable markers
-      circle: false // disable circles, additional code required to implement, not supported by geojson
-    }
-  });
-  map.addControl(drawControl);
+// function addMapEvents() {
+//   //drawControl is the map element that allows drawing and deleting of shapes/layers
+//   var drawControl = new L.Control.Draw({
+//     edit: { //allows editing/deleting of drawn shapes on map
+//       featureGroup: drawnShapes
+//     }, //https://github.com/Leaflet/Leaflet.draw/wiki/API-Reference#lcontroldraw
+//     draw: { //all shapes enabled by default
+//       polyline: false, //disable polylines
+//       marker: false, // disable markers
+//       circle: false // disable circles, additional code required to implement, not supported by geojson
+//     }
+//   });
+//   map.addControl(drawControl);
 
-  // Events for drawControl
-  map.on('draw:created', function (e) {
-    drawnShapes.addLayer(e.layer);
-    doPost('/scripts/search.sjs', displayGeoJSON, false);
-  });
+//   // Events for drawControl
+//   map.on('draw:created', function (e) {
+//     drawnShapes.addLayer(e.layer);
+//     doPost('/scripts/search.sjs', displayGeoJSON, false);
+//   });
 
-  map.on('draw:edited', function (e) {
-    doPost('/scripts/search.sjs', displayGeoJSON, false);
-  });
+//   map.on('draw:edited', function (e) {
+//     doPost('/scripts/search.sjs', displayGeoJSON, false);
+//   });
 
-  map.on('draw:deleted', function (e) {
-    doPost('/scripts/search.sjs', displayGeoJSON, false);
-  });
+//   map.on('draw:deleted', function (e) {
+//     doPost('/scripts/search.sjs', displayGeoJSON, false);
+//   });
 
-}
+// }
 
 // Pushes all checkbox values into the corresponding selections array
 function pushAll(which, checkboxes) {

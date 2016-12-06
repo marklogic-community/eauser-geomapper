@@ -43,40 +43,9 @@
 
           <br/><br/><br/>
 
-          <div class="facet" id="selectEA">
-            <div class="">
-              <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <a data-toggle="collapse" href="#collapseEA"><h4 class="panel-title">EA Version</h4></a>
-                  </div>
-                  <div id="collapseEA" class="panel-collapse collapse in">
-                    <ul class="list-group" id="eaUL">
-                      <li><label><input type="checkbox" class="select-all" id="select_all_i"/>Select All</label></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <facet title="EA Version" ref="eaversion"></facet>
 
-          <!-- Select Industry -->
-          <div class="facet" id="selectIndustry">
-            <div class="">
-              <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <a data-toggle="collapse" href="#collapse1"><h4 class="panel-title">Industries</h4></a>
-                  </div>
-                  <div id="collapse1" class="panel-collapse collapse in">
-                    <ul class="list-group" id="industryUL">
-                      <li><label><input type="checkbox" class="select-all" id="select_all_i"/>Select All</label></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <facet title="Industries" ref="industry"></facet>
 
           <!-- Select Features -->
           <div class="facet" id="selectFeature">
@@ -96,23 +65,7 @@
             </div>
           </div>
 
-          <!-- Select Company -->
-          <div class="facet" id="selectCompany">
-            <div class="">
-              <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <a data-toggle="collapse" href="#collapse3"><h4 class="panel-title">Companies</h4></a>
-                  </div>
-                  <div id="collapse3" class="panel-collapse collapse in">
-                    <ul class="list-group" id="companyUL">
-                      <li><label><input type="checkbox" class="select-all" id="select_all_c"/>Select All</label></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <facet title="Companies" ref="company"></facet>
 
           <!-- Select Region -->
           <div class="facet" id="selectRegion">
@@ -141,7 +94,8 @@
           <p align="right">  </p>
           <h3 id="mapTitle"><!--Map Display--></h3>
           <br/>
-          <div id="mapid"></div>
+          <leaflet ref="map"></leaflet>
+          <!--<div id="mapid"></div>-->
           <br/>
           <br/>
           <div align="center">Have opinions? <a id="feedback-link" href="javascript:{}">Give us feedback!</a></div>
@@ -186,7 +140,7 @@
   <script type="text/javascript" src="private/browserKeys.js"></script>
 
   <!-- Displaying the map (in JS) -->
-  <script type="text/javascript" src="public/map.js"></script>
+  <!--<script type="text/javascript" src="public/map.js"></script>-->
   <script type="text/javascript" src="public/feedback.js"></script>
   <script type="text/javascript" src="public/dist/build.js"></script>
 
@@ -199,7 +153,7 @@
     // Start! Initialize the map and all things awesome.
     // For debugging, check MarkLogic's 8040_ErrorLog.txt
     // and your browser's inspection tool
-    start();
+    // start();
   </script>
 
 </body>
