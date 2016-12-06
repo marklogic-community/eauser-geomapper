@@ -43,9 +43,9 @@
 
           <br/><br/><br/>
 
-          <facet title="EA Version" constraint="eaVersions" ref="eaversion" v-on:selection="selectFacet"></facet>
+          <facet title="EA Version" v-bind:content="facets.EAversions" constraint="eaVersions" v-on:selection="selectFacet"></facet>
 
-          <facet title="Industries" constraint="industries" ref="industry" v-on:selection="selectFacet"></facet>
+          <facet title="Industries" v-bind:content="facets.Industry" constraint="industries" v-on:selection="selectFacet"></facet>
 
           <!-- Select Features -->
           <div class="facet" id="selectFeature">
@@ -65,7 +65,7 @@
             </div>
           </div>
 
-          <facet title="Companies" constraint="companies" ref="company" v-on:selection="selectFacet"></facet>
+          <facet title="Companies" v-bind:content="facets.Company" constraint="companies" v-on:selection="selectFacet"></facet>
 
           <!-- Select Region -->
           <div class="facet" id="selectRegion">

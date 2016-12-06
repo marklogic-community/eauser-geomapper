@@ -18,6 +18,11 @@ new Vue({
       eaVersions: [],
       date1: '',
       date2: ''
+    },
+    facets: {
+      EAversions: {},
+      Industry: {},
+      Company: {}
     }
   },
   mounted: function() {
@@ -55,9 +60,9 @@ new Vue({
         contentType: 'application/json',
         dataType: 'json',
         success: function(response) {
-          vm.$refs.eaversion.displayData(response.facets.EAversions);
-          vm.$refs.industry.displayData(response.facets.Industry);
-          vm.$refs.company.displayData(response.facets.Company);
+          vm.facets.EAversions = response.facets.EAversions;
+          vm.facets.Industry = response.facets.Industry;
+          vm.facets.Company = response.facets.Company;
         },
         error: function() {
 

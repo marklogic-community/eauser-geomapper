@@ -9,7 +9,7 @@
           <div v-bind:id="'facet-' + id" class="panel-collapse collapse in">
             <ul class="list-group">
               <li><label><input type="checkbox" class="select-all" id="select_all"/>Select All</label></li>
-              <li v-for="(count, value) in values" class="list-group-item">
+              <li v-for="(count, value) in content" class="list-group-item">
                 <label>
                   <input type="checkbox" class="checker" v-bind:value="value" v-on:change="updateSelection"/>
                   <span>{{ value }} ({{ count }})</span>
@@ -26,7 +26,7 @@
 
 <script>
   export default {
-    props: ['title', 'constraint'],
+    props: ['title', 'content', 'constraint'],
     data: function() {
       return {
         id: -1,
@@ -35,9 +35,6 @@
       }
     },
     methods: {
-      displayData(data) {
-        this.values = data;
-      },
       updateSelection(event) {
         var selection = event.target.value;
         if (this.selected[selection]) {
