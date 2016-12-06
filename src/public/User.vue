@@ -28,7 +28,6 @@
     },
     created: function() {
       'use strict';
-      console.log('created');
       var vm = this;
 
       $.ajax({
