@@ -22,18 +22,20 @@ new Vue({
   },
   mounted: function() {
     'use strict';
-
-    this.launch();
+    this.doSearch(true);
   },
   methods: {
-    launch: function() {
+    // method for Facet components to call
+    selectFacet: function(constraint, selections) {
       'use strict';
+      this.selections[constraint] = Object.keys(selections);
+      this.doSearch(false);
+    },
+    // execute a search and update the data
+    doSearch: function(firstLoad) {
+      'use strict';
+      var vm = this;
       var map = this.$refs.map;
-      var facets = {
-        ea: this.$refs.eaversion,
-        industry: this.$refs.industry,
-        company: this.$refs.company
-      };
       var payload = {
         selections: this.selections,
         mapWindow: [
@@ -42,7 +44,7 @@ new Vue({
           map.getNorthBound(),
           map.getEastBound()
         ],
-        firstLoad: true,
+        firstLoad: firstLoad,
         searchRegions: map.getAllGeoJson()
       };
 
@@ -53,9 +55,9 @@ new Vue({
         contentType: 'application/json',
         dataType: 'json',
         success: function(response) {
-          facets.ea.displayData(response.facets.EAversions);
-          facets.industry.displayData(response.facets.Industry);
-          facets.company.displayData(response.facets.Company);
+          vm.$refs.eaversion.displayData(response.facets.EAversions);
+          vm.$refs.industry.displayData(response.facets.Industry);
+          vm.$refs.company.displayData(response.facets.Company);
         },
         error: function() {
 

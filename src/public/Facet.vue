@@ -11,7 +11,7 @@
               <li><label><input type="checkbox" class="select-all" id="select_all"/>Select All</label></li>
               <li v-for="(count, value) in values" class="list-group-item">
                 <label>
-                  <input type="checkbox" class="checker" v-bind:value="value"/>
+                  <input type="checkbox" class="checker" v-bind:value="value" v-on:change="updateSelection"/>
                   <span>{{ value }} ({{ count }})</span>
                 </label>
               </li>
@@ -26,17 +26,26 @@
 
 <script>
   export default {
-    props: ['title'],
+    props: ['title', 'constraint'],
     data: function() {
       return {
         id: -1,
-        values: {}
+        values: {},
+        selected: {}
       }
     },
     methods: {
       displayData(data) {
-        console.log('facet displayData');
         this.values = data;
+      },
+      updateSelection(event) {
+        var selection = event.target.value;
+        if (this.selected[selection]) {
+          delete this.selected[selection];
+        } else {
+          this.selected[selection] = true;
+        }
+        this.$emit('selection', this.constraint, this.selected);
       }
     },
     created: function() {
