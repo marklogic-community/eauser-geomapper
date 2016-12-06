@@ -30,7 +30,6 @@
     data: function() {
       return {
         id: -1,
-        values: {},
         selected: {}
       }
     },
