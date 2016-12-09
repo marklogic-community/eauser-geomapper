@@ -44,6 +44,12 @@ new Vue({
       'use strict';
       this.$refs.map.setSelectedFeature(regionName, selected);
     },
+    drawOnMap: function() {
+      'use strict';
+      // the user has drawn, erased, or edited a shape on the map. Update the
+      // current search.
+      this.doSearch(false);
+    },
     // execute a search and update the data
     doSearch: function(firstLoad) {
       'use strict';

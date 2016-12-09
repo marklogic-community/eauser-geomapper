@@ -10,6 +10,7 @@
         map: {},
         maxBounds: {},
         regionPolygons: {},
+        drawnShapes: {},
         markers: {},
         redMarker: L.icon({
           iconUrl: 'images/red-marker.png',
@@ -23,12 +24,13 @@
     },
     mounted: function() {
       'use strict';
+      var vm = this;
 
       function addMapEvents() {
         //drawControl is the map element that allows drawing and deleting of shapes/layers
         var drawControl = new L.Control.Draw({
           edit: { //allows editing/deleting of drawn shapes on map
-            featureGroup: drawnShapes
+            featureGroup: vm.drawnShapes
           }, //https://github.com/Leaflet/Leaflet.draw/wiki/API-Reference#lcontroldraw
           draw: { //all shapes enabled by default
             polyline: false, //disable polylines
@@ -36,20 +38,23 @@
             circle: false // disable circles, additional code required to implement, not supported by geojson
           }
         });
-        this.map.addControl(drawControl);
+        vm.map.addControl(drawControl);
 
         // Events for drawControl
-        this.map.on('draw:created', function (e) {
-          drawnShapes.addLayer(e.layer);
-          doPost('/scripts/search.sjs', displayGeoJSON, false);
+        vm.map.on('draw:created', function (e) {
+          console.log('draw:created');
+          vm.drawnShapes.addLayer(e.layer);
+          vm.$emit('draw');
         });
 
-        this.map.on('draw:edited', function (e) {
-          doPost('/scripts/search.sjs', displayGeoJSON, false);
+        vm.map.on('draw:edited', function (e) {
+          console.log('draw:edited');
+          vm.$emit('draw');
         });
 
-        this.map.on('draw:deleted', function (e) {
-          doPost('/scripts/search.sjs', displayGeoJSON, false);
+        vm.map.on('draw:deleted', function (e) {
+          console.log('draw:deleted');
+          vm.$emit('draw');
         });
 
       }
@@ -58,19 +63,18 @@
       var token = keys.mapboxToken;
 
       // Bounds of entire map/world
-      this.maxBounds = L.latLngBounds(
+      vm.maxBounds = L.latLngBounds(
         L.latLng(-90, -180),
         L.latLng(90, 180)
       );
 
       // Leaflet's map initialization method
       // 'mapid' is the div's name where the map will be found on the web page.
-      console.log('building map');
-      this.map = L.map('mapid', {
+      vm.map = L.map('mapid', {
         minZoom: 2,
-        maxBounds: this.maxBounds,
+        maxBounds: vm.maxBounds,
       }).setView([0, 0], 2);
-      console.log('map built');
+
       var url = 'https://api.mapbox.com/styles/v1/liangdanica/' + style + '/tiles/256/{z}/{x}/{y}?access_token=' + token;
 
       L.tileLayer(url,
@@ -80,7 +84,7 @@
           maxZoom: 18,
           id: 'Basic',
           accessToken: token
-        }).addTo(this.map);
+        }).addTo(vm.map);
 
       // Initialize Overlapping Marker Spiderfier
       //   (the thing that spreads out markers that overlap)
@@ -91,12 +95,12 @@
 
       // Initialize the FeatureGroup to store editable layers (shapes drawn by user)
       // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
-      this.markers = new L.FeatureGroup();
-      var drawnShapes = new L.FeatureGroup();
+      vm.markers = new L.FeatureGroup();
+      vm.drawnShapes = new L.FeatureGroup();
 
       // Add the layers to the map so they are displayed
-      this.map.addLayer(this.markers);
-      this.map.addLayer(drawnShapes);
+      vm.map.addLayer(vm.markers);
+      vm.map.addLayer(vm.drawnShapes);
 
       // Reset Button removes all current facets (if any) and reloads the map.
       // Reloads the map with everything UNchecked.
@@ -119,24 +123,21 @@
 
         // Clear regions
         for (var regionName in regionKeys) {
-          this.map.removeLayer(regionKeys[regionName]);
+          vm.map.removeLayer(regionKeys[regionName]);
           regionKeys[regionName] = 'undefined';
           selections.regions[regionName] = undefined;
           delete regionKeys[regionName];
         }
 
-        this.markers.clearLayers();
-        drawnShapes.clearLayers();
+        vm.markers.clearLayers();
+        vm.drawnShapes.clearLayers();
 
         // doPost('/scripts/search.sjs', displayGeoJSON, false);
-        this.map.setView([0, 0], 2);
+        vm.map.setView([0, 0], 2);
       }
       $('#reset').click(resetClickHandler);
 
-      // Load all MarkLogic facet values
-      // doPost('/scripts/search.sjs', drawPage, true);
-
-      // addMapEvents();
+      addMapEvents();
 
     },
     methods: {
