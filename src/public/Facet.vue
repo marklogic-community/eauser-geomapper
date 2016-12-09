@@ -11,7 +11,7 @@
               <li><label><input type="checkbox" class="select-all" id="select_all"/>Select All</label></li>
               <li v-for="(count, value) in content" class="list-group-item">
                 <label>
-                  <input type="checkbox" class="checker" v-bind:value="value" v-on:change="updateSelection"/>
+                  <input type="checkbox" class="checker" v-bind:value="value" v-bind:checked="selected[value]" v-on:change="updateSelection"/>
                   <span>{{ value }} ({{ count }})</span>
                 </label>
               </li>
