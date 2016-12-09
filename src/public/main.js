@@ -62,6 +62,7 @@ new Vue({
     selectRegion: function(regionName, selected) {
       'use strict';
       this.$refs.map.setSelectedFeature(regionName, selected);
+      this.doSearch(false);
     },
     drawOnMap: function() {
       'use strict';
@@ -127,6 +128,11 @@ new Vue({
         }
       });
 
+    },
+    reset: function() {
+      'use strict';
+      this.$refs.map.resetMap();
+      this.doSearch(false);
     }
   }
 });

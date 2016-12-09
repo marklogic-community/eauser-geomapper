@@ -102,43 +102,7 @@
       vm.map.addLayer(vm.markers);
       vm.map.addLayer(vm.drawnShapes);
 
-      // Reset Button removes all current facets (if any) and reloads the map.
-      // Reloads the map with everything UNchecked.
-      function resetClickHandler(e) {
-        var $allSelectBoxes = $('#select_all_f, .select-all');
-        var $allBoxes = $('#featureUL .fChecker , .checker');
-        var $regionBoxes = $('#regionUL .rChecker');
-        var allOrNone = 'none';
-
-        $allSelectBoxes.prop('checked', false);
-        $allBoxes.prop('checked', false);
-        // Choosing to not show drawn regions on map on reset because:
-        // 1. Users may not be found in any of the regions
-        // 2. Map looks cleaner and simpler without the drawn regions
-        $regionBoxes.prop('checked', false);
-
-        for (var facet of ['Feature', 'Industry', 'Company', 'EAversions']) {
-          updateSelections(facet, allOrNone, false);
-        }
-
-        // Clear regions
-        for (var regionName in regionKeys) {
-          vm.map.removeLayer(regionKeys[regionName]);
-          regionKeys[regionName] = 'undefined';
-          selections.regions[regionName] = undefined;
-          delete regionKeys[regionName];
-        }
-
-        vm.markers.clearLayers();
-        vm.drawnShapes.clearLayers();
-
-        // doPost('/scripts/search.sjs', displayGeoJSON, false);
-        vm.map.setView([0, 0], 2);
-      }
-      $('#reset').click(resetClickHandler);
-
       addMapEvents();
-
     },
     methods: {
       getNorthBound() {
@@ -185,6 +149,18 @@
         };
 
         return obj;
+      },
+      resetMap() {
+        // Clear regions
+        for (var regionName in this.regionPolygons) {
+          this.map.removeLayer(this.regionPolygons[regionName]);
+          delete this.regionPolygons[regionName];
+        }
+
+        this.markers.clearLayers();
+        this.drawnShapes.clearLayers();
+
+        this.map.setView([0, 0], 2);
       },
       setSelectedFeature(regionName, selected) {
 

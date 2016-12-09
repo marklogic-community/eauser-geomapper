@@ -38,7 +38,7 @@
 
           <!-- Reset button -->
           <div class="">
-            <button type="button" id="reset" class="btn btn-default btn-block">Reset Map</button>
+            <button type="button" id="reset" class="btn btn-default btn-block" v-on:click="reset">Reset Map</button>
           </div>
 
           <br/><br/><br/>
@@ -76,7 +76,7 @@
         <!-- Map -->
         <div class="col-md-9">
           <p id="lastUpdated" align="right">Last updated - {{ lastUpdated }}</p>
-          <p align="right">Displaying <span id="count"></span> users</p>
+          <p align="right">Displaying {{ counts.current }} of {{ counts.total }} users</p>
           <p align="right">  </p>
           <h3 id="mapTitle"><!--Map Display--></h3>
           <br/>
