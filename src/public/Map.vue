@@ -4,12 +4,21 @@
 
 <script>
   export default {
-    props: ['features'],
+    props: ['features', 'documents'],
     data: function() {
       return {
         map: {},
         maxBounds: {},
-        regionPolygons: {}
+        regionPolygons: {},
+        markers: {},
+        redMarker: L.icon({
+          iconUrl: 'images/red-marker.png',
+          shadowURL: 'images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        })
       };
     },
     mounted: function() {
@@ -82,11 +91,11 @@
 
       // Initialize the FeatureGroup to store editable layers (shapes drawn by user)
       // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
-      var markers = new L.FeatureGroup();
+      this.markers = new L.FeatureGroup();
       var drawnShapes = new L.FeatureGroup();
 
       // Add the layers to the map so they are displayed
-      this.map.addLayer(markers);
+      this.map.addLayer(this.markers);
       this.map.addLayer(drawnShapes);
 
       // Reset Button removes all current facets (if any) and reloads the map.
@@ -116,7 +125,7 @@
           delete regionKeys[regionName];
         }
 
-        markers.clearLayers();
+        this.markers.clearLayers();
         drawnShapes.clearLayers();
 
         // doPost('/scripts/search.sjs', displayGeoJSON, false);
@@ -205,6 +214,38 @@
         } else {
           this.map.removeLayer(this.regionPolygons[regionName]);
         }
+      }
+    },
+    watch: {
+      documents: function(newdocs) {
+        var vm = this;
+
+        vm.markers.clearLayers();
+        // oms.clearMarkers();
+
+        var geojsonLayer = L.geoJson(vm.documents, {
+          pointToLayer: function (feature, latlng) {
+            var marker = null;
+            var markerOptions = {
+              'title': feature.fullDetails.firstname + ' ' + feature.fullDetails.lastname
+            };
+            if (feature.fullDetails.isMarkLogic) {
+              markerOptions.icon = vm.redMarker;
+            }
+
+            marker = new L.marker(latlng, markerOptions);
+
+            // oms.addMarker(marker);
+            return marker;
+          }
+          // onEachFeature: function (feature, layer) {
+          //   layer.bindPopup(formatPopup(feature.fullDetails));
+          // }
+        });
+
+        vm.markers.addLayer(geojsonLayer);
+        // updateCount(documents);
+
       }
     }
   }

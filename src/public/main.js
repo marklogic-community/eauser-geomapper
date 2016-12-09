@@ -25,7 +25,8 @@ new Vue({
       Industry: {},
       Company: {}
     },
-    featureCollection: {}
+    featureCollection: {},
+    documents: []
   },
   mounted: function() {
     'use strict';
@@ -70,6 +71,7 @@ new Vue({
           vm.facets.EAversions = response.facets.EAversions;
           vm.facets.Industry = response.facets.Industry;
           vm.facets.Company = response.facets.Company;
+          vm.documents = response.documents;
         },
         error: function() {
 
