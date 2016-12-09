@@ -27,7 +27,11 @@ new Vue({
     },
     featureCollection: {},
     documents: [],
-    lastUpdated: ''
+    lastUpdated: '',
+    counts: {
+      total: 0,
+      current: 0
+    }
   },
   mounted: function() {
     'use strict';
@@ -93,6 +97,10 @@ new Vue({
           vm.facets.Industry = response.facets.Industry;
           vm.facets.Company = response.facets.Company;
           vm.documents = response.documents;
+          vm.counts.current = response.documents.length;
+          if (firstLoad) {
+            vm.counts.total = response.documents.length;
+          }
         },
         error: function() {
 
