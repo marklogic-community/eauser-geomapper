@@ -4,11 +4,12 @@
 
 <script>
   export default {
-    props: [],
+    props: ['features'],
     data: function() {
       return {
         map: {},
-        maxBounds: {}
+        maxBounds: {},
+        regionPolygons: {}
       };
     },
     mounted: function() {
@@ -174,8 +175,37 @@
         };
 
         return obj;
-      }
+      },
+      setSelectedFeature(regionName, selected) {
 
+        if (selected) {
+          // Cyclic value error occurs from JSON.parse when using selections.regions[value]
+          // to store the result from L.polygon(...);
+          // Need to store result of L.polygon so the value can
+          // be used to delete off map
+          function featureByName(feature) {
+            return feature.properties.name === regionName;
+          }
+          var regionFeature = this.features.filter(featureByName);
+          if (regionFeature.length !== 1) {
+            console.log('error finding feature by name');
+            return;
+          } else {
+            var coords = regionFeature[0].geometry.coordinates;
+            var type = regionFeature[0].geometry.type;
+            if (type === 'MultiPolygon') {
+              this.regionPolygons[regionName] = L.multiPolygon(coords);
+            }
+            else if (type === 'Polygon') {
+              this.regionPolygons[regionName] = L.polygon(coords);
+            }
+
+            this.map.addLayer(this.regionPolygons[regionName]);
+          }
+        } else {
+          this.map.removeLayer(this.regionPolygons[regionName]);
+        }
+      }
     }
   }
 </script>

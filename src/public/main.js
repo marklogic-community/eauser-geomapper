@@ -5,6 +5,7 @@ import Vue from 'vue';
 
 Vue.component('current-user', require('./User.vue'));
 Vue.component('facet', require('./Facet.vue'));
+Vue.component('region-facet', require('./RegionFacet.vue'));
 Vue.component('leaflet', require('./Map.vue'));
 
 new Vue({
@@ -23,11 +24,13 @@ new Vue({
       EAversions: {},
       Industry: {},
       Company: {}
-    }
+    },
+    featureCollection: {}
   },
   mounted: function() {
     'use strict';
     this.doSearch(true);
+    this.getShapes();
   },
   methods: {
     // method for Facet components to call
@@ -35,6 +38,10 @@ new Vue({
       'use strict';
       this.selections[constraint] = Object.keys(selections);
       this.doSearch(false);
+    },
+    selectRegion: function(regionName, selected) {
+      'use strict';
+      this.$refs.map.setSelectedFeature(regionName, selected);
     },
     // execute a search and update the data
     doSearch: function(firstLoad) {
@@ -68,6 +75,27 @@ new Vue({
 
         }
       });
+    },
+    // Retrieve the geoJSON shapes used for the regions
+    getShapes: function() {
+      'use strict';
+      var vm = this;
+
+      $.ajax({
+        type: 'POST',
+        url: '/scripts/formatShapes.sjs',
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function(response) {
+          //displayRegions is in map.js
+          // displayRegions(response);
+          vm.featureCollection = response;
+        },
+        error: function() {
+          // console.log('formatShapes.sjs failed');
+        }
+      });
+
     }
   }
 });

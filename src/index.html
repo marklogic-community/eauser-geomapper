@@ -67,21 +67,7 @@
 
           <facet title="Companies" v-bind:content="facets.Company" constraint="companies" v-on:selection="selectFacet"></facet>
 
-          <!-- Select Region -->
-          <div class="facet" id="selectRegion">
-            <div class="">
-              <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <a data-toggle="collapse" href="#collapse4"><h4 class="panel-title">Regions</h4></a>
-                  </div>
-                  <div id="collapse4" class="panel-collapse collapse in">
-                    <ul class="list-group" id="regionUL"></ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <region-facet v-bind:content="featureCollection" v-on:selection="selectRegion"></region-facet>
 
         <!-- Close container -->
         </div>
@@ -94,7 +80,7 @@
           <p align="right">  </p>
           <h3 id="mapTitle"><!--Map Display--></h3>
           <br/>
-          <leaflet ref="map"></leaflet>
+          <leaflet ref="map" v-bind:features="featureCollection.features"></leaflet>
           <!--<div id="mapid"></div>-->
           <br/>
           <br/>
