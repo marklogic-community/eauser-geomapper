@@ -80,7 +80,11 @@
           <p align="right">  </p>
           <h3 id="mapTitle"><!--Map Display--></h3>
           <br/>
-          <leaflet ref="map" v-bind:features="featureCollection.features" v-bind:documents="documents"></leaflet>
+          <leaflet ref="map"
+            v-bind:features="featureCollection.features"
+            v-bind:documents="documents"
+            v-on:draw="drawOnMap">
+          </leaflet>
           <!--<div id="mapid"></div>-->
           <br/>
           <br/>
