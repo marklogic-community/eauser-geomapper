@@ -48,6 +48,15 @@
           this.selected[selection] = true;
         }
         this.$emit('selection', this.constraint, this.selected);
+      },
+      reset() {
+        this.allSelected = false;
+        for (var sel in this.selected) {
+          delete this.selected[sel];
+        }
+      },
+      getSelections() {
+        return Object.keys(this.selected);
       }
     },
     created: function() {

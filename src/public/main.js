@@ -11,15 +11,6 @@ Vue.component('leaflet', require('./Map.vue'));
 new Vue({
   el: '#app',
   data: {
-    selections: {
-      features: [],
-      industries: [],
-      companies: [],
-      regions: {},
-      eaVersions: [],
-      date1: '',
-      date2: ''
-    },
     facets: {
       EAversions: {},
       Industry: {},
@@ -53,10 +44,10 @@ new Vue({
     });
   },
   methods: {
-    // method for Facet components to call
+    // respond to Facets emitting a selection event
     selectFacet: function(constraint, selections) {
       'use strict';
-      this.selections[constraint] = Object.keys(selections);
+
       this.doSearch(false);
     },
     selectRegion: function(regionName, selected) {
@@ -73,10 +64,18 @@ new Vue({
     // execute a search and update the data
     doSearch: function(firstLoad) {
       'use strict';
+
+      var selections = {
+        features: [],
+        eaVersions: this.$refs.eaVersions.getSelections(),
+        industries: this.$refs.industries.getSelections(),
+        companies: this.$refs.companies.getSelections()
+      };
+
       var vm = this;
       var map = this.$refs.map;
       var payload = {
-        selections: this.selections,
+        selections: selections,
         mapWindow: [
           map.getSouthBound(),
           map.getWestBound(),
@@ -132,6 +131,9 @@ new Vue({
     reset: function() {
       'use strict';
       this.$refs.map.resetMap();
+      this.$refs.eaVersions.reset();
+      this.$refs.industries.reset();
+      this.$refs.companies.reset();
       this.doSearch(false);
     }
   }
