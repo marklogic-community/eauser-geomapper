@@ -26,12 +26,27 @@ new Vue({
       Company: {}
     },
     featureCollection: {},
-    documents: []
+    documents: [],
+    lastUpdated: ''
   },
   mounted: function() {
     'use strict';
-    this.doSearch(true);
-    this.getShapes();
+    var vm = this;
+    vm.doSearch(true);
+    vm.getShapes();
+
+    //add 'last updated @' message
+    $.ajax({
+      type: 'GET',
+      url: '/scripts/lastUpdate.sjs',
+      dataType: 'json',
+      success: function(response) {
+        vm.lastUpdated = response.lastUpdated;
+      },
+      error: function() {
+        console.log('failed to get lastUpdated date');
+      }
+    });
   },
   methods: {
     // method for Facet components to call
