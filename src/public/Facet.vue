@@ -8,10 +8,15 @@
           </div>
           <div v-bind:id="'facet-' + id" class="panel-collapse collapse in">
             <ul class="list-group">
-              <li><label><input type="checkbox" class="select-all" id="select_all"/>Select All</label></li>
+              <li>
+                <label>
+                  <input type="checkbox" class="select-all" id="select_all" v-model="allSelected"/>
+                  Select <span v-show="allSelected">None</span><span v-show="!allSelected">All</span>
+                </label>
+              </li>
               <li v-for="(count, value) in content" class="list-group-item">
                 <label>
-                  <input type="checkbox" class="checker" v-bind:value="value" v-bind:checked="selected[value]" v-on:change="updateSelection"/>
+                  <input type="checkbox" class="checker" v-bind:value="value" v-bind:checked="selected[value] || allSelected" v-on:change="updateSelection"/>
                   <span>{{ value }} ({{ count }})</span>
                 </label>
               </li>
@@ -30,7 +35,8 @@
     data: function() {
       return {
         id: -1,
-        selected: {}
+        selected: {},
+        allSelected: false
       }
     },
     methods: {
