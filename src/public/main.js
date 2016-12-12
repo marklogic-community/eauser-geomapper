@@ -134,6 +134,7 @@ new Vue({
       this.$refs.eaVersions.reset();
       this.$refs.industries.reset();
       this.$refs.companies.reset();
+      this.$refs.region.reset();
       this.doSearch(false);
     }
   }

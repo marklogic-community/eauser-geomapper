@@ -67,7 +67,7 @@
 
           <facet ref="companies" title="Companies" v-bind:content="facets.Company" constraint="companies" v-on:selection="selectFacet"></facet>
 
-          <region-facet v-bind:content="featureCollection" v-on:selection="selectRegion"></region-facet>
+          <region-facet ref="region" v-bind:content="featureCollection" v-on:selection="selectRegion"></region-facet>
 
         <!-- Close container -->
         </div>

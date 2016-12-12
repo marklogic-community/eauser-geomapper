@@ -10,8 +10,11 @@
             <ul class="list-group">
               <li v-for="feature in content.features" class="list-group-item">
                 <label>
-                  <input type="checkbox" class="rChecker" v-on:click="selectRegion"
-                    v-bind:value="feature.properties.name"/>
+                  <input type="checkbox" class="rChecker"
+                    v-on:click="selectRegion"
+                    v-bind:value="feature.properties.name"
+                    v-model="selected"
+                    />
                   <span>{{feature.properties.name}}</span>
                 </label>
               </li>
@@ -29,12 +32,21 @@
     data: function() {
       return {
         id: -1,
-        selected: {}
+        selected: []
       }
     },
     methods: {
       selectRegion: function(event) {
+        if (event.target.checked) {
+          this.selected.push(event.target.value);
+        } else {
+          var index = this.selected.indexOf(event.target.value);
+          this.selected.splice(index, 1);
+        }
         this.$emit('selection', event.target.value, event.target.checked);
+      },
+      reset: function() {
+        this.selected = [];
       }
     },
     created: function() {
