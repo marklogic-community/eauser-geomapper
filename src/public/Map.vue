@@ -191,6 +191,72 @@
         } else {
           this.map.removeLayer(this.regionPolygons[regionName]);
         }
+      },
+      // firstName, lastname, email, city, state, industry, company
+      formatPopup(properties) {
+
+        var str = '';
+        if (!properties) {
+          return str;
+        }
+
+        // EA User's name
+        if (properties.firstname ) {
+          str += '<b>EA User Name:</b> ' + properties.firstname;
+          if (properties.lastname) {
+            str += ' ' + properties.lastname;
+          }
+          str += '<br>';
+        }
+        // EA User's company
+        if (properties.company) {
+          str += '<b>Company:</b> ' + properties.company + '<br>';
+        }
+        // EA User's postal code
+        if (properties.postalCode) {
+          str += '<b>Postal Code:</b> ' + properties.postalCode + '<br>';
+        }
+        //EA User's industry
+        if (properties.industry) {
+          str += '<b>Industry:</b> ' + properties.industry + '<br>';
+        }
+
+        // Refer below for lists in HTML help
+        // http://www.htmlgoodies.com/tutorials/getting_started/article.php/3479461
+        // Features of ML9 the EA user listed they use when signing up for EA
+        if (properties.features && properties.features.length > 0) {
+          // Features used in ML9
+          // Loaded from /data/config/features/
+          str += '<b>Features:</b><UL>';
+          for (var ndx in properties.features) {
+            str += '<LI>' + properties.features[ndx];
+          }
+          str += '</UL>';
+        }
+        else if (!properties.features || properties.features.length === 0) {
+          str += '<b>Features:</b> None specified<br>';
+        }
+        if (properties.customNotes !== undefined && properties.customNotes !== '') {
+          var notes = properties.customNotes;
+          if (notes.length > 100) {
+            // Just give a preview of all notes
+            str += '<b>Notes:</b> ' + notes.substring(0,100) + ' ...';
+          }
+          else {
+            //display all notes when < 100 characters
+            str += '<b>Notes: </b>' + notes;
+          }
+        }
+
+        // str += '<button id=\'popup-button\' ng-click=\'showDetail=!showDetail\' ng-init=\'showDetail=false\'>Show Full Details</button>';
+        var email = properties.email;
+        str +=
+          '<form id="popup-button" action="details.html" method="GET" target="_blank">' +
+            '<input type="hidden" name="email" value="' + email + '"/> ' +
+            '<input type="submit" value="Show Full Details"/>' +
+          '</form>';
+
+        return str;
       }
     },
     watch: {
@@ -214,10 +280,12 @@
 
             // oms.addMarker(marker);
             return marker;
+          },
+          onEachFeature: function (feature, layer) {
+            layer.bindPopup(
+              vm.formatPopup(feature.fullDetails)
+            );
           }
-          // onEachFeature: function (feature, layer) {
-          //   layer.bindPopup(formatPopup(feature.fullDetails));
-          // }
         });
 
         vm.markers.addLayer(geojsonLayer);
