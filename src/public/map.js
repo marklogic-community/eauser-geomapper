@@ -511,25 +511,6 @@ function displayRegions(response) {
   }
 }
 
-// Retrieve the geoJSON shapes used for the regions
-function getShapes() {
-  'use strict';
-
-  $.ajax({
-    type: 'POST',
-    url: '/scripts/formatShapes.sjs',
-    contentType: 'application/json',
-    dataType: 'json',
-    success: function(response) {
-      //displayRegions is in map.js
-      displayRegions(response);
-    },
-    error: function() {
-      console.log('formatShapes.sjs failed');
-    }
-  });
-
-}
 
 // Draw markers on map
 function drawPage(response) {
@@ -644,16 +625,6 @@ function start() {
 
   addMapEvents();
 
-  //add 'last updated @' message
-  $.ajax({
-    type: 'GET',
-    url: '/scripts/lastUpdate.sjs',
-    dataType: 'json',
-    success: function(response) {
-      $('#lastUpdated').append(response.lastUpdated);
-    },
-    error: fail
-  });
 
 }
 
