@@ -47,23 +47,11 @@
 
           <facet ref="industries" title="Industries" v-bind:content="facets.Industry" constraint="industries" v-on:selection="selectFacet"></facet>
 
-          <!-- Select Features -->
-          <div class="facet" id="selectFeature">
-            <div class="">
-              <div class="panel-group" id="accordion">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <a data-toggle="collapse" href="#collapse2"><h4 class="panel-title">MarkLogic 9 Features</h4></a>
-                  </div>
-                  <div id="collapse2" class="panel-collapse collapse in">
-                    <ul class="list-group" id="featureUL">
-                      <li><label><input type="checkbox" id="select_all_f"/>Select All</label></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <group-facet ref="features" title="MarkLogic 9 Features"
+            v-bind:outline="facets.GroupedFeatures"
+            v-bind:content="facets.Features"
+            constraint="features"
+            v-on:selection="selectFacet"></group-facet>
 
           <facet ref="companies" title="Companies" v-bind:content="facets.Company" constraint="companies" v-on:selection="selectFacet"></facet>
 

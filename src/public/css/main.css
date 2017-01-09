@@ -40,7 +40,7 @@ li.list-group-item {
   z-index: 1;
 }
 
-#displayFeaturesList {
+.displayFeaturesList {
   padding-left: 0px;
   padding-bottom: 15px;
 }

@@ -6,6 +6,7 @@ import Vue from 'vue';
 Vue.component('current-user', require('./User.vue'));
 Vue.component('facet', require('./Facet.vue'));
 Vue.component('region-facet', require('./RegionFacet.vue'));
+Vue.component('group-facet', require('./GroupFacet.vue'));
 Vue.component('leaflet', require('./Map.vue'));
 
 new Vue({
@@ -14,7 +15,9 @@ new Vue({
     facets: {
       EAversions: {},
       Industry: {},
-      Company: {}
+      Company: {},
+      Features: {},
+      GroupedFeatures: {}
     },
     featureCollection: {},
     documents: [],
@@ -66,10 +69,10 @@ new Vue({
       'use strict';
 
       var selections = {
-        features: [],
+        features: this.$refs.features.getSelections(),
         eaVersions: this.$refs.eaVersions.getSelections(),
         industries: this.$refs.industries.getSelections(),
-        companies: this.$refs.companies.getSelections()
+        companies: this.$refs.companies.getSelections(),
       };
 
       var vm = this;
@@ -96,6 +99,10 @@ new Vue({
           vm.facets.EAversions = response.facets.EAversions;
           vm.facets.Industry = response.facets.Industry;
           vm.facets.Company = response.facets.Company;
+          if (response.features && response.features.MarkLogicFeatures) {
+            vm.facets.GroupedFeatures = response.features.MarkLogicFeatures;
+          }
+          vm.facets.Features = response.facets.Feature;
           vm.documents = response.documents;
           vm.counts.current = response.documents.length;
           if (firstLoad) {
