@@ -1,4 +1,4 @@
-/* global require */
+/* global require, console */
 /* jshint esversion:6 */
 
 import Vue from 'vue';
@@ -8,6 +8,7 @@ Vue.component('facet', require('./Facet.vue'));
 Vue.component('region-facet', require('./RegionFacet.vue'));
 Vue.component('group-facet', require('./GroupFacet.vue'));
 Vue.component('leaflet', require('./Map.vue'));
+Vue.component('feedback', require('./Feedback.vue'));
 
 new Vue({
   el: '#app',
@@ -145,6 +146,27 @@ new Vue({
       this.$refs.features.reset();
 
       this.doSearch(false);
+    },
+    sendFeedback: function(subject, message) {
+      'use strict';
+      var payload = {
+        'subject': subject,
+        'message': message
+      };
+
+      $.ajax({
+        type: 'POST',
+        url: '/scripts/emailFeedback.sjs',
+        data: JSON.stringify(payload),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function() {
+          console.log('success');
+        },
+        error: function() {
+          console.log('error');
+        }
+      });
     }
   }
 });
