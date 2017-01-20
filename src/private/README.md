@@ -23,6 +23,7 @@ var clientSecret_REST = keys.clientSecret_REST;
 var EA1programID = keys.EA1programID;
 var EA2programID = keys.EA2programID;
 var EA3programID = keys.EA3programID;
+var EA4programID = keys.EA4programID;
 
 // Email list that will receive status updates and user feedback
 var emailRecipient = keys.emailRecipient;
