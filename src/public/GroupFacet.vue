@@ -23,7 +23,7 @@
                       v-bind:value="value"
                       v-bind:checked="selected[value] || allSelected"
                       v-on:change="updateSelection"/>
-                    <span>{{ value }} ({{content[value] || 0}})</span>
+                    <span>{{ value }} ({{content ? content[value] : 0}})</span>
                   </label>
                 </li>
               </ul>
