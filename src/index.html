@@ -6,257 +6,104 @@
   <!-- Leaflet -->
   <link rel="stylesheet" href="public/leaflet/leaflet.css">
   <link rel="stylesheet" href="public/leaflet/leaflet.draw.css">
+
+  <!-- jQuery, required by Bootstrap -->
+  <link rel="stylesheet" href="public/jquery-ui.min.css">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="public/bootstrap-3.3.6.min.css">
+  <link rel="stylesheet" href="public/bootstrap-theme-3.3.6.min.css">
+
+  <link rel="stylesheet" href="public/css/main.css">
+</head>
+
+<body>
+  <div id="app">
+
+    <current-user class="pull-right"></current-user>
+    <div id="user" class="pull-right">
+    </div>
+
+    <div class="title">
+      <h1>TEACUP</h1>
+      <h4> <i><b>T</b>rack <b>E</b>arly <b>A</b>ccess <b>C</b>ustomers <b>U</b>se of <b>P</b>roduct</i></h4>
+      <h4>All data on MarkLogic 9 EA downloads</h4>
+    </div>
+
+    <!-- MAP -->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <br/>
+
+          <!-- Reset button -->
+          <div class="">
+            <button type="button" id="reset" class="btn btn-default btn-block" v-on:click="reset">Reset Map</button>
+          </div>
+
+          <br/><br/><br/>
+
+          <facet ref="eaVersions" title="EA Version" v-bind:content="facets.EAversions" constraint="eaVersions" v-on:selection="selectFacet"></facet>
+
+          <facet ref="industries" title="Industries" v-bind:content="facets.Industry" constraint="industries" v-on:selection="selectFacet"></facet>
+
+          <group-facet ref="features" title="MarkLogic 9 Features"
+            v-bind:outline="facets.GroupedFeatures"
+            v-bind:content="facets.Features"
+            constraint="features"
+            v-on:selection="selectFacet"></group-facet>
+
+          <facet ref="companies" title="Companies" v-bind:content="facets.Company" constraint="companies" v-on:selection="selectFacet"></facet>
+
+          <region-facet ref="region" v-bind:content="featureCollection" v-on:selection="selectRegion"></region-facet>
+
+        <!-- Close container -->
+        </div>
+
+
+        <!-- Map -->
+        <div class="col-md-9">
+          <p id="lastUpdated" align="right">Last updated - {{ lastUpdated }}</p>
+          <p align="right">Displaying {{ counts.current }} of {{ counts.total }} users</p>
+          <p align="right">  </p>
+          <h3 id="mapTitle"><!--Map Display--></h3>
+          <br/>
+          <leaflet ref="map"
+            v-bind:features="featureCollection.features"
+            v-bind:documents="documents"
+            v-on:draw="drawOnMap">
+          </leaflet>
+          <!--<div id="mapid"></div>-->
+          <br/>
+          <br/>
+
+          <feedback v-on:send="sendFeedback"></feedback>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
   <script src="public/leaflet/leaflet-src.js"></script>
   <script src="public/leaflet/leaflet.draw.js"></script>
 
   <!-- Overlapping Marker Spiderfier : https://github.com/jawj/OverlappingMarkerSpiderfier-Leaflet -->
   <script src="public/oms.min.js"></script>
 
-  <!-- jQuery, required by Bootstrap -->
   <script src="public/jquery-1.12.1.min.js"></script>
   <script src="public/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="public/jquery-ui.min.css">
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="public/bootstrap-3.3.6.min.css">
-  <link rel="stylesheet" href="public/bootstrap-theme-3.3.6.min.css">
   <script src="public/bootstrap-3.3.6.min.js"></script>
+
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
 
   <!-- Private Keys -->
   <script type="text/javascript" src="private/browserKeys.js"></script>
 
-  <!-- Start of CSS -->
-  <style>
-    body {
-      padding: 0px;
-    }
-
-    .title {
-      padding: 10px 10px;
-      text-align: center;
-      padding-left: 500px;
-      padding-right: 500px;
-    }
-
-    .container {
-      width: 90%;
-    }
-
-    li.list-group-item {
-      border: none;
-      padding-bottom: 0px;
-    }
-
-    .col-xs-3 {
-      border: none;
-    }
-
-    /* centers map display titles */
-    #mapTitle {
-      text-align: center;
-    }
-
-    /* centers text on selection menu */
-    .facet h4 {
-      text-align: center;
-    }
-
-    .facet a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* scrolling feature of the menu bars */
-    .panel-collapse {
-      max-height: 200px;
-      overflow: hidden;
-      overflow-y: auto;
-    }
-
-    #mapid {
-      height: 700px;
-      background: none;
-      z-index: 1;
-    }
-
-    .unbold {
-      font-weight: normal;
-    }
-
-    #displayFeaturesList {
-      padding-left: 0px;
-      padding-bottom: 15px;
-    }
-
-    lh {
-      padding-left: 10px;
-    }
-
-    /* centers the reset button */
-    #reset {
-      text-align: center;
-      position: center;
-    }
-    textarea {
-      resize: none;
-      z-index: 500000000000000; /* Woaaaah */
-    }
-  </style>
-
-</head>
-
-<body>
-
-<div id="user" class="pull-right">
-</div>
-
-<div class="title">
-  <h1>TEACUP</h1>
-  <h4> <i><b>T</b>rack <b>E</b>arly <b>A</b>ccess <b>C</b>ustomers <b>U</b>se of <b>P</b>roduct</i></h4>
-  <h4>All data on MarkLogic 9 EA downloads</h4>
-</div>
-
-<!-- MAP -->
-<div class="container">
-  <div class="row">
-    <div class="col-md-3">
-      <br/>
-
-      <!-- Reset button -->
-      <div class="">
-        <button type="button" id="reset" class="btn btn-default btn-block">Reset Map</button>
-      </div>
-
-      <br/><br/><br/>
-
-      <div class="facet" id="selectEA">
-        <div class="">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <a data-toggle="collapse" href="#collapseEA"><h4 class="panel-title">EA Version</h4></a>
-              </div>
-              <div id="collapseEA" class="panel-collapse collapse in">
-                <ul class="list-group" id="eaUL">
-                  <li><label><input type="checkbox" class="select-all" id="select_all_i"/>Select All</label></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Select Industry -->
-      <div class="facet" id="selectIndustry">
-        <div class="">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <a data-toggle="collapse" href="#collapse1"><h4 class="panel-title">Industries</h4></a>
-              </div>
-              <div id="collapse1" class="panel-collapse collapse in">
-                <ul class="list-group" id="industryUL">
-                  <li><label><input type="checkbox" class="select-all" id="select_all_i"/>Select All</label></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Select Features -->
-      <div class="facet" id="selectFeature">
-        <div class="">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <a data-toggle="collapse" href="#collapse2"><h4 class="panel-title">MarkLogic 9 Features</h4></a>
-              </div>
-              <div id="collapse2" class="panel-collapse collapse in">
-                <ul class="list-group" id="featureUL">
-                  <li><label><input type="checkbox" id="select_all_f"/>Select All</label></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Select Company -->
-      <div class="facet" id="selectCompany">
-        <div class="">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <a data-toggle="collapse" href="#collapse3"><h4 class="panel-title">Companies</h4></a>
-              </div>
-              <div id="collapse3" class="panel-collapse collapse in">
-                <ul class="list-group" id="companyUL">
-                  <li><label><input type="checkbox" class="select-all" id="select_all_c"/>Select All</label></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Select Region -->
-      <div class="facet" id="selectRegion">
-        <div class="">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <a data-toggle="collapse" href="#collapse4"><h4 class="panel-title">Regions</h4></a>
-              </div>
-              <div id="collapse4" class="panel-collapse collapse in">
-                <ul class="list-group" id="regionUL"></ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <!-- Close container -->
-    </div>
-
-
-    <!-- Map -->
-    <div class="col-md-9">
-      <p id="lastUpdated" align="right">Last updated - </p>
-      <p align="right">Displaying <span id="count"></span> users</p>
-      <p align="right">  </p>
-      <h3 id="mapTitle"><!--Map Display--></h3>
-      <br/>
-      <div id="mapid"></div>
-      <br/>
-      <br/>
-      <div align="center">Have opinions? <a id="feedback-link" href="javascript:{}">Give us feedback!</a></div>
-    </div>
-
-    <!-- Feedback popup windows -->
-    <div id="feedback-window" title="Feedback?">
-      <p>So... what are your thoughts on EA Tracker?</p>
-      <textarea id="feedback-subject" rows="1" cols = "50" placeholder="Subject line"></textarea>
-      <textarea id="feedback-text" rows="8" cols="50" placeholder="no trolling please :)"></textarea>
-      <br/>
-      <button onclick="send()">Send</button>
-    </div>
-
-    <div id="feedback-success" title="Successfully Sent!">
-      <p>Thank you for your feedback!</p>
-    </div>
-
-    <div id="feedback-fail" title="Failed to send :(">
-      <p>For some reason, your message failed to send... Try again?</p>
-    </div>
-
-  </div>
-</div>
-
-<!-- Displaying the map (in JS) -->
-<script type="text/javascript" src="public/map.js"></script>
-<script type="text/javascript" src="public/feedback.js"></script>
-<script type="text/javascript" src="public/user.js"></script>
+  <!-- Displaying the map (in JS) -->
+  <script type="text/javascript" src="public/dist/build.js"></script>
 
 </body>
 </html>
