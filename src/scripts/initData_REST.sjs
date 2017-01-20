@@ -11,12 +11,13 @@ var clientSecret = keys.clientSecret_REST;
 var EA1programID = keys.EA1programID;
 var EA2programID = keys.EA2programID;
 var EA3programID = keys.EA3programID;
+var EA4programID = keys.EA4programID;
 var emailRecipient = keys.emailRecipient;
 
 //switch out the values depending on what you want :)
 var EA = {
-  "programID": EA1programID,
-  "version": "EA1"
+  "programID": EA4programID,
+  "version": "EA4"
 };
 
 // get access token (valid for 1 hour)
