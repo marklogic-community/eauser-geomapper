@@ -8,6 +8,7 @@
     data: function() {
       return {
         map: {},
+        oms: {},
         maxBounds: {},
         regionPolygons: {},
         drawnShapes: {},
@@ -88,10 +89,10 @@
 
       // Initialize Overlapping Marker Spiderfier
       //   (the thing that spreads out markers that overlap)
-      // var spiderOptions = {
-      //   keepSpiderfied: true
-      // };
-      // var oms = new OverlappingMarkerSpiderfier(map, spiderOptions);
+      var spiderOptions = {
+        keepSpiderfied: true
+      };
+      vm.oms = new OverlappingMarkerSpiderfier(vm.map, spiderOptions);
 
       // Initialize the FeatureGroup to store editable layers (shapes drawn by user)
       // ref: http://leafletjs.com/2013/02/20/guest-post-draw.html
@@ -264,7 +265,7 @@
         var vm = this;
 
         vm.markers.clearLayers();
-        // oms.clearMarkers();
+        vm.oms.clearMarkers();
 
         var geojsonLayer = L.geoJson(vm.documents, {
           pointToLayer: function (feature, latlng) {
@@ -278,7 +279,7 @@
 
             marker = new L.marker(latlng, markerOptions);
 
-            // oms.addMarker(marker);
+            vm.oms.addMarker(marker);
             return marker;
           },
           onEachFeature: function (feature, layer) {
