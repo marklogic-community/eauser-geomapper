@@ -11,12 +11,13 @@ var clientSecret = keys.clientSecret_REST;
 var EA1programID = keys.EA1programID;
 var EA2programID = keys.EA2programID;
 var EA3programID = keys.EA3programID;
+var EA4programID = keys.EA4programID;
 var emailRecipient = keys.emailRecipient;
 
 //switch out the values depending on what you want :)
 var EA = {
-  "programID": EA1programID,
-  "version": "EA1"
+  "programID": EA4programID,
+  "version": "EA4"
 };
 
 // get access token (valid for 1 hour)
@@ -31,10 +32,15 @@ var completed = true;
 
 var numUsers;
 
+var duplicates = [];
+
 try {
   var nextPageToken = "";
 
   numUsers = 0;
+
+  // watch out for multiple users from Marketo that have the same email address
+  var emailsProcessed = {};
 
   do {
 
@@ -52,6 +58,8 @@ try {
     for (var i in users) {
       var json = util.convertToJson_REST(users[i], EA.version);
 
+      json.geometry = util.addCoordinates(json);
+
       var email = json.fullDetails.email;
 
       // if we have reached the end of the list of users
@@ -60,16 +68,27 @@ try {
         break;
       }
 
-      numUsers++;
+      if (emailsProcessed[email]) {
+        xdmp.log('Duplicate email: ' + email);
+        duplicates.push(email);
+      } else {
 
-      // just in case... highly unlikely this will change anything though..
-      email = util.removeSpaces("" + email, "+");
+        numUsers++;
 
-      // uri template for EA users
-      var uri = "/users/" + email + ".json";
+        // just in case... highly unlikely this will change anything though..
+        email = util.removeSpaces("" + email, "+");
 
-      xdmp.log("  inserted " + email);
-      xdmp.documentInsert(uri, json);
+        // uri template for EA users
+        var uri = "/users/" + email + ".json";
+
+        var update = util.mergeRecords(json, uri);
+
+        xdmp.documentInsert(uri, json);
+        xdmp.log("  inserted " + email);
+
+        emailsProcessed[email] = true;
+      }
+
     }
 
   } while (nextPageToken && nextPageToken !== "")
@@ -128,22 +147,31 @@ try {
   if (completed) {
     var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Completed data ingestion at " + timestamp + "\n\n";
-    content += "Number of users: " + numUsers;
+    content += "Number of users: " + numUsers + "\n";
+    if (duplicates.length > 0) {
+      content += '\nDuplicate users: ' + fn.stringJoin(duplicates, ', ') + '\n\n';
+    }
+    content += util.getEmailSource();
 
-    var message = {"from":{"name": "eauser-geomapper", "address": "eauser.geomapper@marklogic.com"},
-                 "to":{"name": emailRecipient.name, "address": emailRecipient.address},
-                 "subject": "EA tracker - success - initial data ingestion",
-                 "content": content};
+    var message = {
+      "from":{"name": "eauser-geomapper", "address": "eauser.geomapper@marklogic.com"},
+      "to":{"name": emailRecipient.name, "address": emailRecipient.address},
+      "subject": "EA tracker - success - initial data ingestion",
+      "content": content
+    };
     xdmp.email(message);
   }
   else {
     var timestamp = fn.formatDateTime(fn.currentDateTime().add(xdmp.elapsedTime()), "[M01]/[D01]/[Y0001] [H01]:[m01]:[s01] ");
     var content = "Failed data ingestion at " + timestamp + "\n\n";
+    content += util.getEmailSource();
 
-    var message = {"from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
-                 "to":{"name": emailRecipient.name, "address": emailRecipient.address},
-                 "subject":"EA tracker - fail - initial data ingestion",
-                 "content": content};
+    var message = {
+      "from":{"name":"eauser-geomapper", "address":"eauser.geomapper@marklogic.com"},
+      "to":{"name": emailRecipient.name, "address": emailRecipient.address},
+      "subject":"EA tracker - fail - initial data ingestion",
+      "content": content
+    };
     xdmp.email(message);
   }
 }

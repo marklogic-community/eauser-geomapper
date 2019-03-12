@@ -31,7 +31,7 @@
             <task-start-time>00:00:00-07:00</task-start-time>
             <task-database name="${content-db}"/>
             <task-modules name="${app-modules-db}"/>
-            <task-user name="${app-name}-user"/>
+            <task-user name="${app-name}-editor-user"/>
           </scheduled-task>
           <!--
           <scheduled-task>
@@ -270,6 +270,14 @@
           <collation>http://marklogic.com/collation/en/S1</collation>
           <range-value-positions>false</range-value-positions>
         </range-element-index>
+
+        <range-element-index>
+          <scalar-type>string</scalar-type>
+          <namespace-uri></namespace-uri>
+          <localname>ea_version</localname>
+          <collation>http://marklogic.com/collation/</collation>
+          <range-value-positions>false</range-value-positions>
+        </range-element-index>
       </range-element-indexes>
       <range-element-attribute-indexes>
 <!--
@@ -462,14 +470,6 @@
           <role-name>${app-role}</role-name>
         </permission>
         <permission>
-          <capability>update</capability>
-          <role-name>${app-role}</role-name>
-        </permission>
-        <permission>
-          <capability>insert</capability>
-          <role-name>${app-role}</role-name>
-        </permission>
-        <permission>
           <capability>read</capability>
           <role-name>${app-role}</role-name>
         </permission>
@@ -481,7 +481,7 @@
           <privilege-name>any-uri</privilege-name>
         </privilege>
         <privilege>
-          <privilege-name>xdmp:value</privilege-name>
+          <privilege-name>get-role-names</privilege-name>
         </privilege>
         <privilege>
           <privilege-name>xdmp:add-response-header</privilege-name>
@@ -490,15 +490,47 @@
           <privilege-name>xdmp:email</privilege-name>
         </privilege>
         <privilege>
+          <privilege-name>xdmp:eval</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:eval-in</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:filesystem-directory</privilege-name>
+        </privilege>
+        <privilege>
           <privilege-name>xdmp:http-get</privilege-name>
         </privilege>
         <privilege>
           <privilege-name>xdmp:invoke</privilege-name>
         </privilege>
         <privilege>
+          <privilege-name>xdmp:user-roles</privilege-name>
+        </privilege>
+        <privilege>
+          <privilege-name>xdmp:value</privilege-name>
+        </privilege>
+        <privilege>
           <privilege-name>xdmp:with-namespaces</privilege-name>
         </privilege>
       </privileges>
+    </role>
+    <role>
+      <role-name>${app-name}-editor-role</role-name>
+      <description>A role for editors of the ${app-name} application</description>
+      <role-names>
+        <role-name>${app-role}</role-name>
+      </role-names>
+      <permissions>
+        <permission>
+          <capability>update</capability>
+          <role-name>${app-role}</role-name>
+        </permission>
+        <permission>
+          <capability>insert</capability>
+          <role-name>${app-role}</role-name>
+        </permission>
+      </permissions>
     </role>
   </roles>
   <users xmlns="http://marklogic.com/xdmp/security">
@@ -508,6 +540,16 @@
       <password>${appuser-password}</password>
       <role-names>
         <role-name>${app-role}</role-name>
+      </role-names>
+      <permissions/>
+      <collections/>
+    </user>
+    <user>
+      <user-name>${app-name}-editor-user</user-name>
+      <description>An editor for the ${app-name} application</description>
+      <password>${appuser-password}</password>
+      <role-names>
+        <role-name>${app-name}-editor-role</role-name>
       </role-names>
       <permissions/>
       <collections/>

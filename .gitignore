@@ -5,3 +5,5 @@ src/private/*.sjs
 *2.html
 *test.*
 main.html
+src/public/dist
+node_modules
