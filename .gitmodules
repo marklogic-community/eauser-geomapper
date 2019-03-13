@@ -1,3 +1,0 @@
-[submodule "src/private"]
-	path = src/private
-	url = dmc-stage.marklogic.com:/space/git/eauser-geomapper-private.git
